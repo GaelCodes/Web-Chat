@@ -9,19 +9,67 @@
     <title>WebChat</title>
 </head>
 
-<body>
-    <h1>HOME</h1>
-
-    <button id="logoutButton" class="btn btn-primary">Desconectarse</button>
+<body class="bg-light">
 
 
+    <nav class="navbar navbar-secondary bg-light">
+        <div class="container-fluid d-flex flex-column">
+            <span class="navbar-brand" href="#">WebChat</span>
+
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item dropdown ">
+                    <a class="nav-link dropdown-toggle link-dark" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      Abigael-hf@hotmail.com
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><button id="logoutButton" class="btn btn-primary">Desconectarse</button></li>
+                        <li><a class="dropdown-item" href="#">Another action</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item" href="#">Something else here</a></li>
+                    </ul>
+                </li>
+            </ul>
 
 
 
+        </div>
+    </nav>
+    <main class="container-fluid">
+        <div class="row bg-warning">
+            <div class="col-4 border-end text-center">
+                <h1>Conversaciones</h1>
+                <ul class="list-unstyled">
+                    <li class="p-2 mb-2 rounded-pill bg-primary">Abigatorhf@gmail.com</li>
+                    <li class="p-2 mb-2 rounded-pill bg-primary">Abigatorhf@gmail.com</li>
+                    <li class="p-2 mb-2 rounded-pill bg-primary">Abigatorhf@gmail.com</li>
+                    <li class="p-2 mb-2 rounded-pill bg-primary">Abigatorhf@gmail.com</li>
+                    <li class="p-2 mb-2 rounded-pill bg-primary">Abigatorhf@gmail.com</li>
+                    <li class="p-2 mb-2 rounded-pill bg-primary">Abigatorhf@gmail.com</li>
+                    <li class="p-2 mb-2 rounded-pill bg-primary">Abigatorhf@gmail.com</li>
+                    <li class="p-2 mb-2 rounded-pill bg-primary">Abigatorhf@gmail.com</li>
+                    <li class="p-2 mb-2 rounded-pill bg-primary">Abigatorhf@gmail.com</li>
 
-
-
-
+                </ul>
+            </div>
+            <div id="conversation-container" class="col-8 text-center d-flex flex-column justify-content-start bg-info">
+                <span class="h1 m-0 p-2 border-bottom d-block">Abigatorhf@gmail.com</span>
+                <div class="container">
+                    <ul class="list-unstyled d-flex flex-column">
+                        <li class="align-self-end badge rounded-pill bg-light text-dark mt-2">Hellow you</li>
+                        <li class="align-self-end badge rounded-pill bg-light text-dark mt-2">Hellow you</li>
+                        <li class="align-self-start badge rounded-pill bg-light text-dark mt-2">Hellow you</li>
+                        <li class="align-self-end badge rounded-pill bg-light text-dark mt-2">Hellow you</li>
+                        <li class="align-self-start badge rounded-pill bg-light text-dark mt-2">Hellow you</li>
+                        <li class="align-self-end badge rounded-pill bg-light text-dark mt-2">Hellow you</li>
+                        <li class="align-self-start badge rounded-pill bg-light text-dark mt-2">Hellow you</li>
+                    </ul>
+                </div>
+                <input type="text" name="inputNewMessage" id="inputNewMessage" class="form-control justify-self-end">
+            </div>
+        </div>
+    </main>
 
 
 

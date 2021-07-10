@@ -1,5 +1,19 @@
-main {
-  height: 100vh;
+body {
+    height: 100vh !important;
+    background: blue !important;
 }
+
+body a:any-link {
+    color: black !important;
+}
+
+main {
+    height: 100vh !important;
+}
+
+#conversation-container {
+    height: 100%;
+}
+
 
 /*# sourceMappingURL=styles.css.map */
