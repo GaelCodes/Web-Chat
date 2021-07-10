@@ -1,0 +1,18 @@
+body {
+    height: 100vh;
+}
+
+body main {
+    height: 85%;
+}
+
+#main-row {
+    height: 100%;
+}
+
+body nav {
+    height: 15%;
+}
+
+
+/*# sourceMappingURL=styles.css.map */
