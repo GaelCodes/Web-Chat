@@ -1,25 +1,15 @@
 var db = firebase.firestore();
 var usersCollection = db.collection("usuarios");
 
+// Login state control
 firebase.auth().onAuthStateChanged((user) => {
     if (user) {
-        console.log('usuario logeado');
         // Logged
     } else {
         // Not Logged
         location = '../index.html';
     }
 });
-
-
-
-
-
-
-
-
-
-
 
 // LOGOUT
 var logoutButton = document.getElementById('logoutButton');

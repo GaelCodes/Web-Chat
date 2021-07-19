@@ -1,11 +1,23 @@
 var db = firebase.firestore();
 var usersCollection = db.collection("usuarios");
 
+var userDocExist = false;
+
 firebase.auth().onAuthStateChanged((user) => {
     if (user) {
-        console.log('usuario logeado redirigiendo');
-        // Logged
-        location = './home/home.html';
+
+        usersCollection.doc(user.uid).get().then(
+            (doc) => {
+
+                // If logged and document has been created will be redirected
+                if (doc.exists) {
+                    location = './home/home.html';
+                }
+            }
+
+        )
+
+
     } else {
         // Not Logged
     }
@@ -49,7 +61,11 @@ function createUser(event) {
                         nombre: "",
                         email: userData.email,
                         photoURL: "",
-                    })
+                    }).then(
+                        (data) => {
+                            location = './home/home.html';
+                        }
+                    )
                     .catch((error) => {
                         console.log('Se ha producido el siguiente error: ', error);
                     });
@@ -84,7 +100,6 @@ function loginUser(event) {
     event.preventDefault();
     let email = signInEmail.value;
     let password = signInPassword.value;
-    console.log(email, password);
 
     firebase.auth().signInWithEmailAndPassword(email, password)
         .then((userCredential) => {
