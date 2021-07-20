@@ -1,10 +1,12 @@
 var db = firebase.firestore();
 var usersCollection = db.collection("usuarios");
-
+var user;
+var messagesCollection;
 // Login state control
-firebase.auth().onAuthStateChanged((user) => {
-    if (user) {
+firebase.auth().onAuthStateChanged((userData) => {
+    if (userData) {
         // Logged
+        user = userData;
     } else {
         // Not Logged
         location = '../index.html';

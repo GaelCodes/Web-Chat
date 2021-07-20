@@ -8,7 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <title>WebChat</title>
 
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="css/styles.css">
 </head>
 
@@ -37,47 +37,59 @@
     </nav>
     <main class="container-fluid">
         <div id="main-row" class="row">
+
             <div class="col-12 col-md-3 border-end text-center">
                 <h1>Conversaciones</h1>
                 <ul id="desktop-chat-list" class="list-unstyled d-none d-md-block">
-                    <!-- <li class="p-2 mb-2 badge bg-light text-dark d-block">Abigatorhf@gmail.com</li>
-                    <li class="p-2 mb-2 badge bg-light text-dark d-block">Abigatorhf@gmail.com</li>
-                    <li class="p-2 mb-2 badge bg-light text-dark d-block">Abigatorhf@gmail.com</li>
-                    <li class="p-2 mb-2 badge bg-light text-dark d-block">Abigatorhf@gmail.com</li>
-                    <li class="p-2 mb-2 badge bg-light text-dark d-block">Abigatorhf@gmail.com</li>
-                    <li class="p-2 mb-2 badge bg-light text-dark d-block">Abigatorhf@gmail.com</li>
-                    <li class="p-2 mb-2 badge bg-light text-dark d-block">Abigatorhf@gmail.com</li>
-                    <li class="p-2 mb-2 badge bg-light text-dark d-block">Abigatorhf@gmail.com</li>
-                    <li class="p-2 mb-2 badge bg-light text-dark d-block">Abigatorhf@gmail.com</li> -->
 
                 </ul>
                 <ul id="mobile-chat-list" class="list-unstyled d-md-none">
-                    <li class="p-2 mb-2 badge bg-light text-dark d-block">Abigatorhf@gmail.com</li>
-                    <li class="p-2 mb-2 badge bg-light text-dark d-block">Abigatorhf@gmail.com</li>
-                    <li class="p-2 mb-2 badge bg-light text-dark d-block">Abigatorhf@gmail.com</li>
-                    <li class="p-2 mb-2 badge bg-light text-dark d-block">Abigatorhf@gmail.com</li>
-                    <li class="p-2 mb-2 badge bg-light text-dark d-block">Abigatorhf@gmail.com</li>
-                    <li class="p-2 mb-2 badge bg-light text-dark d-block">Abigatorhf@gmail.com</li>
-                    <li class="p-2 mb-2 badge bg-light text-dark d-block">Abigatorhf@gmail.com</li>
-                    <li class="p-2 mb-2 badge bg-light text-dark d-block">Abigatorhf@gmail.com</li>
-                    <li class="p-2 mb-2 badge bg-light text-dark d-block">Abigatorhf@gmail.com</li>
 
                 </ul>
             </div>
-            <div id="conversation-container" class="d-none d-md-flex col-md-9 text-center flex-column justify-content-start">
-                <span class="h1 m-0 p-2 border-bottom d-block">Abigatorhf@gmail.com</span>
+
+            <!-- CHAT WEB -->
+            <div class="d-none d-md-flex col-md-9 text-center flex-column justify-content-start">
+                <!-- SUSTITUIR POR CARD -->
+                <span id="chat-interlocutor" class="h1 m-0 p-2 border-bottom d-block">
+                    <!-- EL INTERLOCUTOR VA AQUÍ -->
+                    <p class="h5">Ningún chat seleccionado</p>
+                </span>
+
                 <div class="container">
-                    <ul class="list-unstyled d-flex flex-column">
-                        <li class="align-self-end badge rounded-pill bg-light text-dark mt-2">Hellow you</li>
-                        <li class="align-self-end badge rounded-pill bg-light text-dark mt-2">Hellow you</li>
-                        <li class="align-self-start badge rounded-pill bg-light text-dark mt-2">Hellow you</li>
-                        <li class="align-self-end badge rounded-pill bg-light text-dark mt-2">Hellow you</li>
-                        <li class="align-self-start badge rounded-pill bg-light text-dark mt-2">Hellow you</li>
-                        <li class="align-self-end badge rounded-pill bg-light text-dark mt-2">Hellow you</li>
-                        <li class="align-self-start badge rounded-pill bg-light text-dark mt-2">Hellow you</li>
+                    <ul id="messages-list" class="list-unstyled d-flex flex-column">
+
+                        <!-- LOS MENSAJES VAN AQUÍ -->
                     </ul>
+
                 </div>
-                <input type="text" name="inputNewMessage" id="inputNewMessage" class="form-control mt-auto mb-2">
+
+
+                <div class="mt-auto mb-2 d-flex flex-row">
+                    <input disabled type="text" name="inputNewMessage" id="inputNewMessage" class="form-control bg-secondary">
+                    <button id="sendButton" disabled class="btn btn-primary d-flex ms-2">Enviar <i class="bi bi-upload ms-2"></i></button>
+                </div>
+                <!-- SUSTITUIR POR CARD -->
+
+            </div>
+
+            <!-- MODAL MOBILE -->
+            <div class="d-md-none modal" id="chatModal" tabindex="-1">
+                <div class="modal-dialog modal-fullscreen">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Modal title</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Modal body text goes here.</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary">Save changes</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </main>
@@ -121,6 +133,7 @@
 
     <script src="js/appHome.js"></script>
     <script src="js/getData.js"></script>
+    <script src="js/sendData.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 </body>
 

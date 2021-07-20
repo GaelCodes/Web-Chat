@@ -88,8 +88,19 @@ async function displayOpenedChats(chatsDocs) {
     interlocutorsData.forEach(
         (interlocutor) => {
 
+
+            mobileChatListElement.innerHTML += `
+            <li class="chat-item p-2 mb-2 badge bg-info text-dark d-block text-start">
+            <button type="button" data-bs-toggle="modal" data-bs-target="#chatModal">Launch modal
+            <img src="${interlocutor.picture}" class="rounded w-25"></img>    
+                ${interlocutor.email}
+            </button>
+            </li>
+            
+            `;
+
             desktopChatListElement.innerHTML += `
-            <li class="p-2 mb-2 badge bg-info text-dark d-block text-start">
+            <li class="chat-item-md p-2 mb-2 badge bg-info text-dark d-block text-start">
             <img src="${interlocutor.picture}" class="rounded w-25"></img>    
                 ${interlocutor.email}
             </li>
@@ -98,4 +109,75 @@ async function displayOpenedChats(chatsDocs) {
         }
     )
 
+    // AÑADIR EVENT LISTENERS A LOS CHATS
+    chatsElementsMobile = document.getElementsByClassName('chat-item');
+    chatsElementsDesktop = document.getElementsByClassName('chat-item-md');
+
+    for (const chatElementMobile of chatsElementsMobile) {
+        chatElementMobile.addEventListener('click', displayChatMobile);
+    }
+    for (const chatElementDesktop of chatsElementsDesktop) {
+        chatElementDesktop.addEventListener('click', displayChatDesktop);
+    }
+
+}
+
+
+// OBTENER CHAT
+
+async function getChat(interlocutorID) {
+
+    interlocutorID = interlocutorID.trim();
+
+    messagesCollection = usersCollection.doc(user.uid).collection('conversaciones').doc(interlocutorID).collection('Mensajes');
+
+    let mensajes = await messagesCollection.get();
+
+    return mensajes.docs;
+}
+
+
+// MOSTRAR CHAT
+
+
+var interlocutorElement = document.getElementById('chat-interlocutor');
+var messagesListElement = document.getElementById('messages-list');
+
+
+
+async function displayChatDesktop(event) {
+    let chat = {
+        'interlocutorID': event.target.innerText,
+        'mensajes': []
+    }
+
+    interlocutorElement.innerText = chat.interlocutorID;
+
+
+    chat.mensajes = await getChat(chat.interlocutorID);
+
+
+    messagesListElement.innerHTML = '';
+    chat.mensajes.forEach(
+        (mensaje) => {
+
+            mensaje = mensaje.data();
+            let messageElement = document.createElement('li');
+
+            messageElement.classList.add('align-self-end', 'badge', 'rounded-pill', 'bg-light', 'text-dark', 'mt-2');
+            messageElement.innerHTML = `${mensaje.contenido}`;
+
+
+            messagesListElement.appendChild(messageElement);
+        }
+    );
+
+    // Habilitar el input
+
+    inputNewMessage.removeAttribute('disabled');
+
+}
+
+function displayChatMobile(event) {
+    console.log('Mostrando chat... en Mobile');
 }
