@@ -34,7 +34,10 @@ var userMenuElement = document.getElementById('userMenu');
 
 function displayUserData(userData) {
 
-    userMenuElement.innerText = userData.email;
+    userMenuElement.innerHTML = `
+    <img src="${userData.picture}" class="rounded w-25"></img>
+    ${userData.email}
+    `;
 
 }
 
@@ -90,8 +93,8 @@ async function displayOpenedChats(chatsDocs) {
 
 
             mobileChatListElement.innerHTML += `
-            <li class="chat-item p-2 mb-2 badge bg-info text-dark d-block text-start">
-            <button type="button" data-bs-toggle="modal" data-bs-target="#chatModal">Launch modal
+            <li class="chat-item mb-2 badge p-0 text-dark d-block text-start">
+            <button type="button" class="btn btn-primary w-100 text-start" data-bs-toggle="modal" data-bs-target="#chatModal">
             <img src="${interlocutor.picture}" class="rounded w-25"></img>    
                 ${interlocutor.email}
             </button>
@@ -140,8 +143,11 @@ async function getChat(interlocutorID) {
 // MOSTRAR CHAT
 
 
-var interlocutorElement = document.getElementById('chat-interlocutor');
-var messagesListElement = document.getElementById('messages-list');
+var interlocutorElementMobile = document.getElementById('chat-interlocutor');
+var messagesListElementMobile = document.getElementById('messages-list');
+
+var interlocutorElementDesktop = document.getElementById('chat-interlocutor-md');
+var messagesListElementDesktop = document.getElementById('messages-list-md');
 
 
 
@@ -151,13 +157,13 @@ async function displayChatDesktop(event) {
         'mensajes': []
     }
 
-    interlocutorElement.innerText = chat.interlocutorID;
+    interlocutorElementDesktop.innerHTML = event.target.innerHTML;
 
 
     chat.mensajes = await getChat(chat.interlocutorID);
 
 
-    messagesListElement.innerHTML = '';
+    messagesListElementDesktop.innerHTML = '';
     chat.mensajes.forEach(
         (mensaje) => {
 
@@ -168,16 +174,42 @@ async function displayChatDesktop(event) {
             messageElement.innerHTML = `${mensaje.contenido}`;
 
 
-            messagesListElement.appendChild(messageElement);
+            messagesListElementDesktop.appendChild(messageElement);
         }
     );
 
     // Habilitar el input
 
-    inputNewMessage.removeAttribute('disabled');
+    inputNewMessageDesktop.removeAttribute('disabled');
 
 }
 
-function displayChatMobile(event) {
-    console.log('Mostrando chat... en Mobile');
+async function displayChatMobile(event) {
+
+    let chat = {
+        'interlocutorID': event.target.innerText,
+        'mensajes': []
+    }
+
+    console.log(event.target.innerHTML);
+    interlocutorElementMobile.innerHTML = event.target.innerHTML;
+
+
+    chat.mensajes = await getChat(chat.interlocutorID);
+
+
+    messagesListElementMobile.innerHTML = '';
+    chat.mensajes.forEach(
+        (mensaje) => {
+
+            mensaje = mensaje.data();
+            let messageElement = document.createElement('li');
+
+            messageElement.classList.add('align-self-end', 'badge', 'rounded-pill', 'bg-light', 'text-dark', 'mt-2');
+            messageElement.innerHTML = `${mensaje.contenido}`;
+
+
+            messagesListElementMobile.appendChild(messageElement);
+        }
+    );
 }

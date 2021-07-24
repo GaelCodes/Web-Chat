@@ -1,21 +1,37 @@
 // ENVIAR MENSAJE
 
-var sendButton = document.getElementById('sendButton');
-var inputNewMessage = document.getElementById('inputNewMessage');
+var sendButtonMobile = document.getElementById('sendButtonMobile');
+var inputNewMessageMobile = document.getElementById('inputNewMessageMobile');
 
-sendButton.addEventListener('click', sendMessage);
-inputNewMessage.addEventListener('input', enableButton);
+var sendButtonDesktop = document.getElementById('sendButtonDesktop');
+var inputNewMessageDesktop = document.getElementById('inputNewMessageDesktop');
+
+sendButtonMobile.addEventListener('click', sendMessage);
+sendButtonDesktop.addEventListener('click', sendMessage);
+
+inputNewMessageDesktop.addEventListener('input', enableButton);
+inputNewMessageMobile.addEventListener('input', enableButton);
 
 
-function sendMessage() {
+
+function sendMessage(event) {
+
+    if (event.target.id === 'sendButtonMobile') {
+        var input = inputNewMessageMobile;
+        var sendButton = sendButtonMobile;
+
+    } else if (event.target.id === 'sendButtonDesktop') {
+        var input = inputNewMessageDesktop;
+        var sendButton = sendButtonDesktop;
+    }
+
     messagesCollection.add({
             'emisor': 'yo',
-            'contenido': inputNewMessage.value,
+            'contenido': input.value,
             'estado': 'enviado',
             'fecha': 'el día de hoy'
         }).then((docRef) => {
-            console.log("Document written with ID: ", docRef.id);
-            inputNewMessage.value = "";
+            input.value = "";
             sendButton.setAttribute('disabled', 'disabled');
         })
         .catch((error) => {
@@ -23,12 +39,13 @@ function sendMessage() {
         });
 }
 
-function enableButton() {
-    console.log('Algo ha pasado con el input :O');
-    if (inputNewMessage.value != '') {
+function enableButton(event) {
+    let sendButton = event.target.nextElementSibling;
+
+    if (event.target.value != '') {
         sendButton.removeAttribute('disabled');
+
     } else {
         sendButton.setAttribute('disabled', 'disabled');
-
     }
 }

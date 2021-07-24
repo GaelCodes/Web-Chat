@@ -10,8 +10,8 @@ body main {
     height: 100%;
 }
 
-body nav {
-    height: 15%;
+#chat-interlocutor-md img {
+    width: 5% !important;
 }
 
 

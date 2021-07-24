@@ -23,18 +23,21 @@
 
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle link-dark" id="userMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle link-dark bg-success rounded" id="userMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <!-- user@example.com -->
                         </a>
                         <ul class="dropdown-menu text-center" aria-labelledby="userMail">
                             <li><button id="logoutButton" class="btn btn-primary">Desconectarse</button></li>
                         </ul>
                     </li>
                 </ul>
+
             </div>
-
-
         </div>
     </nav>
+
+
+
     <main class="container-fluid">
         <div id="main-row" class="row">
 
@@ -50,25 +53,30 @@
 
             <!-- CHAT WEB -->
             <div class="d-none d-md-flex col-md-9 text-center flex-column justify-content-start">
+
                 <!-- SUSTITUIR POR CARD -->
-                <span id="chat-interlocutor" class="h1 m-0 p-2 border-bottom d-block">
+
+                <span id="chat-interlocutor-md" class="h1 m-0 p-2 border-bottom d-block">
                     <!-- EL INTERLOCUTOR VA AQUÍ -->
                     <p class="h5">Ningún chat seleccionado</p>
                 </span>
 
                 <div class="container">
-                    <ul id="messages-list" class="list-unstyled d-flex flex-column">
+                    <ul id="messages-list-md" class="list-unstyled d-flex flex-column">
 
-                        <!-- LOS MENSAJES VAN AQUÍ -->
+                        <!-- <li> mensaje </li> -->
+                        <!-- <li> mensaje </li> -->
+                        <!-- <li> mensaje </li> -->
                     </ul>
 
                 </div>
 
-
                 <div class="mt-auto mb-2 d-flex flex-row">
-                    <input disabled type="text" name="inputNewMessage" id="inputNewMessage" class="form-control bg-secondary">
-                    <button id="sendButton" disabled class="btn btn-primary d-flex ms-2">Enviar <i class="bi bi-upload ms-2"></i></button>
+                    <!-- Envio mensajes -->
+                    <input disabled type="text" name="inputNewMessageDesktop" id="inputNewMessageDesktop" class="form-control bg-secondary">
+                    <button id="sendButtonDesktop" disabled class="btn btn-primary d-flex ms-2">Enviar <i class="bi bi-upload ms-2"></i></button>
                 </div>
+
                 <!-- SUSTITUIR POR CARD -->
 
             </div>
@@ -77,17 +85,32 @@
             <div class="d-md-none modal" id="chatModal" tabindex="-1">
                 <div class="modal-dialog modal-fullscreen">
                     <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Modal title</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+                        <div class="modal-header text-center justify-content-start">
+                            <button type="button" class="btn" data-bs-dismiss="modal" aria-label="Close">
+                                <i class="bi bi-arrow-left"></i>
+                            </button>
+                            <h5 class="modal-title mx-auto d-flex flex-nowrap align-items-center h6" id="chat-interlocutor">
+                                Abigael-hf@hotmail.com
+                            </h5>
                         </div>
+
                         <div class="modal-body">
-                            <p>Modal body text goes here.</p>
+                            <ul id="messages-list" class="list-unstyled d-flex flex-column">
+
+                                <!-- <li> mensaje </li> -->
+                                <!-- <li> mensaje </li> -->
+                                <!-- <li> mensaje </li> -->
+
+                            </ul>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary">Save changes</button>
+
+                        <div class="modal-footer flex-nowrap">
+                            <!-- Envio mensajes -->
+                            <input type="text" name="inputNewMessageMobile" id="inputNewMessageMobile" class="form-control bg-secondary">
+                            <button id="sendButtonMobile" disabled class="btn btn-primary d-flex">Enviar <i class="bi bi-upload ms-2"></i></button>
                         </div>
+
                     </div>
                 </div>
             </div>
