@@ -28,29 +28,28 @@
 
         <div class="row justify-content-center">
             <div class="col-12 col-md-6 mt-5">
-                <div class="card border-0">
+                <div class="card border-0 ">
 
                     <div class="card-header text-center">
-                        <h1 class="h2">Iniciar Sesión</h1>
+                        <h1 class="h2">Registrarse</h1>
                     </div>
+                    <div class="card-body py-4">
 
-                    <div class="card-body py-5">
-                        <form id="signInForm">
+                        <form id="signUpForm">
 
-
-
-                            <label for="signInEmail" class="form-label">Email</label>
-                            <input id="signInEmail" type="email" name="email" class="form-control" placeholder="example@hotmail.com">
-                            <label for="signInPassword" class="form-label">Contraseña</label>
-                            <input id="signInPassword" type="password" name="signInPassword" class="form-control" placeholder="Introduzca su contraseña">
-                            <button type="button" id="signInButton" class="btn btn-primary d-block mx-auto mt-4">Conectarse</button>
-                            <div id="signInErrorsContainer" class="text-danger my-2"></div>
+                            <label for="signUpEmail" class="form-label">Email</label>
+                            <input id="signUpEmail" type="email" name="signUpEmail" class="form-control" placeholder="example@hotmail.com">
+                            <label for="signUpPassword" class="form-label">Contraseña</label>
+                            <input id="signUpPassword" name="signUpPassword" type="password" class="form-control" placeholder="Introduzca su contraseña">
+                            <label for="signUpPassword2" class="form-label">Contraseña</label>
+                            <input id="signUpPassword2" name="signUpPassword2" type="password" class="form-control" placeholder="Reintroduzca la contraseña">
+                            <button id="signUpButton" class="btn btn-primary d-block mx-auto mt-4" type="submit">Registrarse</button>
+                            <div id="signUpErrorsContainer" class="text-danger my-2"></div>
 
                         </form>
                     </div>
-
                     <div class="card-footer text-center">
-                        <p>¿Todavía no tienes una cuenta? <a href="registro/register.html" class="text-decoration-none"> Registrate </a> </p>
+                        <p>¿Ya tienes una cuenta? <a href="../index.html" class="text-decoration-none">Inicia Sesión</a> </p>
                     </div>
 
 

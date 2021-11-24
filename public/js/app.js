@@ -1,141 +1,53 @@
-var db = firebase.firestore();
-var usersCollection = db.collection("usuarios");
+//     FIREBASE AUTHENTICATION
+{
+    var db = firebase.firestore();
+    var usersCollection = db.collection("usuarios");
 
-var userDocExist = false;
+    // var userDocExist = false; QUITAR SI TODO FUNCIONA
 
-firebase.auth().onAuthStateChanged((user) => {
-    if (user) {
+    firebase.auth().onAuthStateChanged((user) => {
+        if (user) {
 
-        usersCollection.doc(user.uid).get().then(
-            (doc) => {
+            usersCollection.doc(user.uid).get().then(
+                (doc) => {
 
-                // If logged and document has been created will be redirected
-                if (doc.exists) {
-                    location = './home/home.html';
+                    // If logged and document has been created will be redirected
+                    if (doc.exists) {
+                        location = './home/home.html';
+                    }
                 }
-            }
 
-        )
-
-
-    } else {
-        // Not Logged
-    }
-});
+            )
 
 
-/* 
-    FIREBASE AUTHENTICATION
-*/
-
-
-
-// SIGN UP
-//  Get elements + add event listeners
-
-var signUpButton = document.getElementById('signUpButton');
-var signUpEmail = document.getElementById('signUpEmail');
-var signUpPassword = document.getElementById('signUpPassword');
-var signUpPassword2 = document.getElementById('signUpPassword2');
-var signUpErrorsContainer = document.getElementById('signUpErrorsContainer');
-
-signUpButton.addEventListener('click', createUser);
-
-
-function createUser(event) {
-    event.preventDefault();
-
-
-    let email = signUpEmail.value
-    let password = signUpPassword.value
-    let password2 = signUpPassword2.value
-
-    if (password === password2) {
-        firebase.auth().createUserWithEmailAndPassword(email, password)
-            .then((userCredentials) => {
-                var userData = userCredentials.user;
-
-                var newUserDoc = usersCollection.doc(`${userData.uid}`);
-
-                newUserDoc.set({
-                        nombre: "",
-                        email: userData.email,
-                        photoURL: "",
-                    }).then(
-                        (data) => {
-                            location = './home/home.html';
-                        }
-                    )
-                    .catch((error) => {
-                        console.log('Se ha producido el siguiente error: ', error);
-                    });
-            })
-            .catch((error) => {
-
-                signUpErrorsContainer.innerHTML = `Error : ${error.message}`;
-
-            });
-
-
-    } else {
-        var wrongPasswordNode = document.createElement('p');
-        wrongPasswordNode.innerText = 'Error, las contraseñas no coinciden';
-        insertAfter(wrongPasswordNode, signUpPassword2);
-    }
-
+        } else {
+            // Not Logged
+        }
+    });
 
 }
 
 
 // LOGIN
+{
+    var signInButton = document.getElementById('signInButton');
+    var signInEmail = document.getElementById('signInEmail');
+    var signInPassword = document.getElementById('signInPassword');
+    var signInErrorsContainer = document.getElementById('signInErrorsContainer');
 
-var signInButton = document.getElementById('signInButton');
-var signInEmail = document.getElementById('signInEmail');
-var signInPassword = document.getElementById('signInPassword');
-var signInErrorsContainer = document.getElementById('signInErrorsContainer');
+    signInButton.addEventListener('click', loginUser);
 
-signInButton.addEventListener('click', loginUser);
+    function loginUser(event) {
+        event.preventDefault();
+        let email = signInEmail.value;
+        let password = signInPassword.value;
 
-function loginUser(event) {
-    event.preventDefault();
-    let email = signInEmail.value;
-    let password = signInPassword.value;
-
-    firebase.auth().signInWithEmailAndPassword(email, password)
-        .then((userCredential) => {
-            // Navegar a HOME
-
-            var userData = userCredential.user;
-        })
-        .catch((error) => {
-            signInErrorsContainer.innerHTML = `Error : ${error.message}`;
-        });
-}
-
-
-// FORM SELECTION
-
-var radioButtons = document.getElementsByName('formsOptions');
-var signInForm = document.getElementById('signInForm');
-var signUpForm = document.getElementById('signUpForm');
-
-radioButtons.forEach((radioButton) => {
-    radioButton.addEventListener('change', changeForm);
-})
-
-function changeForm(event) {
-    let form = event.target.value;
-    if (form === 'SignInForm') {
-        signUpForm.classList.toggle('d-none');
-        signInForm.classList.toggle('d-none');
-    } else if (form === 'SignUpForm') {
-        signUpForm.classList.toggle('d-none');
-        signInForm.classList.toggle('d-none');
+        firebase.auth().signInWithEmailAndPassword(email, password)
+            .then((userCredential) => {
+                // Navegará a HOME por el evento firebase.auth().onAuthStateChanged 
+            })
+            .catch((error) => {
+                signInErrorsContainer.innerHTML = `Error : ${error.message}`;
+            });
     }
-}
-
-// METHODS
-
-function insertAfter(newNode, existingNode) {
-    existingNode.parentNode.insertBefore(newNode, existingNode.nextSibling);
 }
