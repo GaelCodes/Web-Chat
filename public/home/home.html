@@ -13,34 +13,6 @@
 </head>
 
 <body>
-
-    <!-- <header class="bg-dark text-white">
-        <span class="text-center h3">WebChat</span>
-
-
-        <nav class="text-center">
-
-
-            <div class="navbar navbar-secondary">
-                <div class="container-fluid">
-
-
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle link-dark bg-success rounded" id="userMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                 user@example.com
-    </a>
-    <ul class="dropdown-menu text-center" aria-labelledby="userMail">
-        <li><button id="logoutButton" class="btn btn-primary">Desconectarse</button></li>
-    </ul>
-    </li>
-    </ul>
-
-    </div>
-    </div>
-    </nav>
-    </header> -->
-
     <header class="p-3 bg-dark text-white">
         <div class="container">
             <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
@@ -53,11 +25,19 @@
                 </ul>
 
                 <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3">
-                    <input type="search" class="form-control form-control-dark" placeholder="Search..." aria-label="Search">
+                    <input id="dropdownMenuButton1" type="search" class="form-control form-control-dark" placeholder="Buscar usuario..." aria-label="Search" data-bs-toggle="dropdown" autocomplete="off">
+                    <ul id="foundUsersList" class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                        <!-- placeholder - example
+                            <li class="dropdown-item chat-item-md p-2 mb-2 badge bg-info text-dark d-block text-start">
+                                <img src="${userData.picture}" class="rounded w-25"></img>    
+                                <p>${userData.email}</p>
+                            </li> 
+                        -->
+                    </ul>
                 </form>
 
                 <div class="text-end">
-                    <button type="button" class="btn btn-warning">Desconectarse</button>
+                    <button id="logoutButton" type="button" class="btn btn-warning">Desconectarse</button>
                 </div>
             </div>
         </div>
@@ -187,7 +167,7 @@
         firebase.initializeApp(firebaseConfig);
     </script>
 
-
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script src="js/appHome.js"></script>
     <script src="js/getData.js"></script>
     <script src="js/sendData.js"></script>
