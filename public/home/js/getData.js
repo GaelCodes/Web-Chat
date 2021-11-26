@@ -29,6 +29,8 @@ $(document).ready(function() {
     // BUSCADOR
 
     {
+
+
         function getUsers() {
             return usersCollection.get();
 
@@ -36,7 +38,7 @@ $(document).ready(function() {
 
         var usersList = $('#foundUsersList');
         var users;
-        async function showUsers(params) {
+        async function showUsers() {
 
 
             if (!users)
@@ -48,14 +50,16 @@ $(document).ready(function() {
                 for (let i = 0; i < 5; i++) {
 
                     let userData = users.docs[i].data();
-
+                    userData.id = users.docs[i].id;
                     usersList.append(`
-                    <li class="dropdown-item chat-item-md p-2 mb-2 badge bg-info text-dark d-block text-start">
+                    <li class="found-user dropdown-item chat-item-md p-2 mb-2 badge bg-info text-dark d-block text-start" data-fs-id="${userData.id}">
                         <img src="${userData.picture}" class="rounded w-25"></img>    
                         <p>${userData.email}</p>
                     </li>`);
 
                 }
+
+                $('.found-user').click(createChat);
             }
 
         }
@@ -76,12 +80,14 @@ $(document).ready(function() {
 
                     if (email.includes(buscador.val().toLowerCase()) && buscador.val() != '') {
 
+
                         usersList.append(`
-                        <li class="dropdown-item chat-item-md p-2 mb-2 badge bg-info text-dark d-block text-start">
+                        <li class="found-user dropdown-item chat-item-md p-2 mb-2 badge bg-info text-dark d-block text-start" data-fs-id="${userDoc.id}">
                             <img src="${picture}" class="rounded w-25"></img>    
                             <p>${email}</p>
                         </li>`);
 
+                        $('.found-user').click(createChat);
                         numUsersMatched++;
                     }
 
@@ -153,11 +159,9 @@ $(document).ready(function() {
         )
 
         // // AÑADIR EVENT LISTENERS A LOS CHATS
-        // chatsElementsMobile = document.getElementsByClassName('chat-item');
         let chatsElementsMobile = $('.chat-item');
         chatsElementsMobile.click(displayChatMobile);
 
-        // chatsElementsDesktop = document.getElementsByClassName('chat-item-md');
         let chatsElementsDesktop = $('.chat-item-md');
         chatsElementsDesktop.click(displayChatDesktop);
 
@@ -173,7 +177,41 @@ $(document).ready(function() {
     }
 
 
+    // CREAR CHAT
 
+    function createChat(event) {
+        console.log('Evento click en foundUser', event);
+        let interlocutorID = event.currentTarget.dataset.fsId;
+        let conversationHTML = event.currentTarget.outerHTML;
+        let newChat = $(conversationHTML).removeClass('found-user dropdown-item');
+
+
+        // Si no existe el chat crea uno, si existe abrelo
+        if (!$(`#desktop-chat-list [data-fs-id="${interlocutorID}"]`).length) {
+
+
+
+            $('#desktop-chat-list').prepend(newChat[0]);
+            newChat = $(`#desktop-chat-list [data-fs-id="${interlocutorID}"]`);
+
+            newChat.click(displayChatDesktop).click();
+
+        } else {
+
+            let chat = $(`#desktop-chat-list [data-fs-id="${interlocutorID}"]`);
+            chat.click();
+        }
+
+
+        // let messagesCollection = db.collection(`usuarios/Sxp3K71KnROFTIegzpAK5ccnsuj1/conversaciones/2thYZz4eWje7FicqRiGQrdiozoY2/messages`);
+
+        // messagesCollection.add({
+        //     author: "tutancamon",
+        //     content: "Mensaje importante",
+        //     date: Date.now(),
+        //     state: "created"
+        // });
+    }
 
     // LOGOUT
     var logoutButton = document.getElementById('logoutButton');
@@ -192,14 +230,40 @@ $(document).ready(function() {
 
 
 // OBTENER DATOS DEL USUARIO
-{
-    function getUserData(userID) {
 
-        return usersCollection.doc(userID).get();
+function getUserData(userID) {
 
-    }
+    return usersCollection.doc(userID).get();
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // MOSTRAR DATOS DEL USUARIO Arreglo1
 // {
@@ -242,16 +306,16 @@ var messagesListMobile = $('#messages-list');
 var messagesListDesktop = $('#messages-list-md');
 
 async function displayChatDesktop(event) {
-    console.log(event);
+
 
     let chat = {
-        'interlocutorID': event.target.dataset.fsId,
+        'interlocutorID': event.currentTarget.dataset.fsId,
         'menssages': []
     }
 
     // interlocutorElementDesktop.innerHTML = event.target.innerHTML;
-    $('#chat-interlocutor-md').html(event.target.innerHTML);
-    console.log($('#chat-interlocutor-md'));
+    $('#chat-interlocutor-md').html(event.currentTarget.innerHTML);
+
     chat.messages = await getChat(chat.interlocutorID);
 
 
@@ -289,7 +353,7 @@ async function displayChatMobile(event) {
         'mensajes': []
     }
 
-    console.log(event.target.innerHTML);
+
     interlocutorElementMobile.innerHTML = event.target.innerHTML;
 
 
