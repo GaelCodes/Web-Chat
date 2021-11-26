@@ -1,8 +1,13 @@
+// COLLECTIONS STRUCTURE 
+// messages = db.collection(`usuarios/${Sxp3K71KnROFTIegzpAK5ccnsuj1}/conversaciones/${2thYZz4eWje7FicqRiGQrdiozoY2}/messages`);
+
 var db = firebase.firestore();
 var usersCollection = db.collection("usuarios");
 var user;
 
 $(document).ready(function() {
+
+    // FIREBASE
 
     firebase.auth().onAuthStateChanged(async(userAuth) => {
         if (userAuth) {
@@ -106,7 +111,8 @@ $(document).ready(function() {
     // OBTENER CONVERSACIONES ABIERTAS
 
     function getOpenedChats(userID) {
-        return usersCollection.doc(userID).collection('conversaciones').get();
+        let conversCollection = `usuarios/${userID}/conversaciones`;
+        return db.collection(conversCollection).get();
     }
 
 
@@ -141,19 +147,19 @@ $(document).ready(function() {
 
                 mobileChatList.append(
                     `
-                    <li class="chat-item mb-2 badge p-0 text-dark d-block text-start">
-                    <button type="button" class="btn btn-primary w-100 text-start" data-bs-toggle="modal" data-bs-target="#chatModal" data-fs-id="${interlocutor.id}">
-                    <img src="${interlocutor.picture}" class="rounded w-25"></img>    
-                        ${interlocutor.email}
-                    </button>
-                    </li> `
+                        <li class="chat-item mb-2 badge p-0 text-dark d-block text-start">
+                        <button type="button" class="btn btn-primary w-100 text-start" data-bs-toggle="modal" data-bs-target="#chatModal" data-fs-id="${interlocutor.id}">
+                        <img src="${interlocutor.picture}" class="rounded w-25"></img>    
+                            ${interlocutor.email}
+                        </button>
+                        </li> `
                 );
                 desktopChatList.append(
                     `
-                    <li class="chat-item-md p-2 mb-2 badge bg-info text-dark d-block text-start" data-fs-id="${interlocutor.id}">
-                    <img src="${interlocutor.picture}" class="rounded w-25"></img>    
-                        ${interlocutor.email}
-                    </li>`
+                        <li class="chat-item-md p-2 mb-2 badge bg-info text-dark d-block text-start" data-fs-id="${interlocutor.id}">
+                        <img src="${interlocutor.picture}" class="rounded w-25"></img>    
+                            ${interlocutor.email}
+                        </li>`
                 );
             }
         )
@@ -213,6 +219,171 @@ $(document).ready(function() {
         // });
     }
 
+
+
+    // ENVIAR MENSAJE
+
+    var inputDesktop = '#inputDesktop';
+    var sendButtonDesktop = '#sendButtonDesktop';
+    $(sendButtonDesktop).click(sendMessage);
+    $(inputDesktop).on('input', enableButton);
+
+    async function sendMessage(event) {
+
+        if (event.currentTarget.id === 'sendButtonMobile') {
+            var input = inputNewMessageMobile;
+            var sendButton = sendButtonMobile;
+
+        } else if (event.currentTarget.id === 'sendButtonDesktop') {
+            var input = $(inputDesktop);
+            var sendButton = sendButtonDesktop;
+        }
+
+        let message = {
+            'emisor': 'yo',
+            'content': input.val(),
+            'estado': 'enviado',
+            'fecha': Date.now()
+        }
+
+        let chatExistsInSender = await checkChatInSender();
+        let chatExistsInReceiver = await checkChatInReceiver();
+
+        if (chatExistsInSender && chatExistsInReceiver) {
+            setMessageSender(message);
+            setMessageReceiver(message);
+        } else if (chatExistsInReceiver) {
+            console.log('El chat existe en receptor');
+            setMessageReceiver(message);
+            createChatSender(message);
+        } else if (chatExistsInSender) {
+            console.log('El chat existe en emisor');
+            createChatReceiver(message);
+            setMessageSender(message);
+        } else {
+            console.log('El chat existe no existe en ninguno de los 2');
+            createChatReceiver(message);
+            createChatSender(message);
+        }
+
+        function checkChatInSender() {
+            let chatRef = `usuarios/${user.uid}/conversaciones/${chat.interlocutorID}`;
+
+            return db.doc(chatRef).get()
+                .then(
+                    (chat) => {
+                        return chat.exists;
+                    }
+                )
+                .catch(
+                    (error) => {
+                        console.log(error);
+                        return false;
+                    }
+                );
+
+
+        }
+
+        function checkChatInReceiver() {
+            let chatRef = `usuarios/${chat.interlocutorID}/conversaciones/${user.uid}`;
+
+            return db.doc(chatRef).get()
+                .then(
+                    (chat) => {
+                        return chat.exists;
+                    }
+                )
+                .catch(
+                    (error) => {
+                        console.log(error);
+                        return false;
+                    }
+                );
+        }
+
+        function createChatReceiver(message) {
+            let newChatRef = `usuarios/${chat.interlocutorID}/conversaciones/${user.uid}`;
+            db.doc(newChatRef).set({ 'dummy': 'dummy' })
+                .then(
+                    (data) => {
+                        console.log('Chat creado en receptor', chat.interlocutorID);
+                    }
+                )
+                .catch(
+                    (error) => {
+                        console.log(error);
+                    }
+                );
+
+            setMessageReceiver(message);
+        };
+
+        function createChatSender(message) {
+            let newChatRef = `usuarios/${user.uid}/conversaciones/${chat.interlocutorID}`;
+
+            db.doc(newChatRef).set({ 'dummy': 'dummy' })
+                .then()
+                .catch(
+                    (error) => {
+                        console.log(error);
+                    }
+                );
+
+
+            setMessageSender(message);
+        };
+
+        function setMessageReceiver(message) {
+
+            let messagesRef = `usuarios/${chat.interlocutorID}/conversaciones/${user.uid}/messages`;
+
+            db.collection(messagesRef).add(message)
+                .then(
+                    (data) => {}
+                )
+                .catch(
+                    (error) => {
+                        console.log(error);
+                    }
+                );
+
+        };
+
+        function setMessageSender(message) {
+            let messagesRef = `usuarios/${user.uid}/conversaciones/${chat.interlocutorID}/messages`;
+
+            db.collection(messagesRef).add(message)
+                .then(
+                    (data) => {
+                        input.val("");
+                        $(sendButtonDesktop).attr('disabled');
+                    }
+                )
+                .catch(
+                    (error) => {
+                        console.log(error);
+                    }
+                );
+        };
+    }
+
+
+
+
+
+    function enableButton(event) {
+        let sendButton = event.target.nextElementSibling;
+
+        if (event.target.value != '') {
+            sendButton.removeAttribute('disabled');
+
+        } else {
+            sendButton.setAttribute('disabled', 'disabled');
+        }
+    }
+
+
     // LOGOUT
     var logoutButton = document.getElementById('logoutButton');
     logoutButton.addEventListener('click', logoutUser);
@@ -225,36 +396,112 @@ $(document).ready(function() {
     }
 
 
+    // OBTENER CHAT
+
+    var messagesCollection;
+    async function getChat(interlocutorID) {
+
+        // messagesCollection = usersCollection.doc(user.uid).collection('conversaciones').doc(interlocutorID).collection('Messages');
+        messagesCollection = db.collection(`usuarios/${user.uid}/conversaciones/${interlocutorID}/messages`);
+
+        let messages = await messagesCollection.get();
+
+        return messages.docs;
+    }
+
+
+    // MOSTRAR CHAT
+
+    var interlocutorMobile = $('#chat-interlocutor');
+    var interlocutorDesktop = $('#chat-interlocutor-md');
+
+    var messagesListMobile = $('#messages-list');
+    var messagesListDesktop = $('#messages-list-md');
+
+    var chat = { 'interlocutorID': '', 'messages': [] };
+    async function displayChatDesktop(event) {
+
+        $(inputDesktop).val(""); // Limpio el input 
+
+        chat.interlocutorID = event.currentTarget.dataset.fsId;
+
+        // interlocutorElementDesktop.innerHTML = event.target.innerHTML;
+        $('#chat-interlocutor-md').html(event.currentTarget.innerHTML);
+
+        chat.messages = await getChat(chat.interlocutorID);
+
+
+        $('#messages-list-md').html('');
+        chat.messages.forEach(
+            (message) => {
+
+                message = message.data();
+                // let messageElement = document.createElement('li');
+
+                // messageElement.classList.add('align-self-end', 'badge', 'rounded-pill', 'bg-light', 'text-dark', 'mt-2');
+                // messageElement.innerHTML = `${mensaje.contenido}`;
+
+                $('#messages-list-md').append()
+                messagesListDesktop.append(`
+                <li class="align-self-end badge rounded-pill bg-light text-dark mt-2">                
+                    ${message.content}                
+                </li>`);
+
+                console.log('Notiene ningun mensaje: ' + message);
+
+            }
+        );
+
+        // // Habilitar el input
+
+        $(inputDesktop).removeAttr('disabled');
+
+    }
+
+    async function displayChatMobile(event) {
+
+        let chat = {
+            'interlocutorID': event.target.innerText,
+            'mensajes': []
+        }
+
+
+        interlocutorElementMobile.innerHTML = event.target.innerHTML;
+
+
+        chat.mensajes = await getChat(chat.interlocutorID);
+
+
+        messagesListElementMobile.innerHTML = '';
+        chat.mensajes.forEach(
+            (mensaje) => {
+
+                mensaje = mensaje.data();
+                let messageElement = document.createElement('li');
+
+                messageElement.classList.add('align-self-end', 'badge', 'rounded-pill', 'bg-light', 'text-dark', 'mt-2');
+                messageElement.innerHTML = `${mensaje.contenido}`;
+
+
+                messagesListElementMobile.appendChild(messageElement);
+            }
+        );
+    }
+
+
+
+    // OBTENER DATOS DEL USUARIO
+
+    function getUserData(userID) {
+
+        return usersCollection.doc(userID).get();
+
+    }
+
+
+
+
 });
-
-
-
-// OBTENER DATOS DEL USUARIO
-
-function getUserData(userID) {
-
-    return usersCollection.doc(userID).get();
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -280,98 +527,3 @@ function getUserData(userID) {
 //     }
 
 // }
-
-
-
-
-// OBTENER CHAT
-
-var messagesCollection;
-async function getChat(interlocutorID) {
-
-    messagesCollection = usersCollection.doc(user.uid).collection('conversaciones').doc(interlocutorID).collection('Messages');
-
-    let messages = await messagesCollection.get();
-
-    return messages.docs;
-}
-
-
-// MOSTRAR CHAT
-
-var interlocutorMobile = $('#chat-interlocutor');
-var interlocutorDesktop = $('#chat-interlocutor-md');
-
-var messagesListMobile = $('#messages-list');
-var messagesListDesktop = $('#messages-list-md');
-
-async function displayChatDesktop(event) {
-
-
-    let chat = {
-        'interlocutorID': event.currentTarget.dataset.fsId,
-        'menssages': []
-    }
-
-    // interlocutorElementDesktop.innerHTML = event.target.innerHTML;
-    $('#chat-interlocutor-md').html(event.currentTarget.innerHTML);
-
-    chat.messages = await getChat(chat.interlocutorID);
-
-
-    $('#messages-list-md').html('');
-    chat.messages.forEach(
-        (message) => {
-
-            message = message.data();
-            // let messageElement = document.createElement('li');
-
-            // messageElement.classList.add('align-self-end', 'badge', 'rounded-pill', 'bg-light', 'text-dark', 'mt-2');
-            // messageElement.innerHTML = `${mensaje.contenido}`;
-
-            $('#messages-list-md').append()
-            messagesListDesktop.append(`
-                <li class="align-self-end badge rounded-pill bg-light text-dark mt-2">                
-                    ${message.content}                
-                </li>`);
-
-            console.log('Notiene ningun mensaje: ' + message);
-
-        }
-    );
-
-    // // Habilitar el input
-
-    // inputNewMessageDesktop.removeAttribute('disabled');
-
-}
-
-async function displayChatMobile(event) {
-
-    let chat = {
-        'interlocutorID': event.target.innerText,
-        'mensajes': []
-    }
-
-
-    interlocutorElementMobile.innerHTML = event.target.innerHTML;
-
-
-    chat.mensajes = await getChat(chat.interlocutorID);
-
-
-    messagesListElementMobile.innerHTML = '';
-    chat.mensajes.forEach(
-        (mensaje) => {
-
-            mensaje = mensaje.data();
-            let messageElement = document.createElement('li');
-
-            messageElement.classList.add('align-self-end', 'badge', 'rounded-pill', 'bg-light', 'text-dark', 'mt-2');
-            messageElement.innerHTML = `${mensaje.contenido}`;
-
-
-            messagesListElementMobile.appendChild(messageElement);
-        }
-    );
-}
