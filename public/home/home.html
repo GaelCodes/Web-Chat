@@ -50,7 +50,7 @@
         <div id="main-row" class="row">
 
             <div class="col-12 col-md-3 border-end text-center">
-                <h1>Conversaciones</h1>
+                <h1 class="h3">chats</h1>
                 <ul id="desktop-chat-list" class="list-unstyled d-none d-md-block">
 
                 </ul>
@@ -59,37 +59,37 @@
                 </ul>
             </div>
 
-            <!-- CHAT WEB -->
-            <div class="d-none d-md-flex col-md-9 text-center flex-column justify-content-start">
+            <!-- CHAT WEB d-md-none se mostrará el que corresponda  -->
 
-                <!-- SUSTITUIR POR CARD -->
-
-                <span id="chat-interlocutor-md" class="h1 m-0 p-2 border-bottom d-block">
-                    <!-- el interlocutor va aquí -->
-                    <p class="h5">Ningún chat seleccionado</p>
-                </span>
-
-                <div class="container">
-                    <ul id="messages-list-md" class="list-unstyled d-flex flex-column">
-
-                        <!-- <li> mensaje </li> -->
-                        <!-- <li> mensaje </li> -->
-                        <!-- <li> mensaje </li> -->
-                    </ul>
-
+            <div id="chatCard" class="card text-center d-none d-md-flex col-md-9 flex-column justify-content-start p-0">
+                <div class="card-header">
+                    <span id="chat-interlocutor-md" class="h5 m-0 p-2 border-bottom d-block">
+                            <!-- el interlocutor va aquí -->
+                            <p class="h5">Ningún chat seleccionado</p>
+                        </span>
                 </div>
+                <div class="card-body">
+                    <div class="container">
+                        <ul id="messages-list-md" class="list-unstyled d-flex flex-column">
 
-                <div class="mt-auto mb-2 d-flex flex-row">
-                    <!-- Envio mensajes -->
-                    <input disabled type="text" name="inputNewMessageDesktop" id="inputDesktop" class="form-control bg-secondary">
-                    <button id="sendButtonDesktop" disabled class="btn btn-primary d-flex ms-2">Enviar <i class="bi bi-upload ms-2"></i></button>
+                            <!-- <li> mensaje </li> -->
+                            <!-- <li> mensaje </li> -->
+                            <!-- <li> mensaje </li> -->
+                        </ul>
+
+                    </div>
                 </div>
-
-                <!-- SUSTITUIR POR CARD -->
-
+                <div class="card-footer text-muted">
+                    <div class="mt-auto mb-2 d-flex flex-row">
+                        <!-- Envio mensajes -->
+                        <input disabled type="text" name="inputNewMessageDesktop" id="inputDesktop" class="form-control bg-secondary">
+                        <button id="sendButtonDesktop" disabled class="btn btn-primary d-flex ms-2">Enviar <i class="bi bi-upload ms-2"></i></button>
+                    </div>
+                </div>
             </div>
 
-            <!-- MODAL MOBILE -->
+
+            <!-- MODAL MOBILE  -->
             <div class="d-md-none modal" id="chatModal" tabindex="-1">
                 <div class="modal-dialog modal-fullscreen">
                     <div class="modal-content">

@@ -5,6 +5,7 @@ var db = firebase.firestore();
 var usersCollection = db.collection("usuarios");
 var user;
 
+
 $(document).ready(function() {
 
     // FIREBASE
@@ -156,29 +157,23 @@ $(document).ready(function() {
                 );
                 desktopChatList.append(
                     `
-                        <li class="chat-item-md p-2 mb-2 badge bg-info text-dark d-block text-start" data-fs-id="${interlocutor.id}">
+                        <li class="chat-item-md p-2 mb-2 badge bg-info text-dark d-block text-start" data-fs-id="${interlocutor.id}" style="display:none">
                         <img src="${interlocutor.picture}" class="rounded w-25"></img>    
                             ${interlocutor.email}
                         </li>`
                 );
             }
-        )
+        );
 
         // // AÑADIR EVENT LISTENERS A LOS CHATS
         let chatsElementsMobile = $('.chat-item');
         chatsElementsMobile.click(displayChatMobile);
 
         let chatsElementsDesktop = $('.chat-item-md');
+        $('.chat-item-md').fadeIn(400, function() {
+            // Animation complete
+        });
         chatsElementsDesktop.click(displayChatDesktop);
-
-
-
-        // for (const chatElementMobile of chatsElementsMobile) {
-        //     chatElementMobile.click(displayChatMobile());
-        // }
-        // for (const chatElementDesktop of chatsElementsDesktop) {
-        //     chatElementDesktop.click(displayChatDesktop());
-        // }
 
     }
 
@@ -421,40 +416,67 @@ $(document).ready(function() {
     var chat = { 'interlocutorID': '', 'messages': [] };
     async function displayChatDesktop(event) {
 
-        $(inputDesktop).val(""); // Limpio el input 
+        animarSalida();
 
-        chat.interlocutorID = event.currentTarget.dataset.fsId;
+        function animarSalida() {
 
-        // interlocutorElementDesktop.innerHTML = event.target.innerHTML;
-        $('#chat-interlocutor-md').html(event.currentTarget.innerHTML);
+            $('#chatCard').animate({
+                    left: "+=75%",
+                    opacity: 0.25
+                },
+                500,
+                async function RellenarDatos() {
 
-        chat.messages = await getChat(chat.interlocutorID);
+                    $(inputDesktop).val(""); // Limpio el input 
+
+                    chat.interlocutorID = event.currentTarget.dataset.fsId;
+
+                    // interlocutorElementDesktop.innerHTML = event.target.innerHTML;
+                    $('#chat-interlocutor-md').html(event.currentTarget.innerHTML);
+
+                    chat.messages = await getChat(chat.interlocutorID);
 
 
-        $('#messages-list-md').html('');
-        chat.messages.forEach(
-            (message) => {
+                    $('#messages-list-md').html('');
+                    chat.messages.forEach(
+                        (message) => {
 
-                message = message.data();
-                // let messageElement = document.createElement('li');
+                            message = message.data();
+                            // let messageElement = document.createElement('li');
 
-                // messageElement.classList.add('align-self-end', 'badge', 'rounded-pill', 'bg-light', 'text-dark', 'mt-2');
-                // messageElement.innerHTML = `${mensaje.contenido}`;
+                            // messageElement.classList.add('align-self-end', 'badge', 'rounded-pill', 'bg-light', 'text-dark', 'mt-2');
+                            // messageElement.innerHTML = `${mensaje.contenido}`;
 
-                $('#messages-list-md').append()
-                messagesListDesktop.append(`
-                <li class="align-self-end badge rounded-pill bg-light text-dark mt-2">                
-                    ${message.content}                
-                </li>`);
+                            $('#messages-list-md').append()
+                            messagesListDesktop.append(`
+                            <li class="align-self-end badge rounded-pill bg-light text-dark mt-2">                
+                                ${message.content}                
+                            </li>`);
 
-                console.log('Notiene ningun mensaje: ' + message);
+                            console.log('Notiene ningun mensaje: ' + message);
 
-            }
-        );
+                        }
+                    );
 
-        // // Habilitar el input
+                    // // Habilitar el input
 
-        $(inputDesktop).removeAttr('disabled');
+                    $(inputDesktop).removeAttr('disabled');
+
+
+                    animarEntrada();
+
+                    function animarEntrada() {
+                        $('#chatCard').css({ "position": "relative", "left": "75%" });
+                        $('#chatCard').animate({
+                                left: "-=75%",
+                                opacity: 1
+                            },
+                            500);
+                    }
+                }
+
+            )
+        }
 
     }
 

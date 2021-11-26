@@ -1,5 +1,24 @@
+#chatCard {
+    max-height: 85vh;
+    height: 85vh;
+}
+
+#chatCard .card-header {
+    max-height: 20%;
+}
+
+#chatCard .card-body {
+    max-height: 80%;
+    overflow: auto;
+}
+
+#chatCard .card-footer {
+    max-height: 20%;
+}
+
 body {
     height: 100vh;
+    overflow-x: hidden;
 }
 
 body main {
