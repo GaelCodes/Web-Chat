@@ -157,9 +157,10 @@ $(document).ready(function() {
                 );
                 desktopChatList.append(
                     `
-                        <li class="chat-item-md p-2 mb-2 badge bg-info text-dark d-block text-start" data-fs-id="${interlocutor.id}" style="display:none">
-                        <img src="${interlocutor.picture}" class="rounded w-25"></img>    
-                            ${interlocutor.email}
+                        <li class="chat-item-md d-flex justify-content-around align-items-center  p-2 mb-2 badge bg-info text-dark d-block text-start" data-fs-id="${interlocutor.id}" style="display:none">
+                            <img src="${interlocutor.picture}" class="rounded-circle w-25 "></img>    
+                            <p>${interlocutor.email}</p>
+                            <button type="button" class="deleteChatButton btn btn-secondary"><i class="bi bi-trash"></i></button>
                         </li>`
                 );
             }
@@ -175,6 +176,8 @@ $(document).ready(function() {
         });
         chatsElementsDesktop.click(displayChatDesktop);
 
+        // Añadir evento al delete Button
+        $('.deleteChatButton').click(deleteChat);
     }
 
 
@@ -214,6 +217,28 @@ $(document).ready(function() {
         // });
     }
 
+    // BORRAR CHAT
+
+    function deleteChat(event) {
+
+
+        deleteAtPath(`usuarios/${user.uid}/conversaciones/${event.currentTarget.dataset.fsId}`);
+
+
+        function deleteAtPath(path) {
+            var deleteFn = firebase.functions().httpsCallable('recursiveDelete');
+            deleteFn({ path: path })
+                .then(function(result) {
+                    logMessage('Delete success: ' + JSON.stringify(result));
+                })
+                .catch(function(err) {
+                    logMessage('Delete failed, see console,');
+                    console.warn(err);
+                });
+        }
+
+
+    }
 
 
     // ENVIAR MENSAJE
