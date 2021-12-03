@@ -33,5 +33,21 @@ body main {
     width: 5% !important;
 }
 
+.message {
+    padding: 0.5em 2em;
+}
+
+.message p {
+    margin: 0px;
+}
+
+.message p:first-child {
+    margin-bottom: 5px;
+}
+
+.message p:nth-child(2) {
+    color: rgb(82, 82, 82);
+}
+
 
 /*# sourceMappingURL=styles.css.map */

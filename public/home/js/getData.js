@@ -222,22 +222,6 @@ $(document).ready(function() {
     function deleteChat(event) {
 
 
-        deleteAtPath(`usuarios/${user.uid}/conversaciones/${event.currentTarget.dataset.fsId}`);
-
-
-        function deleteAtPath(path) {
-            var deleteFn = firebase.functions().httpsCallable('recursiveDelete');
-            deleteFn({ path: path })
-                .then(function(result) {
-                    logMessage('Delete success: ' + JSON.stringify(result));
-                })
-                .catch(function(err) {
-                    logMessage('Delete failed, see console,');
-                    console.warn(err);
-                });
-        }
-
-
     }
 
 
@@ -260,12 +244,13 @@ $(document).ready(function() {
         }
 
         let message = {
-            'emisor': 'yo',
+            'author': user.uid,
             'content': input.val(),
-            'estado': 'enviado',
-            'fecha': Date.now()
+            'state': 'enviado',
+            'date': Date.now()
         }
 
+        console.log('Mensaje creado: ', message);
         let chatExistsInSender = await checkChatInSender();
         let chatExistsInReceiver = await checkChatInReceiver();
 
@@ -456,37 +441,67 @@ $(document).ready(function() {
 
                     chat.interlocutorID = event.currentTarget.dataset.fsId;
 
-                    // interlocutorElementDesktop.innerHTML = event.target.innerHTML;
                     $('#chat-interlocutor-md').html(event.currentTarget.innerHTML);
 
                     chat.messages = await getChat(chat.interlocutorID);
-
+                    auxMessages = [];
 
                     $('#messages-list-md').html('');
                     chat.messages.forEach(
-                        (message) => {
+                        (messageDoc) => {
+                            messageDoc = messageDoc.data();
+                            auxMessages.push(messageDoc);
 
-                            message = message.data();
-                            // let messageElement = document.createElement('li');
 
-                            // messageElement.classList.add('align-self-end', 'badge', 'rounded-pill', 'bg-light', 'text-dark', 'mt-2');
-                            // messageElement.innerHTML = `${mensaje.contenido}`;
+                            // if (message.author == user.uid) {
 
-                            $('#messages-list-md').append()
-                            messagesListDesktop.append(`
-                            <li class="align-self-end badge rounded-pill bg-light text-dark mt-2">                
-                                ${message.content}                
-                            </li>`);
+                            //     messagesListDesktop.append(`
+                            //     <li class="message align-self-start badge bg-primary text-start text-dark mt-2">                
+                            //         <p>${message.content}</p>
+                            //         <p class="text-start">${message.date} ${message.state}</p>      
+                            //     </li>`);
+                            // } else {
 
-                            console.log('Notiene ningun mensaje: ' + message);
+                            //     messagesListDesktop.append(`
+                            //     <li class="message align-self-end badge bg-info text-end text-dark mt-2">                
+                            //         <p>${message.content}</p>
+                            //         <p class="text-end">${message.date} ${message.state}</p>   
+                            //     </li>`);
 
+                            // }
                         }
                     );
 
-                    // // Habilitar el input
+                    chat.messages = auxMessages;
 
+                    chat.messages.sort(orderMessages);
+                    chat.messages.forEach(
+                        (message) => {
+                            message.date = new Date(message.date);
+
+                            message.date = message.date.toLocaleTimeString('es-ES').replace(/:[0-9]{2}$/g, ''); // Mostrar solo hora y minutos
+                            console.log('Hora : ', message.date);
+                            if (message.author == user.uid) {
+
+                                messagesListDesktop.append(`
+                                <li class="message align-self-start badge bg-primary text-start text-dark mt-2">                
+                                    <p>${message.content}</p>
+                                    <p class="text-start">${message.date} ${message.state}</p>      
+                                </li>`);
+                            } else {
+
+                                messagesListDesktop.append(`
+                                <li class="message align-self-end badge bg-info text-end text-dark mt-2">                
+                                    <p>${message.content}</p>
+                                    <p class="text-end">${message.date} ${message.state}</p>   
+                                </li>`);
+
+                            }
+                        }
+                    )
+
+                    // Habilitar el input
                     $(inputDesktop).removeAttr('disabled');
-
 
                     animarEntrada();
 
@@ -497,6 +512,12 @@ $(document).ready(function() {
                                 opacity: 1
                             },
                             500);
+                    }
+
+                    function orderMessages(message1, message2) {
+                        console.log('Fecha en ordenacion: ', message1.date);
+                        console.log('Diferencia de fecha: ', parseInt(message1.date) - parseInt(message2.date));
+                        return (parseInt(message1.date) - parseInt(message2.date));
                     }
                 }
 

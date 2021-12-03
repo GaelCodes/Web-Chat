@@ -26,4 +26,4 @@ El promotor, el diretor de nuestra empresa de software y algún que otro jefe de
 
 Tras el comunicado del cliente y la reunión con los altos cargos del proyecto se llega a las siguientes conclusiones:
 
-- Debido al ciclo de vida del proyecto y las características, el modelo de desarrollo elegido es el iterativo, se realizarán entregas según las features que el cliente quisiera añadir al aplicativo.
+- Debido al ciclo de vida del proyecto y las características, el modelo de desarrollo elegido es el iterativo, se realizarán entregas según las características que el cliente quisiera añadir al aplicativo.
