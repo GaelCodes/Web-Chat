@@ -13,6 +13,7 @@
 </head>
 
 <body>
+
     <header class="p-3 bg-dark text-white">
         <div class="container">
             <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
@@ -24,10 +25,11 @@
                     <li><a href="#" class="nav-link px-2 text-secondary">Home</a></li>
                 </ul>
 
+                <!-- Formulario de búsqueda -->
                 <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3">
                     <input id="dropdownMenuButton1" type="search" class="form-control form-control-dark" placeholder="Buscar usuario..." aria-label="Search" data-bs-toggle="dropdown" autocomplete="off">
                     <ul id="foundUsersList" class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                        <!-- placeholder - example
+                        <!-- placeholder
                             <li class="dropdown-item chat-item-md p-2 mb-2 badge bg-info text-dark d-block text-start">
                                 <img src="${userData.picture}" class="rounded w-25"></img>    
                                 <p>${userData.email}</p>
@@ -42,9 +44,6 @@
             </div>
         </div>
     </header>
-
-
-
 
     <main class="container-fluid">
         <div id="main-row" class="row">
@@ -71,10 +70,15 @@
                         <ul id="messages-list-md" class="list-unstyled d-flex flex-column">
 
                             <!-- <li> mensaje </li> -->
+                            <!-- 
+                                <li class="message align-self-start badge bg-primary text-start text-dark mt-2">                
+                                    <p>${message.content}</p>
+                                    <p class="text-start">${message.date} ${message.state}</p>      
+                                </li> 
+                            -->
                             <!-- <li> mensaje </li> -->
-                            <!-- <li> mensaje </li> -->
-                        </ul>
 
+                        </ul>
                     </div>
                 </div>
                 <div class="card-footer text-muted">
@@ -123,7 +127,6 @@
         </div>
     </main>
 
-
     <footer class="bg-secondary p-2 text-center">
         <h1 class="h6">Desarrollado por @GaelCodes</h1>
         <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
@@ -133,11 +136,9 @@
         </ul>
     </footer>
 
-
-
     <!-- FIREBASE PRODUCTION -->
-
     <!-- The core Firebase JS SDK is always required and must be listed first -->
+
     <!-- <script src="/__/firebase/8.7.0/firebase-app.js"></script>
     <script src="/__/firebase/8.6.8/firebase-auth.js"></script>
     <script src="/__/firebase/8.6.8/firebase-firestore.js"></script>
@@ -145,8 +146,8 @@
 
 
     <!-- FIREBASE DEVELOPMENT -->
-
     <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
+
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-firestore.js"></script>

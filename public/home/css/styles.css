@@ -9,7 +9,8 @@
 
 #chatCard .card-body {
     max-height: 80%;
-    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 #chatCard .card-footer {
@@ -35,6 +36,8 @@ body main {
 
 .message {
     padding: 0.5em 2em;
+    max-width: 70%;
+    white-space: normal;
 }
 
 .message p {
