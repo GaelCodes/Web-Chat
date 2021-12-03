@@ -160,7 +160,6 @@ $(document).ready(function() {
                         <li class="chat-item-md d-flex justify-content-around align-items-center  p-2 mb-2 badge bg-info text-dark d-block text-start" data-fs-id="${interlocutor.id}" style="display:none">
                             <img src="${interlocutor.picture}" class="rounded-circle w-25 "></img>    
                             <p>${interlocutor.email}</p>
-                            <button type="button" class="deleteChatButton btn btn-secondary"><i class="bi bi-trash"></i></button>
                         </li>`
                 );
             }
@@ -407,19 +406,6 @@ $(document).ready(function() {
 
 
     // OBTENER CHAT
-
-    var messagesCollection;
-    async function getChat(interlocutorID) {
-
-        // messagesCollection = usersCollection.doc(user.uid).collection('conversaciones').doc(interlocutorID).collection('Messages');
-        messagesCollection = db.collection(`usuarios/${user.uid}/conversaciones/${interlocutorID}/messages`);
-
-        let messages = await messagesCollection.get();
-
-        return messages.docs;
-    }
-
-
     // MOSTRAR CHAT
 
     var interlocutorMobile = $('#chat-interlocutor');
@@ -434,7 +420,6 @@ $(document).ready(function() {
         animarSalida();
 
         function animarSalida() {
-
             $('#chatCard').animate({
                     left: "+=75%",
                     opacity: 0.25
@@ -442,53 +427,54 @@ $(document).ready(function() {
                 500,
                 async function RellenarDatos() {
 
-                    $(inputDesktop).val(""); // Limpio el input 
+                    if (unsubscribeMessagesMethod) {
+                        unsubscribeMessagesMethod();
+                    }
+
+                    $(inputDesktop).val("");
 
                     chat.interlocutorID = event.currentTarget.dataset.fsId;
 
-                    $('#chat-interlocutor-md').html(event.currentTarget.innerHTML);
-
-                    chat.messages = await getChat(chat.interlocutorID);
-                    auxMessages = [];
-
+                    $('#chat-interlocutor-md').html(event.currentTarget.innerHTML); // <- necesario refactorizar
                     $('#messages-list-md').html('');
-                    chat.messages.forEach(
-                        (messageDoc) => {
-                            messageDoc = messageDoc.data();
-                            auxMessages.push(messageDoc);
-                        }
-                    );
 
-                    chat.messages = auxMessages;
+                    //  REFACTORIZACIÓN MUESTREO DE MENSAJES
 
-                    chat.messages.sort(orderMessages);
-                    chat.messages.forEach(
-                        (message) => {
-                            message.date = new Date(message.date);
+                    var unsubscribeMessagesMethod = db.collection(`usuarios/${user.uid}/conversaciones/${chat.interlocutorID}/messages`).orderBy("date")
+                        .onSnapshot((snapshot) => {
+                            snapshot.docChanges().forEach((change) => {
+                                if (change.type === "added") {
+                                    let message = change.doc.data();
+                                    message.date = new Date(message.date); // formateo de fecha
+                                    message.date = message.date.toLocaleTimeString('es-ES').replace(/:[0-9]{2}$/g, '');
 
-                            message.date = message.date.toLocaleTimeString('es-ES').replace(/:[0-9]{2}$/g, ''); // Mostrar solo hora y minutos
-                            console.log('Hora : ', message.date);
-                            if (message.author == user.uid) {
+                                    if (message.author == user.uid) {
 
-                                messagesListDesktop.append(`
-                                <li class="message align-self-start badge bg-primary text-start text-dark mt-2">                
-                                    <p>${message.content}</p>
-                                    <p class="text-start">${message.date} ${message.state}</p>      
-                                </li>`);
-                            } else {
+                                        messagesListDesktop.append(`
+                                                    <li class="message align-self-start badge bg-primary text-start text-dark mt-2">                
+                                                        <p>${message.content}</p>
+                                                        <p class="text-start">${message.date} ${message.state}</p>      
+                                                    </li>`);
+                                    } else {
 
-                                messagesListDesktop.append(`
-                                <li class="message align-self-end badge bg-info text-end text-dark mt-2">                
-                                    <p>${message.content}</p>
-                                    <p class="text-end">${message.date} ${message.state}</p>   
-                                </li>`);
+                                        messagesListDesktop.append(`
+                                                    <li class="message align-self-end badge bg-info text-end text-dark mt-2">                
+                                                        <p>${message.content}</p>
+                                                        <p class="text-end">${message.date} ${message.state}</p>   
+                                                    </li>`);
 
-                            }
-                        }
-                    )
+                                    }
+                                }
+                                if (change.type === "modified") {
+                                    let message = change.doc.data();
+                                }
+                                if (change.type === "removed") {
+                                    let message = change.doc.data();
+                                }
+                            });
+                        });
 
-                    // Habilitar el input
-                    $(inputDesktop).removeAttr('disabled');
+                    $(inputDesktop).removeAttr('disabled'); // Habilito el input
 
                     animarEntrada();
 
@@ -499,12 +485,6 @@ $(document).ready(function() {
                                 opacity: 1
                             },
                             500);
-                    }
-
-                    function orderMessages(message1, message2) {
-                        console.log('Fecha en ordenacion: ', message1.date);
-                        console.log('Diferencia de fecha: ', parseInt(message1.date) - parseInt(message2.date));
-                        return (parseInt(message1.date) - parseInt(message2.date));
                     }
                 }
 
