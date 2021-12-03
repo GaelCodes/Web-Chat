@@ -27,3 +27,13 @@ El promotor, el diretor de nuestra empresa de software y algún que otro jefe de
 Tras el comunicado del cliente y la reunión con los altos cargos del proyecto se llega a las siguientes conclusiones:
 
 - Debido al ciclo de vida del proyecto y las características, el modelo de desarrollo elegido es el iterativo, se realizarán entregas según las características que el cliente quisiera añadir al aplicativo.
+
+
+
+
+
+
+
+
+
+PD: Como inspiración el diseñador nos ha pasado algunos diseños que se encuentran en la siguiente URL https://genuine-lamps.com/es/android/1254-the-8-best-texting-apps-for-android.html
