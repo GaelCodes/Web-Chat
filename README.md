@@ -64,3 +64,11 @@ Tras el comunicado del cliente y la reunión con los altos cargos del proyecto s
 - Finalmente, se generará la documentación del software que incluirá; documentos generados en el proceso de desarrollo (durante el diseño y pruebas sobretodo), guía introductoria, guía avanzada y una guía de administración que se le entregará al cliente puesto que ellos estarán a cargo de la administración.
 
 PD: El diseñador nos ha pasado algunos diseños que se encuentran en la siguiente URL https://genuine-lamps.com/es/android/1254-the-8-best-texting-apps-for-android.html
+
+![Design 1](https://user-images.githubusercontent.com/59183512/144725133-8de7a385-947a-461f-ab3e-17b8f08d39f3.png)
+![Design 2](https://user-images.githubusercontent.com/59183512/144725139-a9965c9c-dfd8-46e9-a1a1-ba4de7603471.png)
+![Design 3](https://user-images.githubusercontent.com/59183512/144725145-2d67690d-666a-4974-acfa-ae2c655ffabb.png)
+![Design 4](https://user-images.githubusercontent.com/59183512/144725147-1d020c69-72eb-4c86-a6e9-aec02bc726ea.png)
+![Design 5](https://user-images.githubusercontent.com/59183512/144725151-8c764d2d-69f1-4f39-a875-16aae53e520c.png)
+![Design 6](https://user-images.githubusercontent.com/59183512/144725154-b6889374-1d20-40d8-b2b0-c70d813d7ca8.png)
+![Design 7](https://user-images.githubusercontent.com/59183512/144725155-2d9028fa-871f-479a-8915-9db2e84b36b9.png)
