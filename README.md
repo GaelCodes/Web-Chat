@@ -63,12 +63,4 @@ Tras el comunicado del cliente y la reunión con los altos cargos del proyecto s
 - En el 4º y último sprint aplicaremos responsive design al diseño de la aplicación para que se pueda usar en diferentes dispositivos.
 - Finalmente, se generará la documentación del software que incluirá; documentos generados en el proceso de desarrollo (durante el diseño y pruebas sobretodo), guía introductoria, guía avanzada y una guía de administración que se le entregará al cliente puesto que ellos estarán a cargo de la administración.
 
-
-
-
-
-
-
-
-
-PD: Como inspiración el diseñador nos ha pasado algunos diseños que se encuentran en la siguiente URL https://genuine-lamps.com/es/android/1254-the-8-best-texting-apps-for-android.html
+PD: El diseñador nos ha pasado algunos diseños que se encuentran en la siguiente URL https://genuine-lamps.com/es/android/1254-the-8-best-texting-apps-for-android.html
