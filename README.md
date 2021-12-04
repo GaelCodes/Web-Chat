@@ -63,12 +63,18 @@ Tras el comunicado del cliente y la reunión con los altos cargos del proyecto s
 - En el 4º y último sprint aplicaremos responsive design al diseño de la aplicación para que se pueda usar en diferentes dispositivos.
 - Finalmente, se generará la documentación del software que incluirá; documentos generados en el proceso de desarrollo (durante el diseño y pruebas sobretodo), guía introductoria, guía avanzada y una guía de administración que se le entregará al cliente puesto que ellos estarán a cargo de la administración.
 
+PD: El diseñador nos ha pasado algunos diseños que se encuentran en la siguiente URL https://genuine-lamps.com/es/android/1254-the-8-best-texting-apps-for-android.html
 
+![Design 1](https://user-images.githubusercontent.com/59183512/144724695-98484738-6d76-4f4a-a10d-fb457b141b20.png)
 
+![Design 2](https://user-images.githubusercontent.com/59183512/144724700-d34500dc-cfab-4201-b017-eccd100d6a01.png)
 
+![Design 3](https://user-images.githubusercontent.com/59183512/144724703-f27cf50d-b639-46f4-8470-4eb531f86a86.png)
 
+![Design 4](https://user-images.githubusercontent.com/59183512/144724714-c70314cb-e562-48bc-856b-9da8adc7ebe0.png)
 
+![Design 5](https://user-images.githubusercontent.com/59183512/144724716-778f2e98-4dc8-4237-b968-545d069ac516.png)
 
+![Design 6](https://user-images.githubusercontent.com/59183512/144724720-92c2d4a9-9c0e-45dc-bb21-14678d2f7452.png)
 
-
-PD: Como inspiración el diseñador nos ha pasado algunos diseños que se encuentran en la siguiente URL https://genuine-lamps.com/es/android/1254-the-8-best-texting-apps-for-android.html
+![Design 7](https://user-images.githubusercontent.com/59183512/144724723-104bdbe4-df5a-43f5-9414-2493e71b1abb.png)
