@@ -29,8 +29,4 @@ jobs:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_WEB_CHAT_DE48B }}'
           channelId: desarrollo
-<<<<<<< HEAD
           projectId: web-chat-de48b
-=======
-          projectId: web-chat-de48b
->>>>>>> desarrollo
