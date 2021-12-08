@@ -14,7 +14,7 @@
 
                     // If logged and document has been created will be redirected
                     if (doc.exists) {
-                        location = './home/home.html';
+                        location = '../../home/home.html';
                     }
                 }
 
@@ -58,12 +58,12 @@
                     newUserDoc.set({
                             nombre: "",
                             email: userData.email,
-                            photoURL: "",
+                            photoURL: "gs://web-chat-de48b.appspot.com/default-avatar-usuario.png",
                         })
                         .then((data) => {
                             // El documento del usuario ha sido creado redirigiendo al HOME
                             // el usuario aparecerá logeado automáticamente
-                            location = '../home/home.html';
+                            location = '../../home/home.html';
                         })
                         .catch((error) => {
                             console.log('Se ha producido el siguiente error: ', error);
