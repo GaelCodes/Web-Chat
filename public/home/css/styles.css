@@ -10,7 +10,7 @@
 #chatCard {
     max-height: 85vh;
     height: 85vh;
-    background-color: #374248;
+    background-color: #202b30;
     border-radius: 0px;
 }
 
@@ -22,7 +22,7 @@
     max-height: 80%;
     overflow-y: auto;
     overflow-x: hidden;
-    background-color: #161719;
+    background-color: #0000003b;
 }
 
 #chatCard .card-footer {
@@ -47,8 +47,27 @@ body main {
     width: 3% !important;
 }
 
-.chat-interlocutor-md {
-    background-color: #00000036;
+
+/* LISTA USUARIOS ENCONTRADOS */
+
+#foundUsersList {
+    background-color: #202b30;
+    padding: 1em;
+}
+
+.found-user {
+    width: 100%;
+    color: rgba(219, 219, 219, 0.808) !important;
+}
+
+.chat-item-md:hover {
+    background-color: #ffffff07;
+    cursor: pointer;
+}
+
+.found-user img {
+    width: 50px;
+    margin-right: 1em;
 }
 
 
@@ -65,6 +84,7 @@ body main {
 
 .chatsContainer h1,
 #chat-interlocutor-md {
+    color: rgba(219, 219, 219, 0.808);
     margin: 0px;
     padding: 0.5em 0px;
     background-color: #00000036;

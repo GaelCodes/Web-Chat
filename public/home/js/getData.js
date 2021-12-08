@@ -53,14 +53,15 @@ $(document).ready(function() {
             // Si el buscador no está vacio dejalo filtrar, no muestres la lista completa
             if (buscador.val().trim() == '') {
                 usersList.html(' ');
-                for (let i = 0; i < 5; i++) {
+                for (let i = 0;
+                    (i < 5 && i < users.docs.length); i++) {
 
                     let userData = users.docs[i].data();
                     userData.id = users.docs[i].id;
                     usersList.append(`
-                    <li class="found-user dropdown-item chat-item-md p-2 mb-2 badge bg-info text-dark d-block text-start" data-fs-id="${userData.id}">
-                        <img src="${userData.picture}" class="rounded w-25"></img>    
-                        <p>${userData.email}</p>
+                    <li class="found-user dropdown-item chat-item-md d-flex justify-content-center align-items-center p-2 d-block text-start" data-fs-id="${userData.id}">
+                        <img src="${userData.picture}" class="rounded-circle"></img>    
+                        <p class="m-0">${userData.email}</p>
                     </li>`);
 
                 }
@@ -88,9 +89,9 @@ $(document).ready(function() {
 
 
                         usersList.append(`
-                        <li class="found-user dropdown-item chat-item-md p-2 mb-2 badge bg-info text-dark d-block text-start" data-fs-id="${userDoc.id}">
-                            <img src="${picture}" class="rounded w-25"></img>    
-                            <p>${email}</p>
+                        <li class="found-user dropdown-item chat-item-md d-flex justify-content-center align-items-center p-2 d-block text-start" data-fs-id="${userDoc.id}">
+                            <img src="${picture}" class="rounded-circle"></img>    
+                            <p class="m-0">${email}</p>
                         </li>`);
 
                         $('.found-user').click(createChat);
