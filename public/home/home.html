@@ -14,16 +14,16 @@
 
 <body>
 
-    <header class="p-3 bg-dark text-white">
+    <header class="p-3 text-white">
         <div class="container">
             <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
                 <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
                     WebChatLOGO
                 </a>
 
-                <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-                    <li><a href="#" class="nav-link px-2 text-secondary">Home</a></li>
-                </ul>
+
+                <span class="col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0"></span>
+
 
                 <!-- Formulario de búsqueda -->
                 <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3">
@@ -39,7 +39,7 @@
                 </form>
 
                 <div class="text-end">
-                    <button id="logoutButton" type="button" class="btn btn-warning">Desconectarse</button>
+                    <button id="logoutButton" type="button" class="btn">Desconectarse</button>
                 </div>
             </div>
         </div>
@@ -99,7 +99,7 @@
                 <div class="card-footer text-muted">
                     <div class="mt-auto mb-2 d-flex flex-row">
                         <!-- Envio mensajes -->
-                        <input disabled type="text" name="inputNewMessageDesktop" id="inputDesktop" class="form-control bg-secondary">
+                        <input disabled type="text" name="inputNewMessageDesktop" id="inputDesktop" class="form-control border-0" placeholder="Escribe tu mensaje aquí...">
                         <button id="sendButtonDesktop" disabled class="btn btn-primary d-flex ms-2">Enviar <i class="bi bi-upload ms-2"></i></button>
                     </div>
                 </div>
@@ -141,13 +141,8 @@
         </div>
     </main>
 
-    <footer class="bg-secondary p-2 text-center">
+    <footer class="text-center">
         <h1 class="h6">Desarrollado por @GaelCodes</h1>
-        <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-            <li><a href="#" class="nav-link px-2 text-white">Home</a></li>
-            <li><a href="#" class="nav-link px-2 text-white">FAQs</a></li>
-            <li><a href="#" class="nav-link px-2 text-white">About</a></li>
-        </ul>
     </footer>
 
     <!-- FIREBASE PRODUCTION -->

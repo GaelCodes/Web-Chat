@@ -72,3 +72,8 @@ Tras el comunicado del cliente y la reunión con los altos cargos del proyecto s
 
 
 PD: Como inspiración el diseñador nos ha pasado algunos diseños que se encuentran en la siguiente URL https://genuine-lamps.com/es/android/1254-the-8-best-texting-apps-for-android.html
+
+
+REFERENCIAS:
+
+Bocadillos de chat:  https://freefrontend.com/css-speech-bubbles/

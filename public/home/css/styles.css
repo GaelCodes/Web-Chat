@@ -1,16 +1,44 @@
 * {
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    /* background-color: #202b30; */
+    background-color: #252030 !important;
+}
+
+body main {
+    height: 85%;
+}
+
+body header {
+    background-color: #0000006c;
+}
+
+
+/* Search */
+
+header input {
+    border: none !important;
+    background-color: rgba(255, 255, 255, 0.103) !important;
+    color: rgba(255, 255, 255, 0.733) !important;
+}
+
+header #logoutButton {
+    background-color: rgba(112, 112, 112, 0.603) !important;
+    color: rgba(255, 255, 255, 0.733) !important;
 }
 
 #main-row {
-    background-color: #202b30;
+    height: 100%;
 }
 
 #chatCard {
     max-height: 85vh;
     height: 85vh;
-    background-color: #202b30;
+    background-color: transparent;
     border-radius: 0px;
 }
 
@@ -22,24 +50,16 @@
     max-height: 80%;
     overflow-y: auto;
     overflow-x: hidden;
-    background-color: #0000003b;
+    background-color: #a5a5a517;
+}
+
+#chatCard .card-footer #inputDesktop {
+    background-color: rgba(0, 0, 0, 0.288);
+    color: rgba(245, 245, 245, 0.623);
 }
 
 #chatCard .card-footer {
     max-height: 20%;
-}
-
-body {
-    height: 100vh;
-    overflow-x: hidden;
-}
-
-body main {
-    height: 85%;
-}
-
-#main-row {
-    height: 100%;
 }
 
 #chat-interlocutor-md img {
@@ -51,7 +71,7 @@ body main {
 /* LISTA USUARIOS ENCONTRADOS */
 
 #foundUsersList {
-    background-color: #202b30;
+    background-color: #252030 !important;
     padding: 1em;
 }
 
@@ -176,5 +196,8 @@ body main {
     color: rgb(168, 168, 168);
 }
 
-
-/*# sourceMappingURL=styles.css.map */
+footer {
+    background-color: rgba(0, 0, 0, 0.219);
+    padding: 2em 0px;
+    color: rgba(219, 219, 219, 0.808);
+}
