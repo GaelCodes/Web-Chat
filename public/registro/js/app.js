@@ -58,7 +58,7 @@
                     newUserDoc.set({
                             nombre: "",
                             email: userData.email,
-                            photoURL: "gs://web-chat-de48b.appspot.com/default-avatar-usuario.png",
+                            picture: "gs://web-chat-de48b.appspot.com/default-avatar-usuario.png",
                         })
                         .then((data) => {
                             // El documento del usuario ha sido creado redirigiendo al HOME
