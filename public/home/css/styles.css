@@ -1,6 +1,45 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    /* background-color: #202b30; */
+    background-color: #252030 !important;
+}
+
+body main {
+    height: 85%;
+}
+
+body header {
+    background-color: #0000006c;
+}
+
+
+/* Search */
+
+header input {
+    border: none !important;
+    background-color: rgba(255, 255, 255, 0.103) !important;
+    color: rgba(255, 255, 255, 0.733) !important;
+}
+
+header #logoutButton {
+    background-color: rgba(112, 112, 112, 0.603) !important;
+    color: rgba(255, 255, 255, 0.733) !important;
+}
+
+#main-row {
+    height: 100%;
+}
+
 #chatCard {
     max-height: 85vh;
     height: 85vh;
+    background-color: transparent;
+    border-radius: 0px;
 }
 
 #chatCard .card-header {
@@ -9,29 +48,156 @@
 
 #chatCard .card-body {
     max-height: 80%;
-    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background-color: #a5a5a517;
+}
+
+#chatCard .card-footer #inputDesktop {
+    background-color: rgba(0, 0, 0, 0.288);
+    color: rgba(245, 245, 245, 0.623);
 }
 
 #chatCard .card-footer {
     max-height: 20%;
 }
 
-body {
-    height: 100vh;
-    overflow-x: hidden;
-}
-
-body main {
-    height: 85%;
-}
-
-#main-row {
-    height: 100%;
-}
-
 #chat-interlocutor-md img {
-    width: 5% !important;
+    margin-right: 2%;
+    width: 3% !important;
 }
 
 
-/*# sourceMappingURL=styles.css.map */
+/* LISTA USUARIOS ENCONTRADOS */
+
+#foundUsersList {
+    background-color: #252030 !important;
+    padding: 1em;
+}
+
+.found-user {
+    width: 100%;
+    color: rgba(219, 219, 219, 0.808) !important;
+}
+
+.chat-item-md:hover {
+    background-color: #ffffff07;
+    cursor: pointer;
+}
+
+.found-user img {
+    width: 50px;
+    margin-right: 1em;
+}
+
+
+/* LISTA CHATS */
+
+.chat-item-md {
+    border-bottom: 1px solid rgba(128, 128, 128, 0.171);
+}
+
+.chatsContainer {
+    color: rgba(219, 219, 219, 0.808);
+    padding: 0px;
+}
+
+.chatsContainer h1,
+#chat-interlocutor-md {
+    color: rgba(219, 219, 219, 0.808);
+    margin: 0px;
+    padding: 0.5em 0px;
+    background-color: #00000036;
+}
+
+#chat-interlocutor-md p {
+    margin: 0;
+}
+
+
+/* MENSAJES */
+
+.message {
+    position: relative;
+    padding: 0.5em 2em;
+    max-width: 70%;
+    white-space: normal;
+    color: #9fa2a7;
+    font-size: .8em;
+    line-height: 1.75;
+    padding: 15px 25px;
+    /* margin-bottom: 75px; */
+}
+
+
+/* Borde mensajes enviados */
+
+.message.align-self-start {
+    /* border-left: 5px solid #010046fb; */
+    background-color: #26272b;
+}
+
+
+/* Triangulo mensajes enviados */
+
+.message.align-self-start::after {
+    content: '';
+    padding-top: 0px;
+    position: absolute;
+    bottom: 0px;
+    left: -10px;
+    border-width: 10px 10px 0 0px;
+    border-style: solid;
+    border-color: transparent #26272b;
+    display: block;
+    width: 0;
+}
+
+
+/* Triangulo mensajes recibidos */
+
+.message.align-self-end::after {
+    content: '';
+    padding-top: 0px;
+    position: absolute;
+    bottom: 0px;
+    right: -10px;
+    border-width: 0px 10px 10px 0px;
+    border-style: solid;
+    border-color: #00344db7 transparent;
+    display: block;
+    width: 0;
+}
+
+.message.align-self-end {
+    background-color: #00344db7;
+    color: rgb(168, 168, 168);
+}
+
+.message p {
+    margin: 0px;
+}
+
+.message p:first-child {
+    margin-bottom: 5px;
+}
+
+
+/* Datos de estado, mensajes enviados */
+
+.message p:nth-child(2) {
+    color: rgb(82, 82, 82);
+}
+
+
+/* Datos de estado, mensajes recibidos */
+
+.message.message.align-self-end p:nth-child(2) {
+    color: rgb(168, 168, 168);
+}
+
+footer {
+    background-color: rgba(0, 0, 0, 0.219);
+    padding: 2em 0px;
+    color: rgba(219, 219, 219, 0.808);
+}

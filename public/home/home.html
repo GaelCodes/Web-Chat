@@ -13,21 +13,23 @@
 </head>
 
 <body>
-    <header class="p-3 bg-dark text-white">
+
+    <header class="p-3 text-white">
         <div class="container">
             <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
                 <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
                     WebChatLOGO
                 </a>
 
-                <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-                    <li><a href="#" class="nav-link px-2 text-secondary">Home</a></li>
-                </ul>
 
+                <span class="col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0"></span>
+
+
+                <!-- Formulario de búsqueda -->
                 <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3">
                     <input id="dropdownMenuButton1" type="search" class="form-control form-control-dark" placeholder="Buscar usuario..." aria-label="Search" data-bs-toggle="dropdown" autocomplete="off">
                     <ul id="foundUsersList" class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                        <!-- placeholder - example
+                        <!-- placeholder
                             <li class="dropdown-item chat-item-md p-2 mb-2 badge bg-info text-dark d-block text-start">
                                 <img src="${userData.picture}" class="rounded w-25"></img>    
                                 <p>${userData.email}</p>
@@ -37,22 +39,26 @@
                 </form>
 
                 <div class="text-end">
-                    <button id="logoutButton" type="button" class="btn btn-warning">Desconectarse</button>
+                    <button id="logoutButton" type="button" class="btn">Desconectarse</button>
                 </div>
             </div>
         </div>
     </header>
 
-
-
-
     <main class="container-fluid">
         <div id="main-row" class="row">
 
-            <div class="col-12 col-md-3 border-end text-center">
-                <h1 class="h3">chats</h1>
+            <div class="chatsContainer col-12 col-md-3 text-center">
+                <h1 class="h3">CHATS</h1>
                 <ul id="desktop-chat-list" class="list-unstyled d-none d-md-block">
-
+                    <!-- Chat1 -->
+                    <!-- 
+                        <li class="chat-item-md d-flex justify-content-around align-items-center  p-2 mb-2 badge bg-info text-dark d-block text-start" data-fs-id="${interlocutor.id}" style="display:none">
+                            <img src="${interlocutor.picture}" class="rounded-circle w-25 "></img>    
+                            <p>${interlocutor.email}</p>
+                        </li> 
+                    -->
+                    <!-- ChatN -->
                 </ul>
                 <ul id="mobile-chat-list" class="list-unstyled d-md-none">
 
@@ -62,25 +68,38 @@
             <!-- CHAT WEB d-md-none se mostrará el que corresponda  -->
 
             <div id="chatCard" class="card text-center d-none d-md-flex col-md-9 flex-column justify-content-start p-0">
-                <div id="chat-interlocutor-md" class="card-header h5 m-0 p-2 d-block">
+                <div id="chat-interlocutor-md" class="card-header d-flex flex-row align-items-center justify-content-center h3">
                     <!-- el interlocutor va aquí -->
-                    <p class="h5">Ningún chat seleccionado</p>
+                    <p class="h3">Ningún chat seleccionado</p>
                 </div>
                 <div class="card-body">
                     <div class="container">
                         <ul id="messages-list-md" class="list-unstyled d-flex flex-column">
 
                             <!-- <li> mensaje </li> -->
+                            <!-- 
+                                    Mensaje del usuario:
+                                    <li class="message align-self-start bg-primary text-start text-dark mt-2">                
+                                        <p>${message.content}</p>
+                                        <p class="text-start">${message.date} ${message.state}</p>      
+                                    </li> 
+                                
+                                    Mensaje del interlocutor:
+                                    <li class="message align-self-end badge bg-info text-end text-dark mt-2">                
+                                        <p>${message.content}</p>
+                                        <p class="text-end">${message.date} ${message.state}</p>   
+                                    </li>
+                                
+                                -->
                             <!-- <li> mensaje </li> -->
-                            <!-- <li> mensaje </li> -->
-                        </ul>
 
+                        </ul>
                     </div>
                 </div>
                 <div class="card-footer text-muted">
                     <div class="mt-auto mb-2 d-flex flex-row">
                         <!-- Envio mensajes -->
-                        <input disabled type="text" name="inputNewMessageDesktop" id="inputDesktop" class="form-control bg-secondary">
+                        <input disabled type="text" name="inputNewMessageDesktop" id="inputDesktop" class="form-control border-0" placeholder="Escribe tu mensaje aquí...">
                         <button id="sendButtonDesktop" disabled class="btn btn-primary d-flex ms-2">Enviar <i class="bi bi-upload ms-2"></i></button>
                     </div>
                 </div>
@@ -88,7 +107,7 @@
 
 
             <!-- MODAL MOBILE  -->
-            <div class="d-md-none modal" id="chatModal" tabindex="-1">
+            <div id="chatModal" class="d-md-none modal" tabindex="-1">
                 <div class="modal-dialog modal-fullscreen">
                     <div class="modal-content">
 
@@ -103,9 +122,8 @@
 
                         <div class="modal-body">
                             <ul id="messages-list" class="list-unstyled d-flex flex-column">
+                                <!-- <li> mensaje </li> -->
 
-                                <!-- <li> mensaje </li> -->
-                                <!-- <li> mensaje </li> -->
                                 <!-- <li> mensaje </li> -->
 
                             </ul>
@@ -123,21 +141,13 @@
         </div>
     </main>
 
-
-    <footer class="bg-secondary p-2 text-center">
+    <footer class="text-center">
         <h1 class="h6">Desarrollado por @GaelCodes</h1>
-        <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-            <li><a href="#" class="nav-link px-2 text-white">Home</a></li>
-            <li><a href="#" class="nav-link px-2 text-white">FAQs</a></li>
-            <li><a href="#" class="nav-link px-2 text-white">About</a></li>
-        </ul>
     </footer>
 
-
-
     <!-- FIREBASE PRODUCTION -->
-
     <!-- The core Firebase JS SDK is always required and must be listed first -->
+
     <!-- <script src="/__/firebase/8.7.0/firebase-app.js"></script>
     <script src="/__/firebase/8.6.8/firebase-auth.js"></script>
     <script src="/__/firebase/8.6.8/firebase-firestore.js"></script>
@@ -145,8 +155,8 @@
 
 
     <!-- FIREBASE DEVELOPMENT -->
-
     <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
+
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-firestore.js"></script>
