@@ -48,10 +48,17 @@
     <main class="container-fluid">
         <div id="main-row" class="row">
 
-            <div class="col-12 col-md-3 border-end text-center">
-                <h1 class="h3">chats</h1>
+            <div class="chatsContainer col-12 col-md-3 text-center">
+                <h1 class="h3">CHATS</h1>
                 <ul id="desktop-chat-list" class="list-unstyled d-none d-md-block">
-
+                    <!-- Chat1 -->
+                    <!-- 
+                        <li class="chat-item-md d-flex justify-content-around align-items-center  p-2 mb-2 badge bg-info text-dark d-block text-start" data-fs-id="${interlocutor.id}" style="display:none">
+                            <img src="${interlocutor.picture}" class="rounded-circle w-25 "></img>    
+                            <p>${interlocutor.email}</p>
+                        </li> 
+                    -->
+                    <!-- ChatN -->
                 </ul>
                 <ul id="mobile-chat-list" class="list-unstyled d-md-none">
 
@@ -61,9 +68,9 @@
             <!-- CHAT WEB d-md-none se mostrará el que corresponda  -->
 
             <div id="chatCard" class="card text-center d-none d-md-flex col-md-9 flex-column justify-content-start p-0">
-                <div id="chat-interlocutor-md" class="card-header h5 m-0 p-2 d-block">
+                <div id="chat-interlocutor-md" class="card-header d-flex flex-row align-items-center justify-content-center h3">
                     <!-- el interlocutor va aquí -->
-                    <p class="h5">Ningún chat seleccionado</p>
+                    <p class="h3">Ningún chat seleccionado</p>
                 </div>
                 <div class="card-body">
                     <div class="container">
@@ -71,11 +78,19 @@
 
                             <!-- <li> mensaje </li> -->
                             <!-- 
-                                <li class="message align-self-start badge bg-primary text-start text-dark mt-2">                
-                                    <p>${message.content}</p>
-                                    <p class="text-start">${message.date} ${message.state}</p>      
-                                </li> 
-                            -->
+                                    Mensaje del usuario:
+                                    <li class="message align-self-start bg-primary text-start text-dark mt-2">                
+                                        <p>${message.content}</p>
+                                        <p class="text-start">${message.date} ${message.state}</p>      
+                                    </li> 
+                                
+                                    Mensaje del interlocutor:
+                                    <li class="message align-self-end badge bg-info text-end text-dark mt-2">                
+                                        <p>${message.content}</p>
+                                        <p class="text-end">${message.date} ${message.state}</p>   
+                                    </li>
+                                
+                                -->
                             <!-- <li> mensaje </li> -->
 
                         </ul>
@@ -92,7 +107,7 @@
 
 
             <!-- MODAL MOBILE  -->
-            <div class="d-md-none modal" id="chatModal" tabindex="-1">
+            <div id="chatModal" class="d-md-none modal" tabindex="-1">
                 <div class="modal-dialog modal-fullscreen">
                     <div class="modal-content">
 
@@ -108,20 +123,7 @@
                         <div class="modal-body">
                             <ul id="messages-list" class="list-unstyled d-flex flex-column">
                                 <!-- <li> mensaje </li> -->
-                                <!-- 
-                                    Mensaje del usuario:
-                                    <li class="message align-self-start bg-primary text-start text-dark mt-2">                
-                                        <p>${message.content}</p>
-                                        <p class="text-start">${message.date} ${message.state}</p>      
-                                    </li> 
-                                
-                                    Mensaje del interlocutor:
-                                    <li class="message align-self-end badge bg-info text-end text-dark mt-2">                
-                                        <p>${message.content}</p>
-                                        <p class="text-end">${message.date} ${message.state}</p>   
-                                    </li>
-                                
-                                -->
+
                                 <!-- <li> mensaje </li> -->
 
                             </ul>

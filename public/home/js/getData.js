@@ -157,7 +157,7 @@ $(document).ready(function() {
                 );
                 desktopChatList.append(
                     `
-                        <li class="chat-item-md d-flex justify-content-around align-items-center  p-2 mb-2 badge bg-info text-dark d-block text-start" data-fs-id="${interlocutor.id}" style="display:none">
+                        <li class="chat-item-md d-flex justify-content-around align-items-center  p-2 d-block text-start" data-fs-id="${interlocutor.id}" style="display:none">
                             <img src="${interlocutor.picture}" class="rounded-circle w-25 "></img>    
                             <p>${interlocutor.email}</p>
                         </li>`
@@ -434,8 +434,11 @@ $(document).ready(function() {
                     $(inputDesktop).val("");
 
                     chat.interlocutorID = event.currentTarget.dataset.fsId;
-
-                    $('#chat-interlocutor-md').html(event.currentTarget.innerHTML); // <- necesario refactorizar
+                    let interlocutorHTML = event.currentTarget.innerHTML;
+                    $('#chat-interlocutor-md').html(`
+                        
+                            ${interlocutorHTML}
+                        `); // <- necesario refactorizar
                     $('#messages-list-md').html('');
 
                     //  REFACTORIZACIÓN MUESTREO DE MENSAJES

@@ -1,6 +1,17 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+#main-row {
+    background-color: #202b30;
+}
+
 #chatCard {
     max-height: 85vh;
     height: 85vh;
+    background-color: #374248;
+    border-radius: 0px;
 }
 
 #chatCard .card-header {
@@ -11,6 +22,7 @@
     max-height: 80%;
     overflow-y: auto;
     overflow-x: hidden;
+    background-color: #161719;
 }
 
 #chatCard .card-footer {
@@ -31,8 +43,39 @@ body main {
 }
 
 #chat-interlocutor-md img {
-    width: 5% !important;
+    margin-right: 2%;
+    width: 3% !important;
 }
+
+.chat-interlocutor-md {
+    background-color: #00000036;
+}
+
+
+/* LISTA CHATS */
+
+.chat-item-md {
+    border-bottom: 1px solid rgba(128, 128, 128, 0.171);
+}
+
+.chatsContainer {
+    color: rgba(219, 219, 219, 0.808);
+    padding: 0px;
+}
+
+.chatsContainer h1,
+#chat-interlocutor-md {
+    margin: 0px;
+    padding: 0.5em 0px;
+    background-color: #00000036;
+}
+
+#chat-interlocutor-md p {
+    margin: 0;
+}
+
+
+/* MENSAJES */
 
 .message {
     position: relative;
