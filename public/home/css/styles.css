@@ -35,9 +35,60 @@ body main {
 }
 
 .message {
+    position: relative;
     padding: 0.5em 2em;
     max-width: 70%;
     white-space: normal;
+    color: #9fa2a7;
+    font-size: .8em;
+    line-height: 1.75;
+    padding: 15px 25px;
+    /* margin-bottom: 75px; */
+}
+
+
+/* Borde mensajes enviados */
+
+.message.align-self-start {
+    /* border-left: 5px solid #010046fb; */
+    background-color: #26272b;
+}
+
+
+/* Triangulo mensajes enviados */
+
+.message.align-self-start::after {
+    content: '';
+    padding-top: 0px;
+    position: absolute;
+    bottom: 0px;
+    left: -10px;
+    border-width: 10px 10px 0 0px;
+    border-style: solid;
+    border-color: transparent #26272b;
+    display: block;
+    width: 0;
+}
+
+
+/* Triangulo mensajes recibidos */
+
+.message.align-self-end::after {
+    content: '';
+    padding-top: 0px;
+    position: absolute;
+    bottom: 0px;
+    right: -10px;
+    border-width: 0px 10px 10px 0px;
+    border-style: solid;
+    border-color: #00344db7 transparent;
+    display: block;
+    width: 0;
+}
+
+.message.align-self-end {
+    background-color: #00344db7;
+    color: rgb(168, 168, 168);
 }
 
 .message p {
@@ -48,8 +99,18 @@ body main {
     margin-bottom: 5px;
 }
 
+
+/* Datos de estado, mensajes enviados */
+
 .message p:nth-child(2) {
     color: rgb(82, 82, 82);
+}
+
+
+/* Datos de estado, mensajes recibidos */
+
+.message.message.align-self-end p:nth-child(2) {
+    color: rgb(168, 168, 168);
 }
 
 

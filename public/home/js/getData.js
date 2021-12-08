@@ -451,14 +451,14 @@ $(document).ready(function() {
                                     if (message.author == user.uid) {
 
                                         messagesListDesktop.append(`
-                                                    <li class="message align-self-start badge bg-primary text-start text-dark mt-2">                
+                                                    <li class="message align-self-start text-start mt-2">                
                                                         <p>${message.content}</p>
                                                         <p class="text-start">${message.date} ${message.state}</p>      
                                                     </li>`);
                                     } else {
 
                                         messagesListDesktop.append(`
-                                                    <li class="message align-self-end badge bg-info text-end text-dark mt-2">                
+                                                    <li class="message align-self-end text-start mt-2">                
                                                         <p>${message.content}</p>
                                                         <p class="text-end">${message.date} ${message.state}</p>   
                                                     </li>`);
