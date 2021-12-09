@@ -139,7 +139,7 @@ $(document).ready(function() {
                         interlocutorsData.push(interlocutorData);
                     }
                 );
-            // El id de la conversacion es el id del interlocutor
+            // El id de la conversacion es el id del interlocutor (revisar estado correcto en estructura de datos firestore)
             interlocutorsData[i].id = chatDoc.id
         }
 
