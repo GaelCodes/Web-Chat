@@ -90,6 +90,10 @@ header #logoutButton {
     margin-right: 1em;
 }
 
+#desktop-chat-list .chat-item-md img {
+    width: 25%;
+}
+
 
 /* LISTA CHATS */
 

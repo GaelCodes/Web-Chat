@@ -184,19 +184,21 @@ $(document).ready(function() {
     // CREAR CHAT
 
     function createChat(event) {
-        console.log('Evento click en foundUser', event);
         let interlocutorID = event.currentTarget.dataset.fsId;
-        let conversationHTML = event.currentTarget.outerHTML;
-        let newChat = $(conversationHTML).removeClass('found-user dropdown-item');
-
+        let newConversationHTML =
+            `<li class="chat-item-md d-flex justify-content-around align-items-center  p-2 d-block text-start" data-fs-id="${interlocutorID}" style="display:none">
+                ${event.currentTarget.innerHTML}
+            </li>`;
 
         // Si no existe el chat crea uno, si existe abrelo
         if (!$(`#desktop-chat-list [data-fs-id="${interlocutorID}"]`).length) {
 
 
 
-            $('#desktop-chat-list').prepend(newChat[0]);
+            $('#desktop-chat-list').prepend(newConversationHTML);
             newChat = $(`#desktop-chat-list [data-fs-id="${interlocutorID}"]`);
+
+
 
             newChat.click(displayChatDesktop).click();
 
