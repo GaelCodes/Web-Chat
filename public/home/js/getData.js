@@ -257,7 +257,6 @@ $(document).ready(function() {
             'date': Date.now()
         }
 
-        console.log('Mensaje creado: ', message);
         let chatExistsInSender = await checkChatInSender();
         let chatExistsInReceiver = await checkChatInReceiver();
 
@@ -277,6 +276,10 @@ $(document).ready(function() {
             createChatReceiver(message);
             createChatSender(message);
         }
+
+        (function scrollToBottom() {
+            $('.card-body').animate({ scrollTop: $('.card-body ul').height() }, 1000);
+        })();
 
         function checkChatInSender() {
             let chatRef = `usuarios/${user.uid}/conversaciones/${chat.interlocutorID}`;
@@ -480,6 +483,10 @@ $(document).ready(function() {
                                     let message = change.doc.data();
                                 }
                             });
+
+                            (function scrollToBottom() {
+                                $('.card-body').animate({ scrollTop: $('.card-body ul').height() });
+                            })();
                         });
 
                     $(inputDesktop).removeAttr('disabled'); // Habilito el input

@@ -124,6 +124,60 @@ header #logoutButton {
 }
 
 
+/* INICIO CHAT CARD */
+
+#chatCard {
+    padding-right: 1em !important;
+}
+
+#chatCard {
+    scrollbar-width: thin;
+    scrollbar-color: #00000041 #ffffff54;
+}
+
+#chatCard .card-body::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+}
+
+#chatCard .card-body::-webkit-scrollbar-button {
+    width: 0px;
+    height: 0px;
+}
+
+#chatCard .card-body::-webkit-scrollbar-thumb {
+    background: #00000041;
+    border: 0px none #000000;
+    border-radius: 50px;
+}
+
+#chatCard .card-body::-webkit-scrollbar-thumb:hover {
+    background: #0000007c;
+}
+
+#chatCard .card-body::-webkit-scrollbar-thumb:active {
+    background: #000000;
+}
+
+#chatCard .card-body::-webkit-scrollbar-track {
+    background: #ffffff54;
+    border: 0px none #ffffff;
+    border-radius: 50px;
+}
+
+#chatCard .card-body::-webkit-scrollbar-track:hover {
+    background: #666666;
+}
+
+#chatCard .card-body::-webkit-scrollbar-track:active {
+    background: #333333;
+}
+
+#chatCard .card-body::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
+
 /* MENSAJES */
 
 .message {
@@ -205,8 +259,17 @@ header #logoutButton {
     color: rgb(168, 168, 168);
 }
 
+
+/* FIN CHAT CARD */
+
+
+/* INICIO FOOTER */
+
 footer {
     background-color: rgba(0, 0, 0, 0.219);
     padding: 2em 0px;
     color: rgba(219, 219, 219, 0.808);
 }
+
+
+/* FIN FOOTER */
