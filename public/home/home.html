@@ -16,17 +16,19 @@
 
     <header class="p-3 text-white">
         <div class="container">
-            <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-                <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
-                    WebChatLOGO
+            <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-between">
+                <!-- <a href="/" class="mb-2 mb-lg-0 text-white text-decoration-none"> -->
+                <a href="/" class="text-white text-decoration-none">
+                WebChatLOGO
                 </a>
 
 
-                <span class="col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0"></span>
+
 
 
                 <!-- Formulario de búsqueda -->
-                <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3">
+                <!-- <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3"> -->
+                <form>
                     <input id="dropdownMenuButton1" type="search" class="form-control form-control-dark" placeholder="Buscar usuario..." aria-label="Search" data-bs-toggle="dropdown" autocomplete="off">
                     <ul id="foundUsersList" class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                         <!-- placeholder
@@ -38,7 +40,11 @@
                     </ul>
                 </form>
 
-                <div class="text-end">
+                <!-- <span class="col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0"></span> -->
+
+                <!-- <div class="text-end"> -->
+                <div>
+                    <button id="userBadge" type="button" class="btn bg-secondary" disabled>abigael-hf@hotmail.com</button>
                     <button id="logoutButton" type="button" class="btn">Desconectarse</button>
                 </div>
             </div>

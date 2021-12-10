@@ -17,7 +17,7 @@ $(document).ready(function() {
             // https://firebase.google.com/docs/reference/js/firebase.User
 
             let userData = await getUserData(user.uid);
-            // displayUserData(userData.data()); Arreglo1
+            displayUserData(userData.data());
 
             let openedChats = await getOpenedChats(user.uid);
             displayOpenedChats(openedChats);
@@ -31,6 +31,15 @@ $(document).ready(function() {
 
         }
     });
+
+
+    // INFORMACIÓN DEL USUARIO
+
+    function displayUserData(userData) {
+        // <img src="${userData.picture}" class="rounded w-25"></img>
+        // ${userData.email}
+        $('#userBadge').text(`${userData.email}`);
+    }
 
     // BUSCADOR
 
