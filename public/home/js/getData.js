@@ -252,10 +252,9 @@ $(document).ready(function() {
         });
     }
 
-    var inputDesktop = '#inputDesktop';
     var sendButtonDesktop = '#sendButtonDesktop';
     $(sendButtonDesktop).click(sendMessage);
-    $(inputDesktop).on('input', enableButton);
+    $('#inputDesktop').on('input', enableButton);
     $('#inputDesktop').on('keydown', (event) => {
         if (event.code === "Enter" && !$(sendButtonDesktop)[0].disabled) {
             $(sendButtonDesktop).click();
@@ -269,7 +268,7 @@ $(document).ready(function() {
             var sendButton = sendButtonMobile;
 
         } else if (event.currentTarget.id === 'sendButtonDesktop') {
-            var input = $(inputDesktop);
+            var input = $('#inputDesktop');
             var sendButton = sendButtonDesktop;
         }
 
@@ -281,6 +280,7 @@ $(document).ready(function() {
         }
 
         if (message.content != '') {
+            input.val("");
             let chatExistsInSender = await checkChatInSender();
             let chatExistsInReceiver = await checkChatInReceiver();
 
@@ -397,7 +397,6 @@ $(document).ready(function() {
             db.collection(messagesRef).add(message)
                 .then(
                     (data) => {
-                        input.val("");
                         $(sendButtonDesktop).attr('disabled');
                     }
                 )
@@ -468,7 +467,7 @@ $(document).ready(function() {
                         unsubscribeMessagesMethod();
                     }
 
-                    $(inputDesktop).val("");
+                    $('#inputDesktop').val("");
 
                     let interlocutorHTML = event.currentTarget.innerHTML;
                     $('#chat-interlocutor-md').html(`${interlocutorHTML}`);
@@ -515,7 +514,7 @@ $(document).ready(function() {
                             })();
                         });
 
-                    $(inputDesktop).removeAttr('disabled'); // Habilito el input
+                    $('#inputDesktop').removeAttr('disabled'); // Habilito el input
 
                     animarEntrada();
 
