@@ -33,6 +33,7 @@ header #logoutButton {
 
 #main-row {
     height: 100%;
+    overflow-x: hidden;
 }
 
 #chatCard {
