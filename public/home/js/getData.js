@@ -255,7 +255,7 @@ $(document).ready(function() {
     var sendButtonDesktop = '#sendButtonDesktop';
     $(sendButtonDesktop).click(sendMessage);
     $('#inputDesktop').on('input', enableButton);
-    $('#inputDesktop').on('keydown', (event) => {
+    $('#inputDesktop').on('keyup', (event) => {
         if (event.code === "Enter" && !$(sendButtonDesktop)[0].disabled) {
             $(sendButtonDesktop).click();
         }
