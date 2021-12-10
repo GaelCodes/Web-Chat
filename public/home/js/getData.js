@@ -229,6 +229,13 @@ $(document).ready(function() {
 
     // ENVIAR MENSAJE
 
+    function escapeHTML(text) {
+        var replacements = { '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' };
+        return text.replace(/[<>&"]/g, function(character) {
+            return replacements[character];
+        });
+    }
+
     var inputDesktop = '#inputDesktop';
     var sendButtonDesktop = '#sendButtonDesktop';
     $(sendButtonDesktop).click(sendMessage);
@@ -252,7 +259,7 @@ $(document).ready(function() {
 
         let message = {
             'author': user.uid,
-            'content': input.val(),
+            'content': escapeHTML(input.val()),
             'state': 'enviado',
             'date': Date.now()
         }
