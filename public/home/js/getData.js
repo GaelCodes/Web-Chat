@@ -256,7 +256,6 @@ $(document).ready(function() {
     $(sendButtonDesktop).click(sendMessage);
     $('#inputDesktop').on('input', enableButton);
     $('#inputDesktop').on('keyup', (event) => {
-        console.log('Tecla presionada');
         if (event.code === "Enter" && !$(sendButtonDesktop)[0].disabled) {
             $(sendButtonDesktop).click();
         }
