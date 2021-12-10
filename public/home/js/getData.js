@@ -55,7 +55,7 @@ $(document).ready(function() {
         var users;
         async function showUsers() {
 
-
+            // Compruebo si ya ha obtenido la lista de usuarios
             if (!users)
                 users = await getUsers();
 
@@ -65,13 +65,18 @@ $(document).ready(function() {
                 for (let i = 0;
                     (i < 5 && i < users.docs.length); i++) {
 
+
                     let userData = users.docs[i].data();
                     userData.id = users.docs[i].id;
-                    usersList.append(`
-                    <li class="found-user dropdown-item chat-item-md d-flex justify-content-center align-items-center p-2 d-block text-start" data-fs-id="${userData.id}">
-                        <img src="${userData.picture}" class="rounded-circle"></img>    
-                        <p class="m-0">${userData.email}</p>
-                    </li>`);
+
+                    if (userData.id != user.uid) {
+                        usersList.append(`
+                        <li class="found-user dropdown-item chat-item-md d-flex justify-content-center align-items-center p-2 d-block text-start" data-fs-id="${userData.id}">
+                            <img src="${userData.picture}" class="rounded-circle"></img>    
+                            <p class="m-0">${userData.email}</p>
+                        </li>`);
+                    }
+
 
                 }
 
@@ -82,7 +87,7 @@ $(document).ready(function() {
 
         function filterUsers(params) {
 
-            // Compruebo si ya ha obtenido la lista de usuarios
+            // Compruebo si ya ha obtenido la lista de usuarios (es una promesa puede tardar)
             if (users) {
                 usersList.html('');
 
@@ -94,18 +99,20 @@ $(document).ready(function() {
                     let email = userDoc.data().email;
                     let picture = userDoc.data().picture;
 
-                    if (email.includes(buscador.val().toLowerCase()) && buscador.val() != '') {
+                    if (user.uid != users.docs[numUser].id) {
 
+                        if (email.includes(buscador.val().toLowerCase()) && buscador.val() != '') {
+                            usersList.append(`
+                            <li class="found-user dropdown-item chat-item-md d-flex justify-content-center align-items-center p-2 d-block text-start" data-fs-id="${userDoc.id}">
+                                <img src="${picture}" class="rounded-circle"></img>    
+                                <p class="m-0">${email}</p>
+                            </li>`);
 
-                        usersList.append(`
-                        <li class="found-user dropdown-item chat-item-md d-flex justify-content-center align-items-center p-2 d-block text-start" data-fs-id="${userDoc.id}">
-                            <img src="${picture}" class="rounded-circle"></img>    
-                            <p class="m-0">${email}</p>
-                        </li>`);
-
-                        $('.found-user').click(createChat);
-                        numUsersMatched++;
+                            $('.found-user').click(createChat);
+                            numUsersMatched++;
+                        }
                     }
+
 
                     numUser++;
                 }
