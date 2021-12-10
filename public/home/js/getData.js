@@ -419,6 +419,10 @@ $(document).ready(function() {
 
     var chat = { 'interlocutorID': '', 'messages': [] };
     async function displayChatDesktop(event) {
+        chat.interlocutorID = event.currentTarget.dataset.fsId;
+
+        $('.selected').toggleClass('selected');
+        $(`.chatsContainer [data-fs-id="${chat.interlocutorID}"]`).addClass('selected');
 
         animarSalida();
 
@@ -430,18 +434,16 @@ $(document).ready(function() {
                 500,
                 async function RellenarDatos() {
 
+                    // Si estaba suscrito a algún chat, me desuscribo
                     if (unsubscribeMessagesMethod) {
                         unsubscribeMessagesMethod();
                     }
 
                     $(inputDesktop).val("");
 
-                    chat.interlocutorID = event.currentTarget.dataset.fsId;
                     let interlocutorHTML = event.currentTarget.innerHTML;
-                    $('#chat-interlocutor-md').html(`
-                        
-                            ${interlocutorHTML}
-                        `); // <- necesario refactorizar
+                    $('#chat-interlocutor-md').html(`${interlocutorHTML}`);
+
                     $('#messages-list-md').html('');
 
                     //  REFACTORIZACIÓN MUESTREO DE MENSAJES

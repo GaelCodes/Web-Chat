@@ -98,6 +98,10 @@ header #logoutButton {
 
 /* LISTA CHATS */
 
+.chatsContainer .selected {
+    background-color: #ffffff07;
+}
+
 .chat-item-md {
     border-bottom: 1px solid rgba(128, 128, 128, 0.171);
 }
