@@ -268,34 +268,37 @@ $(document).ready(function() {
 
         let message = {
             'author': user.uid,
-            'content': escapeHTML(input.val()),
+            'content': escapeHTML(input.val()).trim(),
             'state': 'enviado',
             'date': Date.now()
         }
 
-        let chatExistsInSender = await checkChatInSender();
-        let chatExistsInReceiver = await checkChatInReceiver();
+        if (message.content != '') {
+            let chatExistsInSender = await checkChatInSender();
+            let chatExistsInReceiver = await checkChatInReceiver();
 
-        if (chatExistsInSender && chatExistsInReceiver) {
-            setMessageSender(message);
-            setMessageReceiver(message);
-        } else if (chatExistsInReceiver) {
-            console.log('El chat existe en receptor');
-            setMessageReceiver(message);
-            createChatSender(message);
-        } else if (chatExistsInSender) {
-            console.log('El chat existe en emisor');
-            createChatReceiver(message);
-            setMessageSender(message);
-        } else {
-            console.log('El chat existe no existe en ninguno de los 2');
-            createChatReceiver(message);
-            createChatSender(message);
+            if (chatExistsInSender && chatExistsInReceiver) {
+                setMessageSender(message);
+                setMessageReceiver(message);
+            } else if (chatExistsInReceiver) {
+                console.log('El chat existe en receptor');
+                setMessageReceiver(message);
+                createChatSender(message);
+            } else if (chatExistsInSender) {
+                console.log('El chat existe en emisor');
+                createChatReceiver(message);
+                setMessageSender(message);
+            } else {
+                console.log('El chat existe no existe en ninguno de los 2');
+                createChatReceiver(message);
+                createChatSender(message);
+            }
+
+            (function scrollToBottom() {
+                $('.card-body').animate({ scrollTop: $('.card-body ul').height() }, 1000);
+            })();
         }
 
-        (function scrollToBottom() {
-            $('.card-body').animate({ scrollTop: $('.card-body ul').height() }, 1000);
-        })();
 
         function checkChatInSender() {
             let chatRef = `usuarios/${user.uid}/conversaciones/${chat.interlocutorID}`;
@@ -568,28 +571,3 @@ $(document).ready(function() {
 
 
 });
-
-
-
-
-
-
-
-
-
-
-// MOSTRAR DATOS DEL USUARIO Arreglo1
-// {
-
-//     var userMenuElement = document.getElementById('userMenu');
-
-//     function displayUserData(userData) {
-
-//         userMenuElement.innerHTML = `
-//     <img src="${userData.picture}" class="rounded w-25"></img>
-//     ${userData.email}
-//     `;
-
-//     }
-
-// }
