@@ -6,6 +6,181 @@ var usersCollection = db.collection("usuarios");
 var user;
 
 
+class Chat {
+    constructor(chatData) {
+        this.interlocutorId = chatData.id;
+        this.interlocutorEmail = null;
+        this.interlocutorPicture = null;
+        this.messages = chatData.messages;
+        this.lastMessage = chatData.lastMessage;
+        this.observers = [];
+
+        // Me suscribo a los cambios de la BBDD
+        this.suscribeToChanges();
+        this.suscribeToInterlocutorData();
+    }
+
+    set messages(newMessages) {
+        this._messages = newMessages;
+    }
+
+    get messages() {
+        return this._messages;
+    }
+
+    set interlocutorId(newInterlocutorId) {
+        this._interlocutorId = newInterlocutorId;
+    }
+
+    get interlocutorId() {
+        return this._interlocutorId;
+    }
+
+    set interlocutorEmail(newInterlocutorEmail) {
+        this._interlocutorEmail = newInterlocutorEmail;
+    }
+
+    get interlocutorEmail() {
+        return this._interlocutorEmail;
+    }
+
+    registerObserver(observer) {
+        this.observers.push(observer);
+    }
+
+    unregisterObserver(observer) {
+        let auxIndexObserver = this.observers.indexOf(observer);
+        this.observers.splice(auxIndexObserver, 1);
+    }
+
+    notifyAll() {
+        for (let i = 0; i < this.observers.length; i++) {
+            this.observers[i].update(this.copy());
+        }
+    }
+
+    copy() {
+        return {
+            interlocutorId: this.interlocutorId,
+            messages: this.messages,
+            lastMessage: this.lastMessage
+        }
+    }
+
+    filterMessage(message) {
+        return true;
+    }
+
+    suscribeToChanges() {
+        // Me suscribo al documento chat
+        // Tal vez tenga que suscribirme a la subcolección messages
+        // si esta suscripción no recibe los cambio de las subcolecciones
+        db.collection(`usuarios/${user.uid}/conversaciones/${this.interlocutorId}`)
+            .onSnapshot((doc) => {
+                console.log("Datos del chat desde la suscripción  del constructor: ", doc.data());
+            });
+    }
+
+    suscribeToInterlocutorData() {
+        db.collection(`usuarios/${user.uid}`).doc(`${user.uid}`)
+            .onSnapshot((doc) => {
+                let auxInterlocutorData = doc.data();
+                this.interlocutorEmail = auxInterlocutorData.email;
+                this.interlocutorPicture = auxInterlocutorData.picture;
+                console.log("Datos del interlocutor desde la suscripción del constructor: ", doc.data());
+            });
+
+    }
+
+}
+
+class ChatView {
+    constructor() {
+        this.chatTag = document.createElement('li');
+        this.chatLastMessage = document.createElement('p');
+        this.chatInterlocutorEmail = document.createElement('p');
+        this.chatInterlocutorPicture = document.createElement('img');
+        this.chatSpeechBubbles = [];
+        this.chatSpeechBubble = document.createElement('li');
+
+    }
+
+    static init() {
+        ChatView.chatsContainer = $('#desktop-chat-list');
+        ChatView.chatDetailsCard = $('#chatCard');
+    }
+
+    populate(chat) {
+        // Relleno los datos de los nodos del Chat Tag
+        this.chatInterlocutorPicture.src = chat.interlocutorPicture;
+        this.chatInterlocutorEmail.innerText = chat.interlocutorEmail;
+        this.chatLastMessage.innerText = chat.lastMessage;
+
+        // Este paso se podría hacer en showMessages,
+        // ya que aquí no hace falta crear los speechBubbles,
+        // es posible que el usuario no llegue a abrir el chat
+        chat.messages.forEach(
+            (message) => {
+                let speechBubble = this.chatSpeechBubble.cloneNode();
+                speechBubble.innerText = message.content;
+                this.chatSpeechBubbles.push(speechBubble);
+            }
+        );
+
+        this.chatTag.append(this.chatInterlocutorPicture);
+        this.chatTag.append(this.chatInterlocutorEmail);
+        this.chatTag.append(this.chatLastMessage);
+        ChatView.chatsContainer.append(this.chatTag);
+    }
+
+    showMessages() {
+        ChatView.chatShowingMessages = this;
+
+        ChatView.chatDetailsCard.querySelector('#chat-interlocutor-md').innerHTML = '';
+        ChatView.chatDetailsCard.querySelector('#messages-list-md').innerHTML = '';
+        ChatView.chatDetailsCard.querySelector('#inputDesktop').innerHTML = '';
+        ChatView.chatDetailsCard.querySelector('#chat-interlocutor-md').append(this.chatInterlocutorPicture);
+        ChatView.chatDetailsCard.querySelector('#chat-interlocutor-md').append(this.chatInterlocutorEmail);
+        for (let i = 0; i < this.chatSpeechBubbles.length; i++) {
+            let speechBubble = this.chatSpeechBubbles[i];
+            ChatView.chatDetailsCard.querySelector('#messages-list-md').append(speechBubble);
+        }
+    }
+
+    hideMessages() {
+        ChatView.chatShowingMessages = null;
+    }
+
+    update(chat) {
+        this.chatInterlocutorPicture.src = chat.interlocutorPicture;
+        this.chatInterlocutorEmail.innerText = chat.interlocutorEmail;
+        this.chatLastMessage.innerText = chat.lastMessage;
+
+        // Hay que añadir todos los mensajes otra vez,
+        // Esto supone una mala experiencia de usuario
+        // Es necesario revisarlo
+        this.chatSpeechBubbles = [];
+        chat.messages.forEach(
+            (message) => {
+                let speechBubble = this.chatSpeechBubble.cloneNode();
+                speechBubble.innerText = message.content;
+                this.chatSpeechBubbles.push(speechBubble);
+            }
+        );
+
+        for (let i = 0; i < this.chatSpeechBubbles.length; i++) {
+            let speechBubble = this.chatSpeechBubbles[i];
+            ChatView.chatDetailsCard.querySelector('#messages-list-md').append(speechBubble);
+        }
+    }
+
+
+}
+
+ChatView.chatShowingMessages = null;
+ChatView.chatsContainer = null;
+ChatView.chatDetailsCard = null;
+
 $(document).ready(function() {
 
     // FIREBASE
