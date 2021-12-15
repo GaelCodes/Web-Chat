@@ -7,17 +7,21 @@ var user;
 
 
 class Chat {
+    //Estoy filtrando los mensajes al ser enviados
+    // y recibidos(en el controlador y en el modelo respectivamente )
+    // ¿es útil esta redundancia, o solo haría falta filtrar en el envío?
     constructor(chatData) {
         this.interlocutorId = chatData.id;
         this.interlocutorEmail = null;
         this.interlocutorPictureUrl = null;
-        this.messages = chatData.messages;
+        this.messages = [];
         this.lastMessage = chatData.lastMessage;
         this.observers = [];
 
         // Me suscribo a los cambios de la BBDD
-        this.suscribeToChanges();
+        this.suscribeToChat();
         this.suscribeToInterlocutorData();
+        this.suscribeToMessages();
     }
 
     set messages(newMessages) {
@@ -52,6 +56,37 @@ class Chat {
         return this._interlocutorPictureUrl;
     }
 
+    addMessage(addedMessage) {
+        if (this.filterMessage(addedMessage)) {
+            this.messages.push(addedMessage);
+
+            //Notifico a los observers de la adición de un mensaje
+            this.notifyAllAddedMessage(addedMessage);
+        }
+    }
+
+    modifyMessage(modifiedMessage) {
+
+        if (this.filterMessage(modifiedMessage)) {
+            let modifiedMessageIndex = this.messages.findIndex((message) => message.id === modifiedMessage.id);
+            this.messages[modifiedMessageIndex] = modifiedMessage;
+
+            //Notifico a los observers de la modificación de un mensaje
+            this.notifyAllModifiedMessage(modifiedMessage);
+        }
+
+    }
+
+    removeMessage(removedMessage) {
+        let removedMessageIndex = this.messages.findIndex((message) => message.id === removedMessage.id);
+        this.messages.splice(removedMessageIndex, 1);
+
+        //Notifico a los observers de la eliminación de un mensaje
+        this.notifyAllRemovedMessage(removedMessage);
+    }
+
+
+
     registerObserver(observer) {
         this.observers.push(observer);
     }
@@ -61,17 +96,54 @@ class Chat {
         this.observers.splice(auxIndexObserver, 1);
     }
 
-    notifyAll() {
+    //Haré notificaciones parciales según los cambios del modelo,
+    // el método notifyAll no será usado, el método update de la vista
+    // no existirá.
+    //
+    // notifyAll() {
+    //     for (let i = 0; i < this.observers.length; i++) {
+    //         this.observers[i].update(this.copy());
+    //     }
+    // }
+
+    notifyAllAddedMessage(addedMessage) {
         for (let i = 0; i < this.observers.length; i++) {
-            this.observers[i].update(this.copy());
+            this.observers[i].updateChatSpeechBubbles("added", addedMessage);
         }
     }
+
+    notifyAllModifiedMessage(modifiedMessage) {
+        for (let i = 0; i < this.observers.length; i++) {
+            this.observers[i].updateChatSpeechBubbles("modified", modifiedMessage);
+        }
+    }
+
+    notifyAllRemovedMessage(removedMessage) {
+        for (let i = 0; i < this.observers.length; i++) {
+            this.observers[i].updateChatSpeechBubbles("removed", removedMessage);
+        }
+    }
+
+    notifyAllModifiedLastMessage() {
+        for (let i = 0; i < this.observers.length; i++) {
+            this.observers[i].updateChatTag(this.copy());
+        }
+    }
+
+    notifyAllModifiedInterlocutorData() {
+        for (let i = 0; i < this.observers.length; i++) {
+            this.observers[i].updateChatTag(this.copy());
+        }
+    }
+
+
 
     copy() {
         return {
             interlocutorId: this.interlocutorId,
-            messages: this.messages,
-            lastMessage: this.lastMessage
+            lastMessage: this.lastMessage,
+            interlocutorEmail: this.interlocutorEmail,
+            interlocutorPictureUrl: this.interlocutorPictureUrl
         }
     }
 
@@ -86,28 +158,51 @@ class Chat {
         // 
         //COMPROBADO: según stackoverflow (https://stackoverflow.com/questions/53227376/firestore-listener-for-sub-collections),
         // las colecciones no reciben los cambios de las subcolecciones
-        db.collection(`usuarios/${user.uid}/conversaciones/${this.interlocutorId}`)
-            .onSnapshot((doc) => {
-                console.log("Datos del chat desde la suscripción  del constructor: ", doc.data());
+        db.collection(`users/${user.uid}/chats`).doc(`${this.interlocutorId}`)
+            .onSnapshot((chatDoc) => {
+                console.log("Datos del chat desde la suscripción  del constructor: ", chatDoc.data());
+                let auxChatData = chatDoc.data();
+                this.lastMessage = auxChatData.lastMessage;
+                this.notifyAllModifiedLastMessage();
             });
     }
 
     suscribeToInterlocutorData() {
-        db.collection(`usuarios/${user.uid}`).doc(`${user.uid}`)
-            .onSnapshot((doc) => {
-                let auxInterlocutorData = doc.data();
+        db.collection(`users/${user.uid}`).doc(`${user.uid}`)
+            .onSnapshot((InterlocutorDoc) => {
+                console.log("Datos del interlocutor desde la suscripción del constructor: ", InterlocutorDoc.data());
+                let auxInterlocutorData = InterlocutorDoc.data();
                 this.interlocutorEmail = auxInterlocutorData.email;
-                this.interlocutorPicture = auxInterlocutorData.picture;
-                console.log("Datos del interlocutor desde la suscripción del constructor: ", doc.data());
+                this.interlocutorPictureUrl = auxInterlocutorData.picture;
+                this.notifyAllModifiedInterlocutorData();
             });
-
     }
 
     suscribeToMessages() {
-        //TODO: suscribirse a la colección messages
-        // db.collection(`usuarios/${user.uid}`).doc(`${user.uid}`)
+        db.collection(`users/${user.uid}/chats/${this.interlocutorId}/messages`)
+            .onSnapshot((snapshot) => {
+                snapshot.docChanges().forEach((change) => {
+                    if (change.type === "added") {
+                        console.log("New message: ", change.doc.data());
+                        let addedMessage = change.doc.data();
+                        addedMessage.id = change.doc.id;
+                        this.addMessage(addedMessage);
+                    }
+                    if (change.type === "modified") {
+                        console.log("Modified message: ", change.doc.data());
+                        let modifiedMessage = change.doc.data();
+                        modifiedMessage.id = change.doc.id;
+                        this.modifyMessage(modifiedMessage);
+                    }
+                    if (change.type === "removed") {
+                        console.log("Removed message: ", change.doc.data());
+                        let removedMessage = change.doc.data();
+                        removedMessage.id = change.doc.id;
+                        this.removeMessage(removedMessage);
+                    }
+                })
+            });
     }
-
 }
 
 class ChatView {
@@ -128,7 +223,7 @@ class ChatView {
 
     populate(chat) {
         // Relleno los datos de los nodos del Chat Tag
-        this.chatInterlocutorPicture.src = chat.interlocutorPicture;
+        this.chatInterlocutorPicture.src = chat.interlocutorPictureUrl;
         this.chatInterlocutorEmail.innerText = chat.interlocutorEmail;
         this.chatLastMessage.innerText = chat.lastMessage;
 
@@ -141,6 +236,7 @@ class ChatView {
         //
         // TODO: revisar si se obtienen subcolecciones y sus cambios en 
         // la suscripción a una colección
+        //
         // chat.messages.forEach(
         //     (message) => {
         //         let speechBubble = this.chatSpeechBubble.cloneNode();
@@ -176,8 +272,8 @@ class ChatView {
         ChatView.chatDetailsCard.querySelector('#inputDesktop').innerHTML = '';
     }
 
-    update(chat) {
-        this.chatInterlocutorPicture.src = chat.interlocutorPicture;
+    updateChatTag(chat) {
+        this.chatInterlocutorPicture.src = chat.interlocutorPictureUrl;
         this.chatInterlocutorEmail.innerText = chat.interlocutorEmail;
         this.chatLastMessage.innerText = chat.lastMessage;
 
@@ -204,16 +300,24 @@ class ChatView {
         // }
     }
 
-    updateChatSpeechBubbles(newMessage) {
-        // Por cada nuevo mensaje hay que añadir un nuevo chatSpeechBubble
-        let newSpeechBubble = this.chatSpeechBubble.cloneNode();
-        newSpeechBubble.innerText = newMessage.content;
-        this.chatSpeechBubbles.push(newSpeechBubble);
+    updateChatSpeechBubbles(change, newMessage) {
 
-        //Si este chat se está mostrando también añado
-        // el speechBubble a la lista de mensajes
-        if (ChatView.chatShowingMessages === this) {
-            ChatView.chatDetailsCard.querySelector('#messages-list-md').append(newSpeechBubble);
+        if (change === "added") {
+            // Por cada nuevo mensaje hay que añadir un nuevo chatSpeechBubble
+            let newSpeechBubble = this.chatSpeechBubble.cloneNode();
+            newSpeechBubble.innerText = newMessage.content;
+            this.chatSpeechBubbles.push(newSpeechBubble);
+
+            //Si este chat se está mostrando también añado
+            // el speechBubble a la lista de mensajes
+            if (ChatView.chatShowingMessages === this) {
+                ChatView.chatDetailsCard.querySelector('#messages-list-md').append(newSpeechBubble);
+            }
+
+        } else if (change === "modified") {
+
+        } else if (change === "removed") {
+
         }
 
     }
