@@ -18,7 +18,7 @@ class Chat {
         this.lastMessage = chatData.lastMessage;
         this.observers = [];
 
-        // Me suscribo a los cambios de la BBDD
+        // El modelo estará suscrito a los cambios de la BBDD
         this.suscribeToChat();
         this.suscribeToInterlocutorData();
         this.suscribeToMessages();
@@ -148,9 +148,13 @@ class Chat {
     }
 
     filterMessage(message) {
-        return true;
+        let filteredMessage = escapeHTML(message).trim()
+        return filteredMessage;
     }
 
+    //TODO: Solucionar la doble suscripción al documento chat,
+    // por un lado aquí con la suscripción a la colección
+    // y en el modelo con la suscripción al documento
     suscribeToChat() {
         // Me suscribo al documento chat
         // Tal vez tenga que suscribirme a la subcolección messages
@@ -207,126 +211,350 @@ class Chat {
 
 class ChatView {
     constructor() {
-        this.chatTag = document.createElement('li');
-        this.chatLastMessage = document.createElement('p');
-        this.chatInterlocutorEmail = document.createElement('p');
-        this.chatInterlocutorPicture = document.createElement('img');
+        this.chatTag = null;
         this.chatSpeechBubbles = [];
-        this.chatSpeechBubble = document.createElement('li');
-
     }
 
     static init() {
         ChatView.chatsContainer = $('#desktop-chat-list');
-        ChatView.chatDetailsCard = $('#chatCard');
+
+        ChatView.chatCard = $('#chatCard');
+        ChatView.chatCardInterlocutorPicture = $('#chat-interlocutor-md img')[0];
+        ChatView.chatCardInterlocutorEmail = $('#chat-interlocutor-md p')[0];
+        ChatView.chatCardMessagesList = $('#messages-list-md');
+        ChatView.chatCardInputDesktop = $('#inputDesktop');
+        ChatView.chatCardSendButtonDesktop = $('#sendButtonDesktop');
+        //Prototipo de los chat tags
+        ChatView.chatTagPrototype = document.createElement('li');
+        ChatView.chatTagPrototype.classList.add('chatTag');
+        ChatView.chatTagLastMessage = document.createElement('p');
+        ChatView.chatTagLastMessage.classList.add('chatTagLastMessage');
+        ChatView.chatTagInterlocutorEmail = document.createElement('p');
+        ChatView.chatTagInterlocutorEmail.classList('chatTagInterlocutorEmail');
+        ChatView.chatTagInterlocutorPicture = document.createElement('img');
+        ChatView.chatTagInterlocutorPicture.classList('chatTagInterlocutorPicture');
+
+        ChatView.chatTagPrototype.append(ChatView.chatTagInterlocutorPicture);
+        ChatView.chatTagPrototype.append(ChatView.chatTagInterlocutorEmail);
+        ChatView.chatTagPrototype.append(ChatView.chatTagLastMessage);
+
+        //Prototipo de los bocadillos de mensajes
+        ChatView.speechBubblePrototype = document.createElement('li');
+        ChatView.speechBubblePrototype.classList.add('speechBubble');
+        ChatView.speechBubbleState = document.createElement('p');
+        ChatView.speechBubbleState.classList.add('speechBubbleMessageState');
+        ChatView.speechBubbleDate = document.createElement('p');
+        ChatView.speechBubbleDate.classList.add('speechBubbleMessageDate');
+        ChatView.speechBubbleMessageContent = document.createElement('p');
+        ChatView.speechBubbleMessageContent.classList.add('speechBubbleMessageContent');
+
+        ChatView.speechBubblePrototype.append(ChatView.speechBubbleMessageContent);
+        ChatView.speechBubblePrototype.append(ChatView.speechBubbleDate);
+        ChatView.speechBubblePrototype.append(ChatView.speechBubbleState);
+
     }
 
-    populate(chat) {
-        // Relleno los datos de los nodos del Chat Tag
-        this.chatInterlocutorPicture.src = chat.interlocutorPictureUrl;
-        this.chatInterlocutorEmail.innerText = chat.interlocutorEmail;
-        this.chatLastMessage.innerText = chat.lastMessage;
+    populateChatTag(chat) {
+        // Relleno los datos de los nodos del chat tag
+        // hago que la clonación incluya los nodos hijos con el parámetro true
+        this.chatTag = ChatView.chatTagPrototype.cloneNode(true);
+        this.chatTag.querySelector('.chatTagInterlocutorPicture').src = chat.interlocutorPictureUrl;
+        this.chatTag.querySelector('.chatTagInterlocutorEmail').innerText = chat.interlocutorEmail;
+        this.chatTag.querySelector('.chatTagLastMessage').innerText = chat.lastMessage;
 
-        // Este paso se podría hacer en showMessages,
-        // ya que aquí no hace falta crear los speechBubbles,
-        // es posible que el usuario no llegue a abrir el chat
+        ChatView.chatsContainer.append(this.chatTag);
 
-        // Por si no se reciben estos datos en la suscripción del chat
-        // voy a añadir los mensajes en updateChatSpeechBubbles
+
+        // Por si no se reciben los mensajes en la suscripción del chat,
+        // voy a añadir los mensajes en el evento disparado cada vez que
+        // se añade un mensaje nuevo o al iniciar la suscripcion a la
+        // colección messages: updateChatSpeechBubbles
         //
         // TODO: revisar si se obtienen subcolecciones y sus cambios en 
         // la suscripción a una colección
-        //
-        // chat.messages.forEach(
-        //     (message) => {
-        //         let speechBubble = this.chatSpeechBubble.cloneNode();
-        //         speechBubble.innerText = message.content;
-        //         this.chatSpeechBubbles.push(speechBubble);
-        //     }
-        // );
-
-        this.chatTag.append(this.chatInterlocutorPicture);
-        this.chatTag.append(this.chatInterlocutorEmail);
-        this.chatTag.append(this.chatLastMessage);
-        ChatView.chatsContainer.append(this.chatTag);
-    }
-
-    showMessages() {
-        ChatView.chatShowingMessages = this;
-
-        ChatView.chatDetailsCard.querySelector('#chat-interlocutor-md').innerHTML = '';
-        ChatView.chatDetailsCard.querySelector('#messages-list-md').innerHTML = '';
-        ChatView.chatDetailsCard.querySelector('#inputDesktop').innerHTML = '';
-        ChatView.chatDetailsCard.querySelector('#chat-interlocutor-md').append(this.chatInterlocutorPicture);
-        ChatView.chatDetailsCard.querySelector('#chat-interlocutor-md').append(this.chatInterlocutorEmail);
-        for (let i = 0; i < this.chatSpeechBubbles.length; i++) {
-            let speechBubble = this.chatSpeechBubbles[i];
-            ChatView.chatDetailsCard.querySelector('#messages-list-md').append(speechBubble);
-        }
-    }
-
-    hideMessages() {
-        ChatView.chatShowingMessages = null;
-        ChatView.chatDetailsCard.querySelector('#chat-interlocutor-md').innerHTML = '';
-        ChatView.chatDetailsCard.querySelector('#messages-list-md').innerHTML = '';
-        ChatView.chatDetailsCard.querySelector('#inputDesktop').innerHTML = '';
+        // DONE: comprobado los cambios de las subcolecciones no se muestran
+        // en las suscripciones a las colecciones padres
+        // 
+        // Los mensajes del chat se añaden en updateChatSpeechBubbles
     }
 
     updateChatTag(chat) {
-        this.chatInterlocutorPicture.src = chat.interlocutorPictureUrl;
-        this.chatInterlocutorEmail.innerText = chat.interlocutorEmail;
-        this.chatLastMessage.innerText = chat.lastMessage;
-
-
-        // No modificamos los chatSpeechBubbles,
-        // los iremos actualizando individualmente según haya un nuevo mensaje,
-        // ya que si setteamos todos los mensajes en cada actualización
-        // resultaría en una UX muy pobre.
-
-        // El resultado sería glicheos de aparición y desaparición de los mensajes
-        //
-        // this.chatSpeechBubbles = [];
-        // chat.messages.forEach(
-        //     (message) => {
-        //         let speechBubble = this.chatSpeechBubble.cloneNode();
-        //         speechBubble.innerText = message.content;
-        //         this.chatSpeechBubbles.push(speechBubble);
-        //     }
-        // );
-        //
-        // for (let i = 0; i < this.chatSpeechBubbles.length; i++) {
-        //     let speechBubble = this.chatSpeechBubbles[i];
-        //     ChatView.chatDetailsCard.querySelector('#messages-list-md').append(speechBubble);
-        // }
+        this.chatTag.querySelector('.chatTagInterlocutorPicture').src = chat.interlocutorPictureUrl;
+        this.chatTag.querySelector('.chatTagInterlocutorEmail').innerText = chat.interlocutorEmail;
+        this.chatTag.querySelector('.chatTagLastMessage').innerText = chat.lastMessage;
     }
 
-    updateChatSpeechBubbles(change, newMessage) {
+    populateChatCard(chat) {
+        ChatView.chatShowingMessages = this;
 
-        if (change === "added") {
-            // Por cada nuevo mensaje hay que añadir un nuevo chatSpeechBubble
-            let newSpeechBubble = this.chatSpeechBubble.cloneNode();
-            newSpeechBubble.innerText = newMessage.content;
+        ChatView.chatCardMessagesList.innerHTML = '';
+        ChatView.chatCardInputDesktop.innerHTML = '';
+        ChatView.chatCardInterlocutorPicture.src = chat.interlocutorPictureUrl;
+        ChatView.chatCardInterlocutorEmail.innerText = chat.interlocutorEmail;
+
+        for (let i = 0; i < this.chatSpeechBubbles.length; i++) {
+            let speechBubble = this.chatSpeechBubbles[i];
+            ChatView.chatCardMessagesList.append(speechBubble);
+        }
+    }
+
+    updateChatSpeechBubbles(changeType, newMessage) {
+
+        if (changeType === "added") {
+            // Por cada nuevo mensaje añado un nuevo chatSpeechBubble
+            // hago que la clonación incluya los nodos hijos con el parámetro true
+            let newSpeechBubble = ChatView.speechBubblePrototype.cloneNode(true);
+            newSpeechBubble.querySelector('.speechBubbleMessageContent') = newMessage.content;
+            newSpeechBubble.querySelector('.speechBubbleMessageDate') = newMessage.date;
+            newSpeechBubble.querySelector('.speechBubbleMessageState') = newMessage.state;
             this.chatSpeechBubbles.push(newSpeechBubble);
 
             //Si este chat se está mostrando también añado
             // el speechBubble a la lista de mensajes
             if (ChatView.chatShowingMessages === this) {
-                ChatView.chatDetailsCard.querySelector('#messages-list-md').append(newSpeechBubble);
+                ChatView.chatCardMessagesList.append(newSpeechBubble);
             }
 
-        } else if (change === "modified") {
-
-        } else if (change === "removed") {
-
+        } else if (changeType === "modified") {
+            //TODO: Pensar si los mensajes se van a poder modificar
+        } else if (changeType === "removed") {
+            //TODO: Pensar si los mensajes se van a poder eliminar
         }
 
     }
 
+    hideMessages() {
+        ChatView.chatShowingMessages = null;
+        ChatView.chatCardInterlocutorPicture.src = '';
+        ChatView.chatCardInterlocutorEmail.innerText = '';
+        ChatView.chatCardMessagesList.innerHTML = '';
+        ChatView.chatCardInputDesktop.innerHTML = '';
+    }
 }
 
 ChatView.chatShowingMessages = null;
 ChatView.chatsContainer = null;
-ChatView.chatDetailsCard = null;
+ChatView.chatCard = null;
+
+class ChatController {
+    constructor(chat, chatView) {
+        this.chat = chat;
+        this.chatView = chatView;
+        chat.registerObserver(chatView);
+        chatView.populateChatTag(chat);
+
+        // Utilizo bind para establecer el contexto de ejecución en el ChatController
+        // en lugar de en el elemento al que se le añade el evento
+        this.chatView.chatTag.addEventListener('click', this.showMessages.bind(this));
+        ChatView.chatCardInputDesktop.addEventListener('change', this.enableButton.bind(this));
+        ChatView.chatCardSendButtonDesktop.addEventListener('click', this.sendMessage.bind(this));
+    }
+
+    static init() {
+        //TODO: Solucionar la doble suscripción al documento chat,
+        // por un lado aquí con la suscripción a la colección
+        // y en el modelo con la suscripción al documento
+        db.collection(`users/user.uid/chats`).onSnapshot((snapshot) => {
+            snapshot.docChanges().forEach((change) => {
+                if (change.type === "added") {
+                    console.log("New chat: ", change.doc.data());
+                    let chat = new Chat();
+                    let chatView = new ChatView();
+                    let chatController = new ChatController(chat, chatView);
+                }
+                if (change.type === "modified") {
+                    console.log("Modified chat: ", change.doc.data());
+                }
+                if (change.type === "removed") {
+                    console.log("Removed city: ", change.doc.data());
+                }
+            });
+        });
+    }
+
+    showMessages() {
+        //La idea final es esta:
+        //animarSalida();
+        //this.chatView.populateChatCard();
+        //animarEntrada();
+        this.chatView.populateChatCard(this.chat);
+    }
+
+    async sendMessage(messageContent) {
+        let messageFiltered = this.chat.filterMessage(messageContent);
+        if (messageFiltered) {
+            let newMessage = {
+                'author': user.uid,
+                'content': messageFiltered,
+                'state': 'enviado',
+                'date': Date.now()
+            }
+
+            ChatView.chatCardInputDesktop.value = '';
+            ChatView.chatCardSendButtonDesktop.enabled = false;
+
+            let chatExistsInSender = await checkChatInSender();
+            let chatExistsInReceiver = await checkChatInReceiver();
+
+            if (chatExistsInSender && chatExistsInReceiver) {
+                // El chat existe en emisor y receptor
+                setMessageSender(newMessage);
+                setMessageReceiver(newMessage);
+            } else if (chatExistsInReceiver) {
+                // El chat existe en receptor
+                setMessageReceiver(newMessage);
+                createChatSender(newMessage);
+            } else if (chatExistsInSender) {
+                // El chat existe en emisor
+                createChatReceiver(newMessage);
+                setMessageSender(newMessage);
+            } else {
+                // El chat NO existe en ninguno de los 2
+                createChatReceiver(newMessage);
+                createChatSender(newMessage);
+            }
+        }
+
+
+        function checkChatInSender() {
+            let chatRef = `users/${user.uid}/chats/${chat.interlocutorID}`;
+
+            //TODO: ¿doble return? Revisar si hay que devolver la promesa o co
+            // o con el último return sería suficiente
+            return db.doc(chatRef).get()
+                .then(
+                    (chat) => {
+                        return chat.exists;
+                    }
+                )
+                .catch(
+                    (error) => {
+                        console.log(error);
+                        return false;
+                    }
+                );
+
+
+        }
+
+        function checkChatInReceiver() {
+            let chatRef = `users/${this.chat.interlocutorId}/chats/${user.uid}`;
+
+            //TODO: ¿doble return? Revisar si hay que devolver la promesa o co
+            // o con el último return sería suficiente
+            return db.doc(chatRef).get()
+                .then(
+                    (chat) => {
+                        return chat.exists;
+                    }
+                )
+                .catch(
+                    (error) => {
+                        console.log(error);
+                        return false;
+                    }
+                );
+        }
+
+        function createChatReceiver(message) {
+            let newChatRef = `users/${this.chat.interlocutorId}/chats/${user.uid}`;
+            db.doc(newChatRef).set({ 'dummy': 'dummy' })
+                .then(
+                    (data) => {
+                        console.log('Chat creado en receptor', this.chat.interlocutorId);
+                    }
+                )
+                .catch(
+                    (error) => {
+                        console.log(error);
+                    }
+                );
+
+            setMessageReceiver(message);
+        };
+
+        function createChatSender(message) {
+            let newChatRef = `users/${user.uid}/chats/${this.chat.interlocutorId}`;
+
+            db.doc(newChatRef).set({ 'dummy': 'dummy' })
+                .then(
+                    (data) => {
+                        console.log('Chat creado en emisor:', user.uid);
+                    }
+                )
+                .catch(
+                    (error) => {
+                        console.log(error);
+                    }
+                );
+
+
+            setMessageSender(message);
+        };
+
+        function setMessageReceiver(message) {
+
+            let messagesRef = `users/${this.chat.interlocutorId}/chats/${user.uid}/messages`;
+
+            db.collection(messagesRef).add(message)
+                .then(
+                    (data) => {}
+                )
+                .catch(
+                    (error) => {
+                        console.log(error);
+                    }
+                );
+
+        };
+
+        function setMessageSender(message) {
+            let messagesRef = `users/${user.uid}/chats/${this.chat.interlocutorId}/messages`;
+
+            db.collection(messagesRef).add(message)
+                .then(
+                    (data) => {
+                        //(se puede borrar)
+                        //El botón de enviar lo restablezco antes mejor
+                        //$(sendButtonDesktop).attr('disabled');
+                    }
+                )
+                .catch(
+                    (error) => {
+                        console.log(error);
+                    }
+                );
+        };
+
+
+    }
+
+    sendMessageFromDesktop() {
+        let messageContent = ChatView.chatCardInputDesktop.value;
+        sendMessage(messageContent);
+    }
+
+    sendMessageFromMobile() {
+        //Capturar el contenido del input del modal
+        // y lanzar sendMessage con el contenido del input del modal
+        // Ejemplo:
+        // let messageContent = ChatView.chatCardInputDesktop.value;
+        // sendMessage(messageContent);
+    }
+
+    enableSendButton() {
+        if (ChatView.chatCardInputDesktop.value != "") {
+            ChatView.chatCardSendButtonDesktop.enable = true;
+        } else {
+            ChatView.chatCardSendButtonDesktop.enable = false;
+        }
+    }
+
+    disableSendButton() {
+        ChatView.sendButtonDesktop.enable = false;
+        //TODO: Añadir la deshabilitación del botón del modal
+    }
+}
 
 $(document).ready(function() {
 
@@ -341,8 +569,11 @@ $(document).ready(function() {
             let userData = await getUserData(user.uid);
             displayUserData(userData.data());
 
-            let openedChats = await getOpenedChats(user.uid);
-            displayOpenedChats(openedChats);
+            ChatView.init();
+            ChatController.init();
+
+            // let openedChats = await getOpenedChats(user.uid);
+            // displayOpenedChats(openedChats);
 
 
 
@@ -506,13 +737,13 @@ $(document).ready(function() {
 
         // // AÑADIR EVENT LISTENERS A LOS CHATS
         let chatsElementsMobile = $('.chat-item');
-        chatsElementsMobile.click(displayChatMobile);
+        // chatsElementsMobile.click(displayChatMobile);
 
         let chatsElementsDesktop = $('.chat-item-md');
         $('.chat-item-md').fadeIn(400, function() {
             // Animation complete
         });
-        chatsElementsDesktop.click(displayChatDesktop);
+        // chatsElementsDesktop.click(displayChatDesktop);
 
         // Añadir evento al delete Button
         $('.deleteChatButton').click(deleteChat);
@@ -538,7 +769,7 @@ $(document).ready(function() {
 
 
 
-            newChat.click(displayChatDesktop).click();
+            // newChat.click(displayChatDesktop).click();
 
         } else {
 
@@ -575,8 +806,8 @@ $(document).ready(function() {
     }
 
     var sendButtonDesktop = '#sendButtonDesktop';
-    $(sendButtonDesktop).click(sendMessage);
-    $('#inputDesktop').on('input', enableButton);
+    // $(sendButtonDesktop).click(sendMessage);
+    // $('#inputDesktop').on('input', enableButton);
     $('#inputDesktop').on('keyup', (event) => {
         if (event.code === "Enter" && !$(sendButtonDesktop)[0].disabled) {
             $(sendButtonDesktop).click();
