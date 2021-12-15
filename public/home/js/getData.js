@@ -10,7 +10,7 @@ class Chat {
     constructor(chatData) {
         this.interlocutorId = chatData.id;
         this.interlocutorEmail = null;
-        this.interlocutorPicture = null;
+        this.interlocutorPictureUrl = null;
         this.messages = chatData.messages;
         this.lastMessage = chatData.lastMessage;
         this.observers = [];
@@ -44,6 +44,14 @@ class Chat {
         return this._interlocutorEmail;
     }
 
+    set interlocutorPictureUrl(newInterlocutorPictureUrl) {
+        this._interlocutorPictureUrl = newInterlocutorPictureUrl;
+    }
+
+    get interlocutorPictureUrl() {
+        return this._interlocutorPictureUrl;
+    }
+
     registerObserver(observer) {
         this.observers.push(observer);
     }
@@ -71,10 +79,13 @@ class Chat {
         return true;
     }
 
-    suscribeToChanges() {
+    suscribeToChat() {
         // Me suscribo al documento chat
         // Tal vez tenga que suscribirme a la subcolección messages
-        // si esta suscripción no recibe los cambio de las subcolecciones
+        // dependiendo de si esta suscripción no recibe los cambio de las subcolecciones
+        // 
+        //COMPROBADO: según stackoverflow (https://stackoverflow.com/questions/53227376/firestore-listener-for-sub-collections),
+        // las colecciones no reciben los cambios de las subcolecciones
         db.collection(`usuarios/${user.uid}/conversaciones/${this.interlocutorId}`)
             .onSnapshot((doc) => {
                 console.log("Datos del chat desde la suscripción  del constructor: ", doc.data());
@@ -90,6 +101,11 @@ class Chat {
                 console.log("Datos del interlocutor desde la suscripción del constructor: ", doc.data());
             });
 
+    }
+
+    suscribeToMessages() {
+        //TODO: suscribirse a la colección messages
+        // db.collection(`usuarios/${user.uid}`).doc(`${user.uid}`)
     }
 
 }
@@ -119,13 +135,19 @@ class ChatView {
         // Este paso se podría hacer en showMessages,
         // ya que aquí no hace falta crear los speechBubbles,
         // es posible que el usuario no llegue a abrir el chat
-        chat.messages.forEach(
-            (message) => {
-                let speechBubble = this.chatSpeechBubble.cloneNode();
-                speechBubble.innerText = message.content;
-                this.chatSpeechBubbles.push(speechBubble);
-            }
-        );
+
+        // Por si no se reciben estos datos en la suscripción del chat
+        // voy a añadir los mensajes en updateChatSpeechBubbles
+        //
+        // TODO: revisar si se obtienen subcolecciones y sus cambios en 
+        // la suscripción a una colección
+        // chat.messages.forEach(
+        //     (message) => {
+        //         let speechBubble = this.chatSpeechBubble.cloneNode();
+        //         speechBubble.innerText = message.content;
+        //         this.chatSpeechBubbles.push(speechBubble);
+        //     }
+        // );
 
         this.chatTag.append(this.chatInterlocutorPicture);
         this.chatTag.append(this.chatInterlocutorEmail);
@@ -149,6 +171,9 @@ class ChatView {
 
     hideMessages() {
         ChatView.chatShowingMessages = null;
+        ChatView.chatDetailsCard.querySelector('#chat-interlocutor-md').innerHTML = '';
+        ChatView.chatDetailsCard.querySelector('#messages-list-md').innerHTML = '';
+        ChatView.chatDetailsCard.querySelector('#inputDesktop').innerHTML = '';
     }
 
     update(chat) {
@@ -156,24 +181,42 @@ class ChatView {
         this.chatInterlocutorEmail.innerText = chat.interlocutorEmail;
         this.chatLastMessage.innerText = chat.lastMessage;
 
-        // Hay que añadir todos los mensajes otra vez,
-        // Esto supone una mala experiencia de usuario
-        // Es necesario revisarlo
-        this.chatSpeechBubbles = [];
-        chat.messages.forEach(
-            (message) => {
-                let speechBubble = this.chatSpeechBubble.cloneNode();
-                speechBubble.innerText = message.content;
-                this.chatSpeechBubbles.push(speechBubble);
-            }
-        );
 
-        for (let i = 0; i < this.chatSpeechBubbles.length; i++) {
-            let speechBubble = this.chatSpeechBubbles[i];
-            ChatView.chatDetailsCard.querySelector('#messages-list-md').append(speechBubble);
-        }
+        // No modificamos los chatSpeechBubbles,
+        // los iremos actualizando individualmente según haya un nuevo mensaje,
+        // ya que si setteamos todos los mensajes en cada actualización
+        // resultaría en una UX muy pobre.
+
+        // El resultado sería glicheos de aparición y desaparición de los mensajes
+        //
+        // this.chatSpeechBubbles = [];
+        // chat.messages.forEach(
+        //     (message) => {
+        //         let speechBubble = this.chatSpeechBubble.cloneNode();
+        //         speechBubble.innerText = message.content;
+        //         this.chatSpeechBubbles.push(speechBubble);
+        //     }
+        // );
+        //
+        // for (let i = 0; i < this.chatSpeechBubbles.length; i++) {
+        //     let speechBubble = this.chatSpeechBubbles[i];
+        //     ChatView.chatDetailsCard.querySelector('#messages-list-md').append(speechBubble);
+        // }
     }
 
+    updateChatSpeechBubbles(newMessage) {
+        // Por cada nuevo mensaje hay que añadir un nuevo chatSpeechBubble
+        let newSpeechBubble = this.chatSpeechBubble.cloneNode();
+        newSpeechBubble.innerText = newMessage.content;
+        this.chatSpeechBubbles.push(newSpeechBubble);
+
+        //Si este chat se está mostrando también añado
+        // el speechBubble a la lista de mensajes
+        if (ChatView.chatShowingMessages === this) {
+            ChatView.chatDetailsCard.querySelector('#messages-list-md').append(newSpeechBubble);
+        }
+
+    }
 
 }
 
