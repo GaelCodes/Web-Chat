@@ -4,14 +4,17 @@
     box-sizing: border-box;
 }
 
+img {
+    max-width: 100px;
+}
+
 body {
     /* background-color: #202b30; */
     background-color: #252030 !important;
 }
 
-body main {
-    height: 85%;
-}
+
+/* INICIO HEADER */
 
 body header {
     background-color: #0000006c;
@@ -31,45 +34,8 @@ header #logoutButton {
     color: rgba(255, 255, 255, 0.733) !important;
 }
 
-#main-row {
-    height: 100%;
-    overflow-x: hidden;
-}
 
-#chatCard {
-    max-height: 85vh;
-    height: 85vh;
-    background-color: transparent;
-    border-radius: 0px;
-}
-
-#chatCard .card-header {
-    max-height: 20%;
-}
-
-#chatCard .card-body {
-    max-height: 80%;
-    overflow-y: auto;
-    overflow-x: hidden;
-    background-color: #a5a5a517;
-}
-
-#chatCard .card-footer #inputDesktop {
-    background-color: rgba(0, 0, 0, 0.288);
-    color: rgba(245, 245, 245, 0.623);
-}
-
-#chatCard .card-footer {
-    max-height: 20%;
-}
-
-#chat-interlocutor-md img {
-    margin-right: 2%;
-    width: 3% !important;
-}
-
-
-/* LISTA USUARIOS ENCONTRADOS */
+/* inicio lista usuarios encontrados */
 
 #foundUsersList {
     background-color: #252030 !important;
@@ -96,14 +62,58 @@ header #logoutButton {
 }
 
 
-/* LISTA CHATS */
+/* fin lista usuarios encontrados */
 
-.chatsContainer .selected {
+
+/* FIN HEADER */
+
+
+/* INICIO MAIN */
+
+body main {
+    height: 85%;
+}
+
+#main-row {
+    height: 100%;
+    overflow-x: hidden;
+}
+
+
+/* inicio lista chats */
+
+.chatTag {
+    border-bottom: 1px solid rgba(128, 128, 128, 0.171);
+    display: grid;
+    grid-template-areas: "picture email email" "picture lastMessage lastMessage";
+    height: 10%vh;
+    padding: 1em;
+    width: 100%;
+}
+
+.chatTag.selected {
     background-color: #ffffff07;
 }
 
-.chat-item-md {
-    border-bottom: 1px solid rgba(128, 128, 128, 0.171);
+.chatTag:hover {
+    background-color: #ffffff07;
+    cursor: pointer;
+}
+
+.chatTagInterlocutorPicture {
+    grid-area: picture;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+}
+
+.chatTagInterlocutorEmail {
+    grid-area: email;
+}
+
+.chatTagLastMessage {
+    grid-area: lastMessage;
+    color: gray;
 }
 
 .chatsContainer {
@@ -111,7 +121,30 @@ header #logoutButton {
     padding: 0px;
 }
 
-.chatsContainer h1,
+.chatsContainer h1 {
+    color: rgba(219, 219, 219, 0.808);
+    margin: 0px;
+    padding: 0.5em 0px;
+    background-color: #00000036;
+}
+
+
+/* fin lista chats */
+
+
+/* inicio chat card */
+
+#chatCard {
+    max-height: 85vh;
+    height: 85vh;
+    background-color: transparent;
+    border-radius: 0px;
+}
+
+#chatCard .card-header {
+    max-height: 20%;
+}
+
 #chat-interlocutor-md {
     color: rgba(219, 219, 219, 0.808);
     margin: 0px;
@@ -123,8 +156,26 @@ header #logoutButton {
     margin: 0;
 }
 
+#chatCard .card-body {
+    max-height: 80%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background-color: #a5a5a517;
+}
 
-/* INICIO CHAT CARD */
+#chatCard .card-footer #inputDesktop {
+    background-color: rgba(0, 0, 0, 0.288);
+    color: rgba(245, 245, 245, 0.623);
+}
+
+#chatCard .card-footer {
+    max-height: 20%;
+}
+
+#chat-interlocutor-md img {
+    margin-right: 2%;
+    width: 3% !important;
+}
 
 #chatCard {
     padding-right: 1em !important;
@@ -178,7 +229,7 @@ header #logoutButton {
 }
 
 
-/* MENSAJES */
+/* inicio bocadillos de mensajes */
 
 .message {
     position: relative;
@@ -190,14 +241,6 @@ header #logoutButton {
     line-height: 1.75;
     padding: 15px 25px;
     /* margin-bottom: 75px; */
-}
-
-
-/* Borde mensajes enviados */
-
-.message.align-self-start {
-    /* border-left: 5px solid #010046fb; */
-    background-color: #26272b;
 }
 
 
@@ -260,7 +303,13 @@ header #logoutButton {
 }
 
 
-/* FIN CHAT CARD */
+/* fin bocadillos de mensajes */
+
+
+/* fin chat card */
+
+
+/* FIN MAIN */
 
 
 /* INICIO FOOTER */

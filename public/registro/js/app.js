@@ -2,7 +2,7 @@
 
 {
     var db = firebase.firestore();
-    var usersCollection = db.collection("usuarios");
+    var usersCollection = db.collection("users");
 
     // var userDocExist = false; QUITAR SI TODO FUNCIONA
 
@@ -53,12 +53,11 @@
                     // El usuario ha sido creado
                     var userData = userCredentials.user;
 
-                    var newUserDoc = usersCollection.doc(`${userData.uid}`);
-
-                    newUserDoc.set({
+                    usersCollection.doc(`${userData.uid}`)
+                        .set({
                             nombre: "Hola mundo",
                             email: userData.email,
-                            picture: "https://firebasestorage.googleapis.com/v0/b/web-chat-de48b.appspot.com/o/default-avatar-usuario.png?alt=media&token=1942c2c5-33d2-4a0c-a70d-fd6e24c5cfdb",
+                            picture: "https://firebasestorage.googleapis.com/v0/b/web-chat-de48b.appspot.com/o/default-avatar-usuario.png?alt=media&token=1942c2c5-33d2-4a0c-a70d-fd6e24c5cfdb"
                         })
                         .then((data) => {
                             // El documento del usuario ha sido creado redirigiendo al HOME

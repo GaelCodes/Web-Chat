@@ -2,16 +2,21 @@
 firebase.auth().onAuthStateChanged((user) => {
     if (user) {
 
-        usersCollection.doc(user.uid).get().then(
-            (doc) => {
+        usersCollection.doc(user.uid).get()
+            .then(
+                (doc) => {
 
-                // If logged and document has been created will be redirected
-                if (doc.exists) {
-                    location = './home/home.html';
+                    // If logged and document has been created will be redirected
+                    if (doc.exists) {
+                        location = './home/home.html';
+                    }
                 }
-            }
 
-        )
+            ).catch(
+                (error) => {
+                    console.log('Error en el cambio de estado de la autentificación: ', error);
+                }
+            )
 
 
     } else {
@@ -40,7 +45,7 @@ function loginUser(event) {
 //Elementos de librerías
 
 var db = firebase.firestore();
-var usersCollection = db.collection("usuarios");
+var usersCollection = db.collection("users");
 
 
 //Elementos del DOM
