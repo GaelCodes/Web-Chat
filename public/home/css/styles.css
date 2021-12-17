@@ -21,7 +21,7 @@ body header {
 }
 
 
-/* Search */
+/* inicio searcher */
 
 header input {
     border: none !important;
@@ -29,10 +29,19 @@ header input {
     color: rgba(255, 255, 255, 0.733) !important;
 }
 
+
+/* fin searcher */
+
+
+/* inicio logged user data */
+
 header #logoutButton {
     background-color: rgba(112, 112, 112, 0.603) !important;
     color: rgba(255, 255, 255, 0.733) !important;
 }
+
+
+/* fin logged user data */
 
 
 /* inicio lista usuarios encontrados */
@@ -240,77 +249,112 @@ body main {
 }
 
 
+/* fin chat card */
+
+
 /* inicio bocadillos de mensajes */
 
-.message {
+.speechBubble {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-around;
+    align-items: flex-end;
     position: relative;
-    padding: 0.5em 2em;
     max-width: 70%;
     white-space: normal;
     color: #9fa2a7;
     font-size: .8em;
     line-height: 1.75;
-    padding: 15px 25px;
-    /* margin-bottom: 75px; */
+    background: rgba(31, 59, 110, 0.774);
+    padding: 1em;
+    border-radius: 0.5em;
+    margin-top: 10px;
+    word-break: break-all;
 }
 
 
-/* Triangulo mensajes enviados */
+/* mensajes enviados */
 
-.message.align-self-start::after {
+.speechBubble.sentMessage {
+    align-self: flex-start;
+}
+
+.speechBubble.sentMessage::after {
     content: '';
     padding-top: 0px;
     position: absolute;
-    bottom: 0px;
+    bottom: 4px;
     left: -10px;
     border-width: 10px 10px 0 0px;
     border-style: solid;
-    border-color: transparent #26272b;
+    border-color: transparent rgba(31, 59, 110, 0.774);
     display: block;
     width: 0;
 }
 
+.speechBubble.sentMessage .speechBubbleMessageState {
+    order: 1;
+    margin: 0px 5px;
+    color: gray;
+}
 
-/* Triangulo mensajes recibidos */
+.speechBubble.sentMessage .speechBubbleMessageDate {
+    order: 2;
+    margin: 0px 5px;
+    padding: 0px;
+    color: gray;
+    min-width: max-content;
+}
 
-.message.align-self-end::after {
+.speechBubble.sentMessage .speechBubbleMessageContent {
+    order: 3;
+    margin: 0px 5px;
+    padding: 0px;
+    font-size: 1.2em;
+    text-align: start;
+}
+
+
+/* mensajes recibidos */
+
+.speechBubble.receivedMessage {
+    background-color: rgba(47, 62, 87, 0.712);
+    align-self: flex-end;
+}
+
+.speechBubble.receivedMessage::after {
     content: '';
     padding-top: 0px;
     position: absolute;
-    bottom: 0px;
+    bottom: 4px;
     right: -10px;
     border-width: 0px 10px 10px 0px;
     border-style: solid;
-    border-color: #00344db7 transparent;
+    border-color: rgba(47, 62, 87, 0.712) transparent;
     display: block;
     width: 0;
 }
 
-.message.align-self-end {
-    background-color: #00344db7;
-    color: rgb(168, 168, 168);
+.speechBubble.receivedMessage .speechBubbleMessageContent {
+    order: 1;
+    margin: 0px 5px;
+    padding: 0px;
+    font-size: 1.2em;
+    text-align: start;
 }
 
-.message p {
-    margin: 0px;
+.speechBubble.receivedMessage .speechBubbleMessageDate {
+    order: 2;
+    margin: 0px 5px;
+    padding: 0px;
+    color: gray;
+    min-width: max-content;
 }
 
-.message p:first-child {
-    margin-bottom: 5px;
-}
-
-
-/* Datos de estado, mensajes enviados */
-
-.message p:nth-child(2) {
-    color: rgb(82, 82, 82);
-}
-
-
-/* Datos de estado, mensajes recibidos */
-
-.message.message.align-self-end p:nth-child(2) {
-    color: rgb(168, 168, 168);
+.speechBubble.receivedMessage .speechBubbleMessageState {
+    order: 3;
+    margin: 0px 5px;
+    color: gray;
 }
 
 

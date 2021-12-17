@@ -63,6 +63,7 @@ class Chat {
 
     addMessage(addedMessage) {
         if (this.filterMessage(addedMessage)) {
+            addedMessage = this.formatMessage(addedMessage);
             this.messages.push(addedMessage);
 
             //Notifico a los observers de la adición de un mensaje
@@ -153,8 +154,18 @@ class Chat {
     }
 
     filterMessage(message) {
-        let filteredMessage = escapeHTML(message).trim()
+        let filteredMessage = message;
+        filteredMessage.content = escapeHTML(message.content);
+        filteredMessage.content = filteredMessage.content.trim();
         return filteredMessage;
+    }
+
+    formatMessage(message) {
+        // formateo de fecha
+        message.date = new Date(message.date);
+        message.date = message.date.toLocaleTimeString('es-ES').replace(/:[0-9]{2}$/g, '');
+        let formatedMessage = message;
+        return formatedMessage;
     }
 
     //TODO: Solucionar la doble suscripción al documento chat,
@@ -190,7 +201,6 @@ class Chat {
             .onSnapshot((snapshot) => {
                 snapshot.docChanges().forEach((change) => {
                     if (change.type === "added") {
-                        console.log("New message: ", change.doc.data());
                         let addedMessage = change.doc.data();
                         addedMessage.id = change.doc.id;
                         this.addMessage(addedMessage);
@@ -223,8 +233,8 @@ class ChatController {
         // Utilizo bind para establecer el contexto de ejecución en el ChatController
         // en lugar de en el elemento al que se le añade el evento
         this.chatView.chatTag.addEventListener('click', this.showMessages.bind(this));
-        ChatView.chatCardInputDesktop.addEventListener('change', this.enableSendButton.bind(this));
-        ChatView.chatCardSendButtonDesktop.addEventListener('click', this.sendMessage.bind(this));
+        ChatView.chatCardSendButtonDesktop.addEventListener('click', this.sendMessageFromDesktop.bind(this));
+        ChatView.chatCardInputDesktop.addEventListener('keyup', this.sendMessageWithEnterKey.bind(this));
     }
 
     static init() {
@@ -255,6 +265,7 @@ class ChatController {
                     console.log('Ha ocurrido un error en la escucha de la colección chats: ', error);
                 }
             );
+        ChatView.chatCardInputDesktop.addEventListener('keyup', ChatController.enableOrDisableSendButton);
     }
 
     static findChat(interlocutorId) {
@@ -267,98 +278,46 @@ class ChatController {
     }
 
     showMessages() {
-        // Si ya se están mostrando los mensajes del chat no pasará nada
+        // Si ya se están mostrando los mensajes 
+        // del chat en cuestión no pasará nada
         if (ChatView.chatShowingMessages != this.chatView) {
+
+            // Sacaré la chatCard, cuando esté fuera se rellenará
+            // y finalmente volverá a entrar entonces
+            // se habilitará el input
             let promiseCardOut = this.chatView.animateChatCardOut();
             $.when(promiseCardOut)
                 .then(() => {
                     this.chatView.populateChatCard(this.chat.copy());
                     this.chatView.animateChatCardIn();
+                    ChatView.chatCardInputDesktop.disabled = false;
                 });
             ChatView.chatShowingMessages = this.chatView;
         }
-
     }
 
     async sendMessage(messageContent) {
-        let messageFiltered = this.chat.filterMessage(messageContent);
+        let newMessage = {
+            'author': user.uid,
+            'content': messageContent,
+            'state': 'enviado',
+            'date': Date.now()
+        }
+
+        let messageFiltered = this.chat.filterMessage(newMessage);
         if (messageFiltered) {
-            let newMessage = {
-                'author': user.uid,
-                'content': messageFiltered,
-                'state': 'enviado',
-                'date': Date.now()
-            }
 
             ChatView.chatCardInputDesktop.value = '';
-            ChatView.chatCardSendButtonDesktop.enabled = false;
+            ChatController.enableOrDisableSendButton();
 
-            let chatExistsInSender = await checkChatInSender();
-            let chatExistsInReceiver = await checkChatInReceiver();
-
-            if (chatExistsInSender && chatExistsInReceiver) {
-                // El chat existe en emisor y receptor
-                setMessageSender(newMessage);
-                setMessageReceiver(newMessage);
-            } else if (chatExistsInReceiver) {
-                // El chat existe en receptor
-                setMessageReceiver(newMessage);
-                createChatSender(newMessage);
-            } else if (chatExistsInSender) {
-                // El chat existe en emisor
-                createChatReceiver(newMessage);
-                setMessageSender(newMessage);
-            } else {
-                // El chat NO existe en ninguno de los 2
-                createChatReceiver(newMessage);
-                createChatSender(newMessage);
-            }
+            createUpdateChatLastMessage.call(this, messageFiltered);
+            setMessage.call(this, messageFiltered);
         }
 
-
-        function checkChatInSender() {
-            let chatRef = `users/${user.uid}/chats/${chat.interlocutorID}`;
-
-            //TODO: ¿doble return? Revisar si hay que devolver la promesa o co
-            // o con el último return sería suficiente
-            return db.doc(chatRef).get()
-                .then(
-                    (chat) => {
-                        return chat.exists;
-                    }
-                )
-                .catch(
-                    (error) => {
-                        console.log(error);
-                        return false;
-                    }
-                );
-
-
-        }
-
-        function checkChatInReceiver() {
-            let chatRef = `users/${this.chat.interlocutorId}/chats/${user.uid}`;
-
-            //TODO: ¿doble return? Revisar si hay que devolver la promesa o co
-            // o con el último return sería suficiente
-            return db.doc(chatRef).get()
-                .then(
-                    (chat) => {
-                        return chat.exists;
-                    }
-                )
-                .catch(
-                    (error) => {
-                        console.log(error);
-                        return false;
-                    }
-                );
-        }
-
-        function createChatReceiver(message) {
-            let newChatRef = `users/${this.chat.interlocutorId}/chats/${user.uid}`;
-            db.doc(newChatRef).set({ 'dummy': 'dummy' })
+        function createUpdateChatLastMessage(message) {
+            // Actualizo el último mensaje del chat en receptor
+            let receiverChatRef = `users/${this.chat.interlocutorId}/chats/${user.uid}`;
+            db.doc(receiverChatRef).set({ 'lastMessage': message })
                 .then(
                     (data) => {
                         console.log('Chat creado en receptor', this.chat.interlocutorId);
@@ -369,14 +328,9 @@ class ChatController {
                         console.log(error);
                     }
                 );
-
-            setMessageReceiver(message);
-        };
-
-        function createChatSender(message) {
-            let newChatRef = `users/${user.uid}/chats/${this.chat.interlocutorId}`;
-
-            db.doc(newChatRef).set({ 'dummy': 'dummy' })
+            // Actualizo el último mensaje del chat en emisor
+            let senderChatRef = `users/${user.uid}/chats/${this.chat.interlocutorId}`;
+            db.doc(senderChatRef).set({ 'lastMessage': message })
                 .then(
                     (data) => {
                         console.log('Chat creado en emisor:', user.uid);
@@ -387,13 +341,14 @@ class ChatController {
                         console.log(error);
                     }
                 );
+        }
 
-
-            setMessageSender(message);
-        };
+        function setMessage(message) {
+            setMessageReceiver.call(this, message);
+            setMessageSender.call(this, message);
+        }
 
         function setMessageReceiver(message) {
-
             let messagesRef = `users/${this.chat.interlocutorId}/chats/${user.uid}/messages`;
 
             db.collection(messagesRef).add(message)
@@ -409,8 +364,8 @@ class ChatController {
         };
 
         function setMessageSender(message) {
+            // Creo el mensaje
             let messagesRef = `users/${user.uid}/chats/${this.chat.interlocutorId}/messages`;
-
             db.collection(messagesRef).add(message)
                 .then(
                     (data) => {
@@ -424,35 +379,45 @@ class ChatController {
                         console.log(error);
                     }
                 );
+
+
+
         };
+
 
 
     }
 
     sendMessageFromDesktop() {
-        let messageContent = ChatView.chatCardInputDesktop.value;
-        sendMessage(messageContent);
+
+        if (ChatView.chatShowingMessages === this.chatView) {
+            let messageContent = ChatView.chatCardInputDesktop.value;
+            this.sendMessage(messageContent);
+        }
     }
 
     sendMessageFromMobile() {
         //Capturar el contenido del input del modal
         // y lanzar sendMessage con el contenido del input del modal
         // Ejemplo:
-        // let messageContent = ChatView.chatCardInputDesktop.value;
-        // sendMessage(messageContent);
+        // if (ChatView.chatShowingMessages === this.chatView) {
+        //     let messageContent = ChatView.chatCardInputMobile.value;
+        //     sendMessage(messageContent);
+        // }
     }
 
-    enableSendButton() {
-        if (ChatView.chatCardInputDesktop.value != "") {
-            ChatView.chatCardSendButtonDesktop.enable = true;
-        } else {
-            ChatView.chatCardSendButtonDesktop.enable = false;
+    sendMessageWithEnterKey(e) {
+        if (e.keyCode === 13) {
+            this.sendMessageFromDesktop();
         }
     }
 
-    disableSendButton() {
-        ChatView.sendButtonDesktop.enable = false;
-        //TODO: Añadir la deshabilitación del botón del modal
+    static enableOrDisableSendButton() {
+        if (ChatView.chatCardInputDesktop.value.trim() != "") {
+            ChatView.chatCardSendButtonDesktop.disabled = false;
+        } else {
+            ChatView.chatCardSendButtonDesktop.disabled = true;
+        }
     }
 }
 ChatController.chats = [];
@@ -489,7 +454,7 @@ class ChatView {
         //Prototipo de los bocadillos de mensajes
         ChatView.speechBubblePrototype = document.createElement('li');
         ChatView.speechBubblePrototype.classList.add('speechBubble');
-        ChatView.speechBubbleState = document.createElement('p');
+        ChatView.speechBubbleState = document.createElement('span');
         ChatView.speechBubbleState.classList.add('speechBubbleMessageState');
         ChatView.speechBubbleDate = document.createElement('p');
         ChatView.speechBubbleDate.classList.add('speechBubbleMessageDate');
@@ -530,7 +495,7 @@ class ChatView {
     updateChatTag(chat) {
         this.chatTag.querySelector('.chatTagInterlocutorPicture').src = chat.interlocutorPictureUrl;
         this.chatTag.querySelector('.chatTagInterlocutorEmail').innerText = chat.interlocutorEmail;
-        this.chatTag.querySelector('.chatTagLastMessage').innerText = chat.lastMessage;
+        this.chatTag.querySelector('.chatTagLastMessage').innerText = chat.lastMessage.content;
     }
 
     populateChatCard(chat) {
@@ -565,14 +530,34 @@ class ChatView {
     }
 
     updateChatSpeechBubbles(changeType, newMessage) {
-
         if (changeType === "added") {
             // Por cada nuevo mensaje añado un nuevo chatSpeechBubble
             // hago que la clonación incluya los nodos hijos con el parámetro true
             let newSpeechBubble = ChatView.speechBubblePrototype.cloneNode(true);
             newSpeechBubble.querySelector('.speechBubbleMessageContent').innerText = newMessage.content;
             newSpeechBubble.querySelector('.speechBubbleMessageDate').innerText = newMessage.date;
-            newSpeechBubble.querySelector('.speechBubbleMessageState').innerText = newMessage.state;
+
+            // Según el estado del mensaje, añadiré un ícono u otro ( enviado, recibido o leído )
+            switch (newMessage.state) {
+                case 'enviado':
+                    newSpeechBubble.querySelector('.speechBubbleMessageState').innerHTML = '<i class="icon-enviado bi bi-check2"></i>';
+                    break;
+                case 'recibido':
+                    newSpeechBubble.querySelector('.speechBubbleMessageState').innerHTML = '<i class="icon-recibido bi bi-check2-all"></i>';
+                    break;
+                case 'leido':
+                    newSpeechBubble.querySelector('.speechBubbleMessageState').innerHTML = '<i class="icon-leido bi bi-check2-all"></i>';
+                    break;
+                default:
+                    break;
+            }
+            // Según el author del mensaje será un mensaje enviado o recibido
+            if (newMessage.author === user.uid) {
+                newSpeechBubble.classList.add('sentMessage');
+            } else {
+                newSpeechBubble.classList.add('receivedMessage');
+            }
+
             this.chatSpeechBubbles.push(newSpeechBubble);
 
             //Si este chat se está mostrando también añado
