@@ -267,9 +267,17 @@ class ChatController {
     }
 
     showMessages() {
-        this.chatView.animateChatCardOut();
-        this.chatView.populateChatCard(this.chat.copy());
-        this.chatView.animateChatCardIn();
+        // Si ya se están mostrando los mensajes del chat no pasará nada
+        if (ChatView.chatShowingMessages != this.chatView) {
+            let promiseCardOut = this.chatView.animateChatCardOut();
+            $.when(promiseCardOut)
+                .then(() => {
+                    this.chatView.populateChatCard(this.chat.copy());
+                    this.chatView.animateChatCardIn();
+                });
+            ChatView.chatShowingMessages = this.chatView;
+        }
+
     }
 
     async sendMessage(messageContent) {
@@ -526,8 +534,6 @@ class ChatView {
     }
 
     populateChatCard(chat) {
-        ChatView.chatShowingMessages = this;
-
         ChatView.chatCardMessagesList.innerHTML = '';
         ChatView.chatCardInputDesktop.value = '';
         ChatView.chatCardInterlocutorPicture.src = chat.interlocutorPictureUrl;
@@ -540,21 +546,21 @@ class ChatView {
     }
 
 
-    async animateChatCardOut() {
-        $('#chatCard').animate({
+    animateChatCardOut() {
+        return $('#chatCard').animate({
                 left: "+=75%",
                 opacity: 0.25
             },
-            500);
+            500).promise();
     }
 
-    async animateChatCardIn() {
+    animateChatCardIn() {
         $('#chatCard').css({ "position": "relative", "left": "75%" });
-        $('#chatCard').animate({
+        return $('#chatCard').animate({
                 left: "-=75%",
                 opacity: 1
             },
-            500);
+            500).promise();
 
     }
 
@@ -583,7 +589,7 @@ class ChatView {
 
     }
 
-    hideMessages() {
+    resetChatCard() {
         ChatView.chatShowingMessages = null;
         ChatView.chatCardInterlocutorPicture.src = '';
         ChatView.chatCardInterlocutorEmail.innerText = '';
