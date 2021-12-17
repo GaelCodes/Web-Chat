@@ -10,16 +10,18 @@ class Chat {
     //Estoy filtrando los mensajes al ser enviados
     // y recibidos(en el controlador y en el modelo respectivamente )
     // ¿es útil esta redundancia, o solo haría falta filtrar en el envío?
-    constructor(chatData) {
-        this.interlocutorId = chatData.id;
-        this.interlocutorEmail = null;
+    constructor(id, lastMessage) {
+        this.interlocutorId = id;
+        this.interlocutorEmail = email;
+        this.messages = [];
+        this.observers = [];
+        this.lastMessage = lastMessage;
+
         //Para evitar la emisión de errores establezco la url
         // a una imagen por defecto, hasta que se obtenga
         // la información del usuario en la suscripción a los datos del interlocutor(suscribeToInterlocutorData)
         this.interlocutorPictureUrl = 'https://firebasestorage.googleapis.com/v0/b/web-chat-de48b.appspot.com/o/default-avatar-usuario.png?alt=media&token=1942c2c5-33d2-4a0c-a70d-fd6e24c5cfdb';
-        this.messages = [];
-        this.lastMessage = chatData.lastMessage;
-        this.observers = [];
+
 
         // El modelo estará suscrito a los cambios de la BBDD
         this.suscribeToChat();
@@ -255,6 +257,7 @@ class ChatView {
 
     }
 
+
     populateChatTag(chat) {
         // Relleno los datos de los nodos del chat tag
         // hago que la clonación incluya los nodos hijos con el parámetro true
@@ -297,6 +300,25 @@ class ChatView {
             let speechBubble = this.chatSpeechBubbles[i];
             ChatView.chatCardMessagesList.append(speechBubble);
         }
+    }
+
+
+    async animateChatCardOut() {
+        $('#chatCard').animate({
+                left: "+=75%",
+                opacity: 0.25
+            },
+            500);
+    }
+
+    async animateChatCardIn() {
+        $('#chatCard').css({ "position": "relative", "left": "75%" });
+        $('#chatCard').animate({
+                left: "-=75%",
+                opacity: 1
+            },
+            500);
+
     }
 
     updateChatSpeechBubbles(changeType, newMessage) {
@@ -382,11 +404,9 @@ class ChatController {
     }
 
     showMessages() {
-        //La idea final es esta:
-        //animarSalida();
-        //this.chatView.populateChatCard();
-        //animarEntrada();
-        this.chatView.populateChatCard(this.chat);
+        this.chatView.animateChatCardOut();
+        this.chatView.populateChatCard(this.chat.copy());
+        this.chatView.animateChatCardIn();
     }
 
     async sendMessage(messageContent) {
@@ -565,6 +585,233 @@ class ChatController {
     }
 }
 
+class Searcher {
+
+    constructor() {
+        throw new Error("Can't instantiate abstract class!");
+    }
+
+    init() {
+        Searcher.foundUsers = [];
+        Searcher.input = $('input[type="search"]')[0];
+        Searcher.input.addEventListener('focus', showUsers);
+        Searcher.input.addEventListener('keyup', filterUsers);
+
+    }
+
+    getUsers() {
+        return usersCollection.get();
+    }
+
+    async showUsers() {
+        // Compruebo si ya ha obtenido la lista de usuarios
+        if (!Searcher.foundUsers) {
+
+            db.collection(`users`)
+                .onSnapshot((snapshot) => {
+                    snapshot.docChanges().forEach((change) => {
+                        if (change.type === "added") {
+                            console.log("New found user: ", change.doc.data());
+                            let foundUserData = change.doc.data();
+                            foundUserData.id = change.doc.id;
+                            let foundUser = new FoundUser(foundUserData.id, foundUserData.email, foundUserData.picture);
+                            let foundUserView = new FoundUserView();
+                            let foundUserController = new FoundUserController(foundUser, foundUserView);
+                            Searcher.foundUsers.push({ 'model': foundUser, 'view': foundUserView, 'controller': foundUserController });
+                        }
+                        if (change.type === "modified") {
+                            console.log("Modified found user: ", change.doc.data());
+                            let modifiedFoundUserData = change.doc.data();
+                            modifiedFoundUserData.id = change.doc.id;
+                            let modifiedFoundUserIndex = this.foundUsers.findIndex((foundUser) => foundUser['model'].id === modifiedFoundUserData.id);
+                            Searcher.foundUsers[modifiedFoundUserIndex]['model'].updateFoundUser(modifiedFoundUserData);
+                        }
+                        if (change.type === "removed") {
+                            console.log("Removed found user: ", change.doc.data());
+                            let removedFoundUserData = change.doc.data();
+                            removedFoundUserData.id = change.doc.id;
+                            let removedFoundUserIndex = this.foundUsers.findIndex((foundUser) => foundUser[0].id === modifiedFoundUserData.id);
+                            Searcher.foundUsers.splice(removedFoundUserIndex, 1);
+                        }
+                    });
+                });
+        }
+
+        // Si el buscador no está vacio dejalo filtrar, no muestres la lista completa
+        // if (Searcher.input.val().trim() == '') {
+
+        //     usersList.html(' ');
+        //     for (let i = 0;
+        //         (i < 5 && i < users.docs.length); i++) {
+
+
+        //         let userData = users.docs[i].data();
+        //         userData.id = users.docs[i].id;
+
+        //         if (userData.id != user.uid) {
+        //             usersList.append(`
+        //             <li class="found-user dropdown-item chat-item-md d-flex justify-content-center align-items-center p-2 d-block text-start" data-fs-id="${userData.id}">
+        //                 <img src="${userData.picture}" class="rounded-circle"></img>    
+        //                 <p class="m-0">${userData.email}</p>
+        //             </li>`);
+        //         }
+
+
+        //     }
+
+        //     $('.found-user').click(createChat);
+        // }
+
+    }
+
+    filterUsers() {
+
+        let searchedString = Searcher.input.value;
+
+        Searcher.foundUsers.forEach(
+            (foundUser) => {
+                if (foundUser.model.email.includes(searchedString)) {
+                    foundUser.view.showFoundUser();
+                } else {
+                    foundUser.view.hideFoundUser();
+                }
+            }
+        )
+    }
+
+
+}
+Searcher.usersList = null;
+Searcher.users = null;
+Searcher.input = null;
+
+class User {
+    constructor(id, email, pictureUrl) {
+        this.id = id;
+        this.email = email;
+        this.picture = pictureUrl;
+    }
+}
+
+class FoundUser extends User {
+    constructor(id, email, pictureUrl) {
+        super(id, email, pictureUrl);
+        this.observers = [];
+    }
+
+    registerObserver(observer) {
+        this.observers.push(observer);
+    }
+
+    unregisterObserver(observer) {
+        let observerIndex = this.observers.indexOf(observer);
+        this.observers.splice(observerIndex, 1);
+    }
+
+    copy() {
+        return {
+            email: this.email,
+            picture: this.picture
+        }
+    }
+
+    updateFoundUser(modifiedFoundUserData) {
+        this.picture = foundUser.picture;
+        this.notifyAll();
+    }
+
+    notifyAll() {
+        for (let i = 0; i < this.observers.length; i++) {
+            this.observers[i].update(this.copy());
+        }
+    }
+}
+
+class FoundUserView {
+    constructor() {
+
+    }
+
+    init() {
+        FoundUserView.foundUsersList = document.createElement('ul');
+        FoundUserView.foundUsersList.classList.add('foundUsersList');
+        FoundUserView.foundUserTagPrototype = document.createElement('li');
+        FoundUserView.foundUserTagPrototype.classList.add('foundUserTag');
+        FoundUserView.foundUserEmail = document.createElement('p');
+        FoundUserView.foundUserEmail.classList.add('foundUserEmail');
+        // La foundUserTag del usuario encontrado tendrá una imagen
+        // inicial por defecto hasta que se carguen los datos
+        // del usuario encontrado
+        FoundUserView.foundUserPicture = document.createElement('img');
+        FoundUserView.foundUserPicture.classList.add('foundUserPicture');
+        FoundUserView.foundUserPicture.src = 'https://firebasestorage.googleapis.com/v0/b/web-chat-de48b.appspot.com/o/default-avatar-usuario.png?alt=media&token=1942c2c5-33d2-4a0c-a70d-fd6e24c5cfdb';
+
+        FoundUserView.foundUserTagPrototype.append(FoundUserView.foundUserPicture);
+        FoundUserView.foundUserTagPrototype.append(FoundUserView.foundUserEmail);
+    }
+
+    populate(foundUser) {
+        // TODO: Rellenar datos de la vista del usuario encontrado
+    }
+
+    update(foundUser) {
+        // TODO: Actualizar datos de la vista del usuario encontrado
+    }
+
+    showFoundUser() {
+        this.foundUserTag.style.display = 'flex-box';
+    }
+
+    hideFoundUser() {
+        this.foundUserTag.style.display = 'none';
+    }
+}
+
+class FoundUserController {
+    constructor(foundUser, foundUserView) {
+        this.foundUser = foundUser;
+        this.foundUserView = foundUserView;
+        this.foundUser.registerObserver(this.foundUserView);
+        this.foundUserView.populate(this.foundUser.copy());
+
+        // Event listeners
+        this.FoundUserView.foundUserTag.addEventListener('click', this.chatWithFoundUser.bind(this));
+    }
+
+    chatWithFoundUser() {
+        // Si no existe el chat lo precreo, si existe ábrelo
+        let foundChat = ChatController.findChat(this.foundUser.id);
+        if (foundChat) {
+            foundChat.controller.showMessages();
+        } else {
+            this.preCreateChat();
+        }
+    }
+
+    preCreateChat() {
+
+        db.collection(`users/${user.uid}/chats`).doc(`${this.foundUser.id}`).set({
+                lastMessage: "Sin mensajes"
+            })
+            .then(() => {
+                foundChat = ChatController.findChat(this.foundUser.id);
+                foundChat.controller.showMessages();
+            })
+            .catch((error) => {
+                console.error("Error writing document: ", error);
+            });
+    }
+}
+
+
+
+function escapeHTML(text) {
+    var replacements = { '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' };
+    return text.replace(/[<>&"]/g, function(character) {
+        return replacements[character];
+    });
+}
+
 $(document).ready(function() {
     firebase.auth().onAuthStateChanged(async(userAuth) => {
         if (userAuth) {
@@ -573,6 +820,7 @@ $(document).ready(function() {
             user = userAuth;
             let userData = await getUserData(user.uid);
             displayUserData(userData.data());
+
             ChatView.init();
             ChatController.init();
         } else {
@@ -595,173 +843,29 @@ $(document).ready(function() {
     }
 
     // BUSCADOR
-    class User {
-        constructor(email, picture) {
-            this.email = email;
-            this.picture = picture;
-        }
-    }
-
-    class UserFound extends User {
-        constructor(email, picture) {
-            this.email = email;
-            this.picture = picture;
-        }
-    }
-
-    class UserFoundView {
-        constructor() {
-
-        }
-    }
-
-    class UserFoundController {
-        constructor() {
-
-        }
-    }
-
-    class Searcher {
-
-        init() {
-            Searcher.usersList = $('#foundUsersList')[0];
-            Searcher.input = $('[type="search"]')[0];
-            Searcher.input.addEventListener('focus', showUsers);
-            Searcher.input.addEventListener('keyup', filterUsers);
-        }
-
-        getUsers() {
-            return usersCollection.get();
-        }
-
-        async showUsers() {
-            // Compruebo si ya ha obtenido la lista de usuarios
-            if (!Searcher.users)
-                Searcher.users = await getUsers();
-
-            // Si el buscador no está vacio dejalo filtrar, no muestres la lista completa
-            if (buscador.val().trim() == '') {
-                usersList.html(' ');
-                for (let i = 0;
-                    (i < 5 && i < users.docs.length); i++) {
 
 
-                    let userData = users.docs[i].data();
-                    userData.id = users.docs[i].id;
-
-                    if (userData.id != user.uid) {
-                        usersList.append(`
-                        <li class="found-user dropdown-item chat-item-md d-flex justify-content-center align-items-center p-2 d-block text-start" data-fs-id="${userData.id}">
-                            <img src="${userData.picture}" class="rounded-circle"></img>    
-                            <p class="m-0">${userData.email}</p>
-                        </li>`);
-                    }
 
 
-                }
 
-                $('.found-user').click(createChat);
-            }
-
-        }
-
-        filterUsers() {
-            // Compruebo si ya ha obtenido la lista de usuarios (es una promesa puede tardar)
-            if (users) {
-                usersList.html('');
-
-                // Bucle para mostrar solo 5 usuarios que encajen como máximo
-                let numUser = 0;
-                let numUsersMatched = 0;
-                while (numUsersMatched < 5 && numUser < users.docs.length) {
-                    let userDoc = users.docs[numUser];
-                    let email = userDoc.data().email;
-                    let picture = userDoc.data().picture;
-
-                    if (user.uid != users.docs[numUser].id) {
-
-                        if (email.includes(buscador.val().toLowerCase()) && buscador.val() != '') {
-                            usersList.append(`
-                            <li class="found-user dropdown-item chat-item-md d-flex justify-content-center align-items-center p-2 d-block text-start" data-fs-id="${userDoc.id}">
-                                <img src="${picture}" class="rounded-circle"></img>    
-                                <p class="m-0">${email}</p>
-                            </li>`);
-
-                            $('.found-user').click(createChat);
-                            numUsersMatched++;
-                        }
-                    }
-
-
-                    numUser++;
-                }
-            }
-        }
-
-
-    }
-    Searcher.usersList = null;
-    Searcher.users = null;
-    Searcher.input = null;
 
 
 
     // CREAR CHAT
 
-    function createChat(event) {
-        let interlocutorID = event.currentTarget.dataset.fsId;
-        let newConversationHTML =
-            `<li class="chat-item-md d-flex justify-content-around align-items-center  p-2 d-block text-start" data-fs-id="${interlocutorID}" style="display:none">
-                ${event.currentTarget.innerHTML}
-            </li>`;
-
-        // Si no existe el chat crea uno, si existe abrelo
-        if (!$(`#desktop-chat-list [data-fs-id="${interlocutorID}"]`).length) {
-
-
-
-            $('#desktop-chat-list').prepend(newConversationHTML);
-            newChat = $(`#desktop-chat-list [data-fs-id="${interlocutorID}"]`);
-
-
-
-            // newChat.click(displayChatDesktop).click();
-
-        } else {
-
-            let chat = $(`#desktop-chat-list [data-fs-id="${interlocutorID}"]`);
-            chat.click();
-        }
-
-
-        // let messagesCollection = db.collection(`users/Sxp3K71KnROFTIegzpAK5ccnsuj1/chats/2thYZz4eWje7FicqRiGQrdiozoY2/messages`);
-
-        // messagesCollection.add({
-        //     author: "tutancamon",
-        //     content: "Mensaje importante",
-        //     date: Date.now(),
-        //     state: "created"
-        // });
-    }
-
-
+    // TODO: Reimplementar el envío de mensajes 
     // ENVIAR MENSAJE
 
-    function escapeHTML(text) {
-        var replacements = { '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' };
-        return text.replace(/[<>&"]/g, function(character) {
-            return replacements[character];
-        });
-    }
 
-    var sendButtonDesktop = '#sendButtonDesktop';
-    // $(sendButtonDesktop).click(sendMessage);
-    // $('#inputDesktop').on('input', enableButton);
-    $('#inputDesktop').on('keyup', (event) => {
-        if (event.code === "Enter" && !$(sendButtonDesktop)[0].disabled) {
-            $(sendButtonDesktop).click();
-        }
-    });
+
+    // var sendButtonDesktop = '#sendButtonDesktop';
+    // // $(sendButtonDesktop).click(sendMessage);
+    // // $('#inputDesktop').on('input', enableButton);
+    // $('#inputDesktop').on('keyup', (event) => {
+    //     if (event.code === "Enter" && !$(sendButtonDesktop)[0].disabled) {
+    //         $(sendButtonDesktop).click();
+    //     }
+    // });
 
 
     // LOGOUT
@@ -786,92 +890,7 @@ $(document).ready(function() {
     var messagesListDesktop = $('#messages-list-md');
 
     var chat = { 'interlocutorID': '', 'messages': [] };
-    async function displayChatDesktop(event) {
-        chat.interlocutorID = event.currentTarget.dataset.fsId;
 
-        $('.selected').toggleClass('selected');
-        $(`.chatsContainer [data-fs-id="${chat.interlocutorID}"]`).addClass('selected');
-
-        animarSalida();
-
-        function animarSalida() {
-            $('#chatCard').animate({
-                    left: "+=75%",
-                    opacity: 0.25
-                },
-                500,
-                async function RellenarDatos() {
-
-                    // Si estaba suscrito a algún chat, me desuscribo
-                    if (unsubscribeMessagesMethod) {
-                        unsubscribeMessagesMethod();
-                    }
-
-                    $('#inputDesktop').val("");
-
-                    let interlocutorHTML = event.currentTarget.innerHTML;
-                    $('#chat-interlocutor-md').html(`${interlocutorHTML}`);
-
-                    $('#messages-list-md').html('');
-
-                    //  REFACTORIZACIÓN MUESTREO DE MENSAJES
-
-                    var unsubscribeMessagesMethod = db.collection(`users/${user.uid}/chats/${chat.interlocutorID}/messages`).orderBy("date")
-                        .onSnapshot((snapshot) => {
-                            snapshot.docChanges().forEach((change) => {
-                                if (change.type === "added") {
-                                    let message = change.doc.data();
-                                    message.date = new Date(message.date); // formateo de fecha
-                                    message.date = message.date.toLocaleTimeString('es-ES').replace(/:[0-9]{2}$/g, '');
-
-                                    if (message.author == user.uid) {
-
-                                        messagesListDesktop.append(`
-                                                    <li class="message align-self-start text-start mt-2">                
-                                                        <p>${message.content}</p>
-                                                        <p class="text-start">${message.date} ${message.state}</p>      
-                                                    </li>`);
-                                    } else {
-
-                                        messagesListDesktop.append(`
-                                                    <li class="message align-self-end text-start mt-2">                
-                                                        <p>${message.content}</p>
-                                                        <p class="text-end">${message.date} ${message.state}</p>   
-                                                    </li>`);
-
-                                    }
-                                }
-                                if (change.type === "modified") {
-                                    let message = change.doc.data();
-                                }
-                                if (change.type === "removed") {
-                                    let message = change.doc.data();
-                                }
-                            });
-
-                            (function scrollToBottom() {
-                                $('.card-body').animate({ scrollTop: $('.card-body ul').height() });
-                            })();
-                        });
-
-                    $('#inputDesktop').removeAttr('disabled'); // Habilito el input
-
-                    animarEntrada();
-
-                    function animarEntrada() {
-                        $('#chatCard').css({ "position": "relative", "left": "75%" });
-                        $('#chatCard').animate({
-                                left: "-=75%",
-                                opacity: 1
-                            },
-                            500);
-                    }
-                }
-
-            )
-        }
-
-    }
 
     async function displayChatMobile(event) {
 
