@@ -57,7 +57,7 @@
                         .set({
                             nombre: "Hola mundo",
                             email: userData.email,
-                            picture: "https://firebasestorage.googleapis.com/v0/b/web-chat-de48b.appspot.com/o/default-avatar-usuario.png?alt=media&token=1942c2c5-33d2-4a0c-a70d-fd6e24c5cfdb"
+                            pictureUrl: "https://firebasestorage.googleapis.com/v0/b/web-chat-de48b.appspot.com/o/default-avatar-usuario.png?alt=media&token=1942c2c5-33d2-4a0c-a70d-fd6e24c5cfdb"
                         })
                         .then((data) => {
                             // El documento del usuario ha sido creado redirigiendo al HOME

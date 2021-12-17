@@ -42,23 +42,34 @@ header #logoutButton {
     padding: 1em;
 }
 
-.found-user {
+.foundUserTag {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
     width: 100%;
-    color: rgba(219, 219, 219, 0.808) !important;
+    color: rgba(209, 209, 209, 0.808) !important;
+    border-bottom: 1px solid rgba(128, 128, 128, 0.171);
+    padding: 0.5em;
 }
 
-.chat-item-md:hover {
+.foundUserTag:first-child {
+    border-top: 1px solid rgba(128, 128, 128, 0.171);
+}
+
+.foundUserTag:hover {
     background-color: #ffffff07;
     cursor: pointer;
 }
 
-.found-user img {
-    width: 50px;
-    margin-right: 1em;
+.foundUserEmail {
+    margin: 0px;
+    padding: 0px;
 }
 
-#desktop-chat-list .chat-item-md img {
-    width: 25%;
+.foundUserPicture {
+    width: 50px;
+    margin-right: 1em;
+    border-radius: 50%;
 }
 
 

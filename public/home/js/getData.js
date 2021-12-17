@@ -12,7 +12,7 @@ class Chat {
     // ¿es útil esta redundancia, o solo haría falta filtrar en el envío?
     constructor(id, lastMessage) {
         this.interlocutorId = id;
-        this.interlocutorEmail = email;
+        this.interlocutorEmail = null;
         this.messages = [];
         this.observers = [];
         this.lastMessage = lastMessage;
@@ -170,7 +170,7 @@ class Chat {
         db.collection(`users/${user.uid}/chats`).doc(`${this.interlocutorId}`)
             .onSnapshot((chatDoc) => {
                 let auxChatData = chatDoc.data();
-                this.lastMessage = auxChatData.lastMessage.content;
+                this.lastMessage = auxChatData.lastMessage;
                 this.notifyAllModifiedLastMessage();
             });
     }
@@ -180,7 +180,7 @@ class Chat {
             .onSnapshot((InterlocutorDoc) => {
                 let auxInterlocutorData = InterlocutorDoc.data();
                 this.interlocutorEmail = auxInterlocutorData.email;
-                this.interlocutorPictureUrl = auxInterlocutorData.picture;
+                this.interlocutorPictureUrl = auxInterlocutorData.pictureUrl;
                 this.notifyAllModifiedInterlocutorData();
             });
     }
@@ -212,153 +212,6 @@ class Chat {
     }
 }
 
-class ChatView {
-    constructor() {
-        this.chatTag = null;
-        this.chatSpeechBubbles = [];
-    }
-
-    static init() {
-        ChatView.chatsContainer = $('#desktop-chat-list');
-
-        ChatView.chatCard = $('#chatCard');
-        ChatView.chatCardInterlocutorPicture = $('#chat-interlocutor-md img')[0];
-        ChatView.chatCardInterlocutorEmail = $('#chat-interlocutor-md p')[0];
-        ChatView.chatCardMessagesList = $('#messages-list-md')[0];
-        ChatView.chatCardInputDesktop = $('#inputDesktop')[0];
-        ChatView.chatCardSendButtonDesktop = $('#sendButtonDesktop')[0];
-        //Prototipo de los chat tags
-        ChatView.chatTagPrototype = document.createElement('li');
-        ChatView.chatTagPrototype.classList.add('chatTag');
-        ChatView.chatTagLastMessage = document.createElement('p');
-        ChatView.chatTagLastMessage.classList.add('chatTagLastMessage');
-        ChatView.chatTagInterlocutorEmail = document.createElement('p');
-        ChatView.chatTagInterlocutorEmail.classList.add('chatTagInterlocutorEmail');
-        ChatView.chatTagInterlocutorPicture = document.createElement('img');
-        ChatView.chatTagInterlocutorPicture.classList.add('chatTagInterlocutorPicture');
-
-        ChatView.chatTagPrototype.append(ChatView.chatTagInterlocutorPicture);
-        ChatView.chatTagPrototype.append(ChatView.chatTagInterlocutorEmail);
-        ChatView.chatTagPrototype.append(ChatView.chatTagLastMessage);
-
-        //Prototipo de los bocadillos de mensajes
-        ChatView.speechBubblePrototype = document.createElement('li');
-        ChatView.speechBubblePrototype.classList.add('speechBubble');
-        ChatView.speechBubbleState = document.createElement('p');
-        ChatView.speechBubbleState.classList.add('speechBubbleMessageState');
-        ChatView.speechBubbleDate = document.createElement('p');
-        ChatView.speechBubbleDate.classList.add('speechBubbleMessageDate');
-        ChatView.speechBubbleMessageContent = document.createElement('p');
-        ChatView.speechBubbleMessageContent.classList.add('speechBubbleMessageContent');
-
-        ChatView.speechBubblePrototype.append(ChatView.speechBubbleMessageContent);
-        ChatView.speechBubblePrototype.append(ChatView.speechBubbleDate);
-        ChatView.speechBubblePrototype.append(ChatView.speechBubbleState);
-
-    }
-
-
-    populateChatTag(chat) {
-        // Relleno los datos de los nodos del chat tag
-        // hago que la clonación incluya los nodos hijos con el parámetro true
-        this.chatTag = ChatView.chatTagPrototype.cloneNode(true);
-        this.chatTag.querySelector('.chatTagInterlocutorPicture').src = chat.interlocutorPictureUrl;
-        this.chatTag.querySelector('.chatTagInterlocutorEmail').innerText = chat.interlocutorEmail;
-        this.chatTag.querySelector('.chatTagLastMessage').innerText = chat.lastMessage.content;
-
-        ChatView.chatsContainer.append(this.chatTag);
-
-
-        // Por si no se reciben los mensajes en la suscripción del chat,
-        // voy a añadir los mensajes en el evento disparado cada vez que
-        // se añade un mensaje nuevo o al iniciar la suscripcion a la
-        // colección messages: updateChatSpeechBubbles
-        //
-        // TODO: revisar si se obtienen subcolecciones y sus cambios en 
-        // la suscripción a una colección
-        // DONE: comprobado los cambios de las subcolecciones no se muestran
-        // en las suscripciones a las colecciones padres
-        // 
-        // Los mensajes del chat se añaden en updateChatSpeechBubbles
-    }
-
-    updateChatTag(chat) {
-        this.chatTag.querySelector('.chatTagInterlocutorPicture').src = chat.interlocutorPictureUrl;
-        this.chatTag.querySelector('.chatTagInterlocutorEmail').innerText = chat.interlocutorEmail;
-        this.chatTag.querySelector('.chatTagLastMessage').innerText = chat.lastMessage;
-    }
-
-    populateChatCard(chat) {
-        ChatView.chatShowingMessages = this;
-
-        ChatView.chatCardMessagesList.innerHTML = '';
-        ChatView.chatCardInputDesktop.value = '';
-        ChatView.chatCardInterlocutorPicture.src = chat.interlocutorPictureUrl;
-        ChatView.chatCardInterlocutorEmail.innerText = chat.interlocutorEmail;
-
-        for (let i = 0; i < this.chatSpeechBubbles.length; i++) {
-            let speechBubble = this.chatSpeechBubbles[i];
-            ChatView.chatCardMessagesList.append(speechBubble);
-        }
-    }
-
-
-    async animateChatCardOut() {
-        $('#chatCard').animate({
-                left: "+=75%",
-                opacity: 0.25
-            },
-            500);
-    }
-
-    async animateChatCardIn() {
-        $('#chatCard').css({ "position": "relative", "left": "75%" });
-        $('#chatCard').animate({
-                left: "-=75%",
-                opacity: 1
-            },
-            500);
-
-    }
-
-    updateChatSpeechBubbles(changeType, newMessage) {
-
-        if (changeType === "added") {
-            // Por cada nuevo mensaje añado un nuevo chatSpeechBubble
-            // hago que la clonación incluya los nodos hijos con el parámetro true
-            let newSpeechBubble = ChatView.speechBubblePrototype.cloneNode(true);
-            newSpeechBubble.querySelector('.speechBubbleMessageContent').innerText = newMessage.content;
-            newSpeechBubble.querySelector('.speechBubbleMessageDate').innerText = newMessage.date;
-            newSpeechBubble.querySelector('.speechBubbleMessageState').innerText = newMessage.state;
-            this.chatSpeechBubbles.push(newSpeechBubble);
-
-            //Si este chat se está mostrando también añado
-            // el speechBubble a la lista de mensajes
-            if (ChatView.chatShowingMessages === this) {
-                ChatView.chatCardMessagesList.append(newSpeechBubble);
-            }
-
-        } else if (changeType === "modified") {
-            //TODO: Pensar si los mensajes se van a poder modificar
-        } else if (changeType === "removed") {
-            //TODO: Pensar si los mensajes se van a poder eliminar
-        }
-
-    }
-
-    hideMessages() {
-        ChatView.chatShowingMessages = null;
-        ChatView.chatCardInterlocutorPicture.src = '';
-        ChatView.chatCardInterlocutorEmail.innerText = '';
-        ChatView.chatCardMessagesList.innerHTML = '';
-        ChatView.chatCardInputDesktop.value = '';
-    }
-}
-//Inicializo las variables globales de la vista
-ChatView.chatShowingMessages = null;
-ChatView.chatsContainer = null;
-ChatView.chatCard = null;
-
 class ChatController {
     constructor(chat, chatView) {
         this.chat = chat;
@@ -385,9 +238,10 @@ class ChatController {
                         if (change.type === "added") {
                             let chatData = change.doc.data();
                             chatData.id = change.doc.id;
-                            let chat = new Chat(chatData);
+                            let chat = new Chat(chatData.id, chatData.lastMessage);
                             let chatView = new ChatView();
                             let chatController = new ChatController(chat, chatView);
+                            ChatController.chats.push({ 'model': chat, 'view': chatView, 'controller': chatController });
                         }
                         if (change.type === "modified") {
                             console.log("Modified chat: ", change.doc.data());
@@ -401,6 +255,15 @@ class ChatController {
                     console.log('Ha ocurrido un error en la escucha de la colección chats: ', error);
                 }
             );
+    }
+
+    static findChat(interlocutorId) {
+        let foundChatIndex = ChatController.chats.findIndex((chatComponent) => chatComponent.model.interlocutorId === interlocutorId);
+        if (foundChatIndex != -1) {
+            return ChatController.chats[foundChatIndex];
+        } else {
+            return false;
+        }
     }
 
     showMessages() {
@@ -584,6 +447,154 @@ class ChatController {
         //TODO: Añadir la deshabilitación del botón del modal
     }
 }
+ChatController.chats = [];
+
+class ChatView {
+    constructor() {
+        this.chatTag = null;
+        this.chatSpeechBubbles = [];
+    }
+
+    static init() {
+        ChatView.chatsContainer = $('#desktop-chat-list');
+
+        ChatView.chatCard = $('#chatCard');
+        ChatView.chatCardInterlocutorPicture = $('#chat-interlocutor-md img')[0];
+        ChatView.chatCardInterlocutorEmail = $('#chat-interlocutor-md p')[0];
+        ChatView.chatCardMessagesList = $('#messages-list-md')[0];
+        ChatView.chatCardInputDesktop = $('#inputDesktop')[0];
+        ChatView.chatCardSendButtonDesktop = $('#sendButtonDesktop')[0];
+        //Prototipo de los chat tags
+        ChatView.chatTagPrototype = document.createElement('li');
+        ChatView.chatTagPrototype.classList.add('chatTag');
+        ChatView.chatTagLastMessage = document.createElement('p');
+        ChatView.chatTagLastMessage.classList.add('chatTagLastMessage');
+        ChatView.chatTagInterlocutorEmail = document.createElement('p');
+        ChatView.chatTagInterlocutorEmail.classList.add('chatTagInterlocutorEmail');
+        ChatView.chatTagInterlocutorPicture = document.createElement('img');
+        ChatView.chatTagInterlocutorPicture.classList.add('chatTagInterlocutorPicture');
+
+        ChatView.chatTagPrototype.append(ChatView.chatTagInterlocutorPicture);
+        ChatView.chatTagPrototype.append(ChatView.chatTagInterlocutorEmail);
+        ChatView.chatTagPrototype.append(ChatView.chatTagLastMessage);
+
+        //Prototipo de los bocadillos de mensajes
+        ChatView.speechBubblePrototype = document.createElement('li');
+        ChatView.speechBubblePrototype.classList.add('speechBubble');
+        ChatView.speechBubbleState = document.createElement('p');
+        ChatView.speechBubbleState.classList.add('speechBubbleMessageState');
+        ChatView.speechBubbleDate = document.createElement('p');
+        ChatView.speechBubbleDate.classList.add('speechBubbleMessageDate');
+        ChatView.speechBubbleMessageContent = document.createElement('p');
+        ChatView.speechBubbleMessageContent.classList.add('speechBubbleMessageContent');
+
+        ChatView.speechBubblePrototype.append(ChatView.speechBubbleMessageContent);
+        ChatView.speechBubblePrototype.append(ChatView.speechBubbleDate);
+        ChatView.speechBubblePrototype.append(ChatView.speechBubbleState);
+
+    }
+
+
+    populateChatTag(chat) {
+        // Relleno los datos de los nodos del chat tag
+        // hago que la clonación incluya los nodos hijos con el parámetro true
+        this.chatTag = ChatView.chatTagPrototype.cloneNode(true);
+        this.chatTag.querySelector('.chatTagInterlocutorPicture').src = chat.interlocutorPictureUrl;
+        this.chatTag.querySelector('.chatTagInterlocutorEmail').innerText = chat.interlocutorEmail;
+        this.chatTag.querySelector('.chatTagLastMessage').innerText = chat.lastMessage.content;
+
+        ChatView.chatsContainer.append(this.chatTag);
+
+
+        // Por si no se reciben los mensajes en la suscripción del chat,
+        // voy a añadir los mensajes en el evento disparado cada vez que
+        // se añade un mensaje nuevo o al iniciar la suscripcion a la
+        // colección messages: updateChatSpeechBubbles
+        //
+        // TODO: revisar si se obtienen subcolecciones y sus cambios en 
+        // la suscripción a una colección
+        // DONE: comprobado los cambios de las subcolecciones no se muestran
+        // en las suscripciones a las colecciones padres
+        // 
+        // Los mensajes del chat se añaden en updateChatSpeechBubbles
+    }
+
+    updateChatTag(chat) {
+        this.chatTag.querySelector('.chatTagInterlocutorPicture').src = chat.interlocutorPictureUrl;
+        this.chatTag.querySelector('.chatTagInterlocutorEmail').innerText = chat.interlocutorEmail;
+        this.chatTag.querySelector('.chatTagLastMessage').innerText = chat.lastMessage;
+    }
+
+    populateChatCard(chat) {
+        ChatView.chatShowingMessages = this;
+
+        ChatView.chatCardMessagesList.innerHTML = '';
+        ChatView.chatCardInputDesktop.value = '';
+        ChatView.chatCardInterlocutorPicture.src = chat.interlocutorPictureUrl;
+        ChatView.chatCardInterlocutorEmail.innerText = chat.interlocutorEmail;
+
+        for (let i = 0; i < this.chatSpeechBubbles.length; i++) {
+            let speechBubble = this.chatSpeechBubbles[i];
+            ChatView.chatCardMessagesList.append(speechBubble);
+        }
+    }
+
+
+    async animateChatCardOut() {
+        $('#chatCard').animate({
+                left: "+=75%",
+                opacity: 0.25
+            },
+            500);
+    }
+
+    async animateChatCardIn() {
+        $('#chatCard').css({ "position": "relative", "left": "75%" });
+        $('#chatCard').animate({
+                left: "-=75%",
+                opacity: 1
+            },
+            500);
+
+    }
+
+    updateChatSpeechBubbles(changeType, newMessage) {
+
+        if (changeType === "added") {
+            // Por cada nuevo mensaje añado un nuevo chatSpeechBubble
+            // hago que la clonación incluya los nodos hijos con el parámetro true
+            let newSpeechBubble = ChatView.speechBubblePrototype.cloneNode(true);
+            newSpeechBubble.querySelector('.speechBubbleMessageContent').innerText = newMessage.content;
+            newSpeechBubble.querySelector('.speechBubbleMessageDate').innerText = newMessage.date;
+            newSpeechBubble.querySelector('.speechBubbleMessageState').innerText = newMessage.state;
+            this.chatSpeechBubbles.push(newSpeechBubble);
+
+            //Si este chat se está mostrando también añado
+            // el speechBubble a la lista de mensajes
+            if (ChatView.chatShowingMessages === this) {
+                ChatView.chatCardMessagesList.append(newSpeechBubble);
+            }
+
+        } else if (changeType === "modified") {
+            //TODO: Pensar si los mensajes se van a poder modificar
+        } else if (changeType === "removed") {
+            //TODO: Pensar si los mensajes se van a poder eliminar
+        }
+
+    }
+
+    hideMessages() {
+        ChatView.chatShowingMessages = null;
+        ChatView.chatCardInterlocutorPicture.src = '';
+        ChatView.chatCardInterlocutorEmail.innerText = '';
+        ChatView.chatCardMessagesList.innerHTML = '';
+        ChatView.chatCardInputDesktop.value = '';
+    }
+}
+//Inicializo las variables globales de la vista
+ChatView.chatShowingMessages = null;
+ChatView.chatsContainer = null;
+ChatView.chatCard = null;
 
 class Searcher {
 
@@ -591,105 +602,87 @@ class Searcher {
         throw new Error("Can't instantiate abstract class!");
     }
 
-    init() {
+    static init() {
         Searcher.foundUsers = [];
         Searcher.input = $('input[type="search"]')[0];
-        Searcher.input.addEventListener('focus', showUsers);
-        Searcher.input.addEventListener('keyup', filterUsers);
-
+        Searcher.input.addEventListener('focus', Searcher.getUsers);
+        Searcher.input.addEventListener('keyup', Searcher.filterUsers);
     }
 
-    getUsers() {
-        return usersCollection.get();
-    }
-
-    async showUsers() {
+    static getUsers() {
         // Compruebo si ya ha obtenido la lista de usuarios
-        if (!Searcher.foundUsers) {
-
+        if (Searcher.foundUsers.length === 0) {
             db.collection(`users`)
                 .onSnapshot((snapshot) => {
                     snapshot.docChanges().forEach((change) => {
                         if (change.type === "added") {
-                            console.log("New found user: ", change.doc.data());
                             let foundUserData = change.doc.data();
                             foundUserData.id = change.doc.id;
-                            let foundUser = new FoundUser(foundUserData.id, foundUserData.email, foundUserData.picture);
-                            let foundUserView = new FoundUserView();
-                            let foundUserController = new FoundUserController(foundUser, foundUserView);
-                            Searcher.foundUsers.push({ 'model': foundUser, 'view': foundUserView, 'controller': foundUserController });
+
+                            // El usuario no podrá enviarse mensajes así mismo por lo tanto,
+                            // nunca debe estar en la lista de búsqueda
+                            if (foundUserData.id != user.uid) {
+                                let foundUser = new FoundUser(foundUserData.id, foundUserData.email, foundUserData.pictureUrl);
+                                let foundUserView = new FoundUserView();
+                                let foundUserController = new FoundUserController(foundUser, foundUserView);
+                                Searcher.foundUsers.push({ 'model': foundUser, 'view': foundUserView, 'controller': foundUserController });
+                            }
                         }
                         if (change.type === "modified") {
-                            console.log("Modified found user: ", change.doc.data());
                             let modifiedFoundUserData = change.doc.data();
                             modifiedFoundUserData.id = change.doc.id;
-                            let modifiedFoundUserIndex = this.foundUsers.findIndex((foundUser) => foundUser['model'].id === modifiedFoundUserData.id);
-                            Searcher.foundUsers[modifiedFoundUserIndex]['model'].updateFoundUser(modifiedFoundUserData);
+
+                            // El usuario no podrá enviarse mensajes así mismo por lo tanto,
+                            // nunca habrá estado en la lista de búsqueda
+                            if (modifiedFoundUserData.id != user.uid) {
+                                let modifiedFoundUserIndex = this.foundUsers.findIndex((foundUser) => foundUser['model'].id === modifiedFoundUserData.id);
+                                Searcher.foundUsers[modifiedFoundUserIndex]['model'].updateFoundUser(modifiedFoundUserData);
+                            }
                         }
                         if (change.type === "removed") {
-                            console.log("Removed found user: ", change.doc.data());
                             let removedFoundUserData = change.doc.data();
                             removedFoundUserData.id = change.doc.id;
-                            let removedFoundUserIndex = this.foundUsers.findIndex((foundUser) => foundUser[0].id === modifiedFoundUserData.id);
-                            Searcher.foundUsers.splice(removedFoundUserIndex, 1);
+
+                            // El usuario no podrá enviarse mensajes así mismo por lo tanto,
+                            // nunca habrá estado en la lista de búsqueda
+                            if (removedFoundUserData.id != user.uid) {
+                                let removedFoundUserIndex = this.foundUsers.findIndex((foundUser) => foundUser[0].id === modifiedFoundUserData.id);
+                                Searcher.foundUsers.splice(removedFoundUserIndex, 1);
+                            }
                         }
                     });
                 });
+        } else {
+            // Si ya tiene los usuarios y gana focus simplemente filtrará
+            Searcher.filterUsers();
         }
-
-        // Si el buscador no está vacio dejalo filtrar, no muestres la lista completa
-        // if (Searcher.input.val().trim() == '') {
-
-        //     usersList.html(' ');
-        //     for (let i = 0;
-        //         (i < 5 && i < users.docs.length); i++) {
-
-
-        //         let userData = users.docs[i].data();
-        //         userData.id = users.docs[i].id;
-
-        //         if (userData.id != user.uid) {
-        //             usersList.append(`
-        //             <li class="found-user dropdown-item chat-item-md d-flex justify-content-center align-items-center p-2 d-block text-start" data-fs-id="${userData.id}">
-        //                 <img src="${userData.picture}" class="rounded-circle"></img>    
-        //                 <p class="m-0">${userData.email}</p>
-        //             </li>`);
-        //         }
-
-
-        //     }
-
-        //     $('.found-user').click(createChat);
-        // }
-
     }
 
-    filterUsers() {
+    static filterUsers() {
 
         let searchedString = Searcher.input.value;
-
         Searcher.foundUsers.forEach(
             (foundUser) => {
                 if (foundUser.model.email.includes(searchedString)) {
-                    foundUser.view.showFoundUser();
+                    foundUser.view.showFoundUser.call(foundUser.view);
                 } else {
-                    foundUser.view.hideFoundUser();
+                    foundUser.view.hideFoundUser.call(foundUser.view);
                 }
             }
         )
     }
-
-
 }
+//Inicializo las variables globales
 Searcher.usersList = null;
 Searcher.users = null;
 Searcher.input = null;
+Searcher.foundUsers = [];
 
 class User {
     constructor(id, email, pictureUrl) {
         this.id = id;
         this.email = email;
-        this.picture = pictureUrl;
+        this.pictureUrl = pictureUrl;
     }
 }
 
@@ -711,7 +704,7 @@ class FoundUser extends User {
     copy() {
         return {
             email: this.email,
-            picture: this.picture
+            pictureUrl: this.pictureUrl
         }
     }
 
@@ -727,14 +720,53 @@ class FoundUser extends User {
     }
 }
 
-class FoundUserView {
-    constructor() {
+class FoundUserController {
+    constructor(foundUser, foundUserView) {
+        this.foundUser = foundUser;
+        this.foundUserView = foundUserView;
+        this.foundUser.registerObserver(this.foundUserView);
+        this.foundUserView.populate(this.foundUser.copy());
 
+        // Event listeners
+        this.foundUserView.foundUserTag.addEventListener('click', this.chatWithFoundUser.bind(this));
     }
 
-    init() {
-        FoundUserView.foundUsersList = document.createElement('ul');
-        FoundUserView.foundUsersList.classList.add('foundUsersList');
+    chatWithFoundUser() {
+        // Si no existe el chat lo precreo, si existe ábrelo
+        let foundChat = ChatController.findChat(this.foundUser.id);
+        if (foundChat) {
+            foundChat.controller.showMessages();
+        } else {
+            this.preCreateChat();
+        }
+    }
+
+    preCreateChat() {
+
+        // La precreación del chat es simplemente crearlo en la colección de chats del usuario
+        // y no en el destinatario
+        db.collection(`users/${user.uid}/chats`).doc(`${this.foundUser.id}`).set({
+                lastMessage: "Sin mensajes"
+            })
+            .then(() => {
+                // Una vez creado lo busco nuevamente y se lo abro al usuario
+                let foundChat = ChatController.findChat(this.foundUser.id);
+                foundChat.controller.showMessages();
+            })
+            .catch((error) => {
+                console.error("Error writing document: ", error);
+            });
+    }
+}
+
+class FoundUserView {
+    constructor() {
+        // Paso el parámetro true para que la clonación sea profunda
+        this.foundUserTag = FoundUserView.foundUserTagPrototype.cloneNode(true);
+    }
+
+    static init() {
+        FoundUserView.foundUsersList = document.getElementById('foundUsersList');
         FoundUserView.foundUserTagPrototype = document.createElement('li');
         FoundUserView.foundUserTagPrototype.classList.add('foundUserTag');
         FoundUserView.foundUserEmail = document.createElement('p');
@@ -751,59 +783,25 @@ class FoundUserView {
     }
 
     populate(foundUser) {
-        // TODO: Rellenar datos de la vista del usuario encontrado
+        this.foundUserTag.querySelector('.foundUserPicture').src = foundUser.pictureUrl;
+        this.foundUserTag.querySelector('.foundUserEmail').innerText = foundUser.email;
+        FoundUserView.foundUsersList.append(this.foundUserTag);
     }
 
     update(foundUser) {
-        // TODO: Actualizar datos de la vista del usuario encontrado
+        this.foundUserTag.querySelector('foundUserPicture').src = foundUser.pictureUrl;
     }
 
     showFoundUser() {
-        this.foundUserTag.style.display = 'flex-box';
+        this.foundUserTag.style.display = 'flex';
     }
 
     hideFoundUser() {
         this.foundUserTag.style.display = 'none';
     }
 }
-
-class FoundUserController {
-    constructor(foundUser, foundUserView) {
-        this.foundUser = foundUser;
-        this.foundUserView = foundUserView;
-        this.foundUser.registerObserver(this.foundUserView);
-        this.foundUserView.populate(this.foundUser.copy());
-
-        // Event listeners
-        this.FoundUserView.foundUserTag.addEventListener('click', this.chatWithFoundUser.bind(this));
-    }
-
-    chatWithFoundUser() {
-        // Si no existe el chat lo precreo, si existe ábrelo
-        let foundChat = ChatController.findChat(this.foundUser.id);
-        if (foundChat) {
-            foundChat.controller.showMessages();
-        } else {
-            this.preCreateChat();
-        }
-    }
-
-    preCreateChat() {
-
-        db.collection(`users/${user.uid}/chats`).doc(`${this.foundUser.id}`).set({
-                lastMessage: "Sin mensajes"
-            })
-            .then(() => {
-                foundChat = ChatController.findChat(this.foundUser.id);
-                foundChat.controller.showMessages();
-            })
-            .catch((error) => {
-                console.error("Error writing document: ", error);
-            });
-    }
-}
-
-
+//Inicializo las variables globales
+FoundUserView.foundUsersList = null;
 
 function escapeHTML(text) {
     var replacements = { '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' };
@@ -823,6 +821,8 @@ $(document).ready(function() {
 
             ChatView.init();
             ChatController.init();
+            Searcher.init();
+            FoundUserView.init();
         } else {
             // User is signed out
 
