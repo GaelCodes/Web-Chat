@@ -105,7 +105,8 @@ body main {
 .chatTag {
     border-bottom: 1px solid rgba(128, 128, 128, 0.171);
     display: grid;
-    grid-template-areas: "picture email email" "picture lastMessage lastMessage";
+    grid-template-columns: 30% 70%;
+    grid-template-areas: "picture email" "picture lastMessage";
     height: 10%vh;
     padding: 1em;
     width: 100%;
@@ -132,7 +133,11 @@ body main {
 }
 
 .chatTagLastMessage {
+    padding: 0px 0.5em;
     grid-area: lastMessage;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     color: gray;
 }
 
