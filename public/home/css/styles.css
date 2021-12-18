@@ -160,10 +160,26 @@ body main {
 /* inicio chat card */
 
 #chatCard {
-    max-height: 85vh;
-    height: 85vh;
-    background-color: transparent;
+    display: none;
+    position: absolute !important;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #252030;
     border-radius: 0px;
+    scrollbar-width: thin;
+    scrollbar-color: #00000041 #ffffff54;
+}
+
+@media only screen and (min-width: 767px) {
+    #chatCard {
+        position: relative !important;
+        max-height: 85vh;
+        height: 85vh;
+        width: 75% !important;
+        padding-right: 1em !important;
+    }
 }
 
 #chatCard .card-header {
@@ -175,6 +191,11 @@ body main {
     margin: 0px;
     padding: 0.5em 0px;
     background-color: #00000036;
+}
+
+.chatCardInterlocutorPicture {
+    width: 10% !important;
+    margin-right: 2%;
 }
 
 #chat-interlocutor-md p {
@@ -197,19 +218,8 @@ body main {
     max-height: 20%;
 }
 
-#chat-interlocutor-md img {
-    margin-right: 2%;
-    width: 3% !important;
-}
 
-#chatCard {
-    padding-right: 1em !important;
-}
-
-#chatCard {
-    scrollbar-width: thin;
-    scrollbar-color: #00000041 #ffffff54;
-}
+/* inicio scrollbar */
 
 #chatCard .card-body::-webkit-scrollbar {
     width: 5px;
@@ -252,6 +262,9 @@ body main {
 #chatCard .card-body::-webkit-scrollbar-corner {
     background: transparent;
 }
+
+
+/* fin scrollbar */
 
 
 /* fin chat card */

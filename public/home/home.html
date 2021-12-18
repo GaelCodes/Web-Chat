@@ -48,31 +48,25 @@
 
     <main class="container-fluid">
         <div id="main-row" class="row">
-
             <div class="chatsContainer col-12 col-md-3 text-center">
                 <h1 class="h3">CHATS</h1>
-                <ul id="desktop-chat-list" class="list-unstyled d-none d-md-block">
-                    <!-- Chat1 -->
-                    <!-- 
-                        <li class="chat-item-md d-flex justify-content-around align-items-center  p-2 mb-2 badge bg-info text-dark d-block text-start" data-fs-id="${interlocutor.id}" style="display:none">
-                            <img src="${interlocutor.picture}" class="rounded-circle w-25 "></img>    
-                            <p>${interlocutor.email}</p>
-                        </li> 
-                    -->
-                    <!-- ChatN -->
+                <ul id="desktop-chat-list" class="list-unstyled">
                 </ul>
                 <ul id="mobile-chat-list" class="list-unstyled d-md-none">
-
                 </ul>
             </div>
-
-            <!-- CHAT WEB d-md-none se mostrará el que corresponda  -->
-
-            <div id="chatCard" class="card text-center d-none d-md-flex col-md-9 flex-column justify-content-start p-0">
-                <div id="chat-interlocutor-md" class="card-header d-flex flex-row align-items-center justify-content-center h3">
+            <div id="chatCard" class="card text-center d-md-flex col-md-9 flex-column justify-content-start p-0">
+                <div id="chat-interlocutor-md" class="card-header d-flex flex-row h3">
                     <!-- el interlocutor va aquí -->
-                    <img src="https://firebasestorage.googleapis.com/v0/b/web-chat-de48b.appspot.com/o/default-avatar-usuario.png?alt=media&token=1942c2c5-33d2-4a0c-a70d-fd6e24c5cfdb" alt="Imagen no encontrada">
-                    <p>Abigael-hf@hotmail.com</p>
+                    <button id="hideChatCardButton" class="btn btn-primary ms-4 p-1 px-2">
+                        <i class="d-md-none bi bi-fullscreen-exit"></i>
+                        <i class="bi bi-arrow-right h5 d-none d-md-block m-0"></i>
+                    </button>
+                    <div class="mx-auto d-flex align-items-center">
+                        <img class="chatCardInterlocutorPicture" src="https://firebasestorage.googleapis.com/v0/b/web-chat-de48b.appspot.com/o/default-avatar-usuario.png?alt=media&token=1942c2c5-33d2-4a0c-a70d-fd6e24c5cfdb" alt="Imagen no encontrada">
+                        <p>Abigael-hf@hotmail.com</p>
+                    </div>
+
                 </div>
                 <div class="card-body">
                     <div class="container">
@@ -103,40 +97,6 @@
                         <!-- Envio mensajes -->
                         <input disabled type="text" name="inputNewMessageDesktop" id="inputDesktop" class="form-control border-0" placeholder="Escribe tu mensaje aquí...">
                         <button id="sendButtonDesktop" disabled class="btn btn-primary d-flex ms-2">Enviar <i class="bi bi-upload ms-2"></i></button>
-                    </div>
-                </div>
-            </div>
-
-
-            <!-- MODAL MOBILE  -->
-            <div id="chatModal" class="d-md-none modal" tabindex="-1">
-                <div class="modal-dialog modal-fullscreen">
-                    <div class="modal-content">
-
-                        <div class="modal-header text-center justify-content-start">
-                            <button type="button" class="btn" data-bs-dismiss="modal" aria-label="Close">
-                                <i class="bi bi-arrow-left"></i>
-                            </button>
-                            <h5 class="modal-title mx-auto d-flex flex-nowrap align-items-center h6" id="chat-interlocutor">
-                                Abigael-hf@hotmail.com
-                            </h5>
-                        </div>
-
-                        <div class="modal-body">
-                            <ul id="messages-list" class="list-unstyled d-flex flex-column">
-                                <!-- <li> mensaje </li> -->
-
-                                <!-- <li> mensaje </li> -->
-
-                            </ul>
-                        </div>
-
-                        <div class="modal-footer flex-nowrap">
-                            <!-- Envio mensajes -->
-                            <input type="text" name="inputNewMessageMobile" id="inputNewMessageMobile" class="form-control bg-secondary">
-                            <button id="sendButtonMobile" disabled class="btn btn-primary d-flex">Enviar <i class="bi bi-upload ms-2"></i></button>
-                        </div>
-
                     </div>
                 </div>
             </div>

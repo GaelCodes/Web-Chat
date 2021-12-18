@@ -235,6 +235,7 @@ class ChatController {
         this.chatView.chatTag.addEventListener('click', this.showMessages.bind(this));
         ChatView.chatCardSendButtonDesktop.addEventListener('click', this.sendMessageFromDesktop.bind(this));
         ChatView.chatCardInputDesktop.addEventListener('keyup', this.sendMessageWithEnterKey.bind(this));
+        ChatView.chatCardHideChatCardButton.addEventListener('click', this.hideMessages.bind(this));
     }
 
     static init() {
@@ -254,7 +255,7 @@ class ChatController {
                             ChatController.chats.push({ 'model': chat, 'view': chatView, 'controller': chatController });
                         }
                         if (change.type === "modified") {
-                            console.log("Modified chat: ", change.doc.data());
+
                         }
                         if (change.type === "removed") {
                             console.log("Removed city: ", change.doc.data());
@@ -277,23 +278,63 @@ class ChatController {
         }
     }
 
-    showMessages() {
-        // Si ya se están mostrando los mensajes 
-        // del chat en cuestión no pasará nada
-        if (ChatView.chatShowingMessages != this.chatView) {
+    async showMessages() {
 
-            // Sacaré la chatCard, cuando esté fuera se rellenará
-            // y finalmente volverá a entrar entonces
-            // se habilitará el input
-            let promiseCardOut = this.chatView.animateChatCardOut();
-            $.when(promiseCardOut)
-                .then(() => {
-                    this.chatView.populateChatCard(this.chat.copy());
-                    this.chatView.animateChatCardIn();
-                    ChatView.chatCardInputDesktop.disabled = false;
-                });
+        if (window.matchMedia('(max-width: 768px)').matches) {
+            // Animation chatCardFadeIn Mobile
+
+            this.chatView.populateChatCard(this.chat.copy());
+            await this.chatView.animateChatCardZoomIn();
+            ChatView.chatCardInputDesktop.disabled = false;
             ChatView.chatShowingMessages = this.chatView;
+
+        } else {
+            // Animation chatCard Desktop
+
+            // Si ya se están mostrando los mensajes 
+            // del chat en cuestión no pasará nada
+            if (ChatView.chatShowingMessages != this.chatView) {
+
+                // Sacaré la chatCard, cuando esté fuera se rellenará
+                // y finalmente volverá a entrar entonces
+                // se habilitará el input
+                if (ChatView.chatShowingMessages) {
+                    await this.chatView.animateChatCardFadeOutRight();
+                }
+                this.chatView.populateChatCard(this.chat.copy());
+                await this.chatView.animateChatCardFadeInRight();
+                ChatView.chatCardInputDesktop.disabled = false;
+
+                ChatView.chatShowingMessages = this.chatView;
+            }
         }
+    }
+
+    async hideMessages() {
+
+        if (ChatView.chatShowingMessages === this.chatView) {
+
+
+            if (window.matchMedia('(max-width: 768px)').matches) {
+                // Algorithm hide messages for mobile
+
+                await this.chatView.animateChatCardZoomOut()
+                $('#chatCard').css("display", "none");
+                this.chatView.resetChatCard();
+                ChatView.chatCardInputDesktop.disabled = true;
+                ChatView.chatShowingMessages = null;
+
+            } else {
+                // Algorithm hide messages for desktop
+
+                await this.chatView.animateChatCardFadeOutRight();
+                this.chatView.resetChatCard();
+                ChatView.chatCardInputDesktop.disabled = true;
+                ChatView.chatShowingMessages = null;
+
+            }
+        }
+
     }
 
     async sendMessage(messageContent) {
@@ -305,7 +346,7 @@ class ChatController {
         }
 
         let messageFiltered = this.chat.filterMessage(newMessage);
-        if (messageFiltered) {
+        if (messageFiltered.content) {
 
             ChatView.chatCardInputDesktop.value = '';
             ChatController.enableOrDisableSendButton();
@@ -318,11 +359,7 @@ class ChatController {
             // Actualizo el último mensaje del chat en receptor
             let receiverChatRef = `users/${this.chat.interlocutorId}/chats/${user.uid}`;
             db.doc(receiverChatRef).set({ 'lastMessage': message })
-                .then(
-                    (data) => {
-                        console.log('Chat creado en receptor', this.chat.interlocutorId);
-                    }
-                )
+                .then()
                 .catch(
                     (error) => {
                         console.log(error);
@@ -331,11 +368,7 @@ class ChatController {
             // Actualizo el último mensaje del chat en emisor
             let senderChatRef = `users/${user.uid}/chats/${this.chat.interlocutorId}`;
             db.doc(senderChatRef).set({ 'lastMessage': message })
-                .then(
-                    (data) => {
-                        console.log('Chat creado en emisor:', user.uid);
-                    }
-                )
+                .then()
                 .catch(
                     (error) => {
                         console.log(error);
@@ -396,16 +429,6 @@ class ChatController {
         }
     }
 
-    sendMessageFromMobile() {
-        //Capturar el contenido del input del modal
-        // y lanzar sendMessage con el contenido del input del modal
-        // Ejemplo:
-        // if (ChatView.chatShowingMessages === this.chatView) {
-        //     let messageContent = ChatView.chatCardInputMobile.value;
-        //     sendMessage(messageContent);
-        // }
-    }
-
     sendMessageWithEnterKey(e) {
         if (e.keyCode === 13) {
             this.sendMessageFromDesktop();
@@ -432,11 +455,12 @@ class ChatView {
         ChatView.chatsContainer = $('#desktop-chat-list');
 
         ChatView.chatCard = $('#chatCard');
-        ChatView.chatCardInterlocutorPicture = $('#chat-interlocutor-md img')[0];
+        ChatView.chatCardInterlocutorPicture = $('.chatCardInterlocutorPicture')[0];
         ChatView.chatCardInterlocutorEmail = $('#chat-interlocutor-md p')[0];
         ChatView.chatCardMessagesList = $('#messages-list-md')[0];
         ChatView.chatCardInputDesktop = $('#inputDesktop')[0];
         ChatView.chatCardSendButtonDesktop = $('#sendButtonDesktop')[0];
+        ChatView.chatCardHideChatCardButton = $('#hideChatCardButton')[0];
         //Prototipo de los chat tags
         ChatView.chatTagPrototype = document.createElement('li');
         ChatView.chatTagPrototype.classList.add('chatTag');
@@ -466,7 +490,6 @@ class ChatView {
         ChatView.speechBubblePrototype.append(ChatView.speechBubbleState);
 
     }
-
 
     populateChatTag(chat) {
         // Relleno los datos de los nodos del chat tag
@@ -510,8 +533,28 @@ class ChatView {
         }
     }
 
+    setInitialPositionForFadeInRigh() {
+        // Con getBoundingClientRect() obtengo las  
+        // dimensiones y posición del chatTag
+        $('#chatCard').css({
+            'left': "+=75%",
+            'position': 'absolute',
+            'display': 'flex',
+        });
+    }
 
-    animateChatCardOut() {
+    animateChatCardFadeInRight() {
+        this.setInitialPositionForFadeInRigh();
+        $('#chatCard').css({ "position": "relative", "left": "75%" });
+        return $('#chatCard').animate({
+                left: "-=75%",
+                opacity: 1
+            },
+            500).promise();
+
+    }
+
+    animateChatCardFadeOutRight() {
         return $('#chatCard').animate({
                 left: "+=75%",
                 opacity: 0.25
@@ -519,13 +562,44 @@ class ChatView {
             500).promise();
     }
 
-    animateChatCardIn() {
-        $('#chatCard').css({ "position": "relative", "left": "75%" });
+    setInitialPositionForZoomIn() {
+        // Con getBoundingClientRect() obtengo las  
+        // dimensiones y posición del chatTag
+        let chatTagRectangle = this.chatTag.getBoundingClientRect();
+        $('#chatCard').css({
+            'opacity': 0.25,
+            'position': 'absolute',
+            'display': 'flex',
+            'width': chatTagRectangle.width,
+            'height': chatTagRectangle.height,
+            'top': chatTagRectangle.y,
+
+        });
+    }
+
+    animateChatCardZoomIn() {
+        // Estado inicial del FadeIn
+        this.setInitialPositionForZoomIn();
+
+        // Estado final del fadeIn
         return $('#chatCard').animate({
-                left: "-=75%",
-                opacity: 1
-            },
-            500).promise();
+            'opacity': 1,
+            top: 0,
+            height: "100vh"
+        }, "slow").promise();
+
+    }
+
+    animateChatCardZoomOut() {
+        // Estado inicial es desplegado
+        let chatTagRectangle = this.chatTag.getBoundingClientRect();
+        return $('#chatCard').animate({
+            'position': 'absolute',
+            'opacity': 0.25,
+            'top': chatTagRectangle.y,
+            'height': chatTagRectangle.height,
+        }, "slow").promise()
+
 
     }
 
@@ -576,7 +650,7 @@ class ChatView {
 
     resetChatCard() {
         ChatView.chatShowingMessages = null;
-        ChatView.chatCardInterlocutorPicture.src = '';
+        ChatView.chatCardInterlocutorPicture.src = 'https://firebasestorage.googleapis.com/v0/b/web-chat-de48b.appspot.com/o/default-avatar-usuario.png?alt=media&token=1942c2c5-33d2-4a0c-a70d-fd6e24c5cfdb';
         ChatView.chatCardInterlocutorEmail.innerText = '';
         ChatView.chatCardMessagesList.innerHTML = '';
         ChatView.chatCardInputDesktop.value = '';
