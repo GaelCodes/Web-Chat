@@ -4,10 +4,6 @@
     box-sizing: border-box;
 }
 
-img {
-    max-width: 100px;
-}
-
 body {
     /* background-color: #202b30; */
     background-color: #252030 !important;
@@ -18,6 +14,26 @@ body {
 
 body header {
     background-color: #0000006c;
+}
+
+header .webChatLogo {
+    width: 50vw;
+    height: 100%;
+}
+
+@media only screen and (min-width: 768px) {
+    header .webChatLogo {
+        width: 20vw;
+    }
+}
+
+header #userBadge {
+    width: 100%;
+}
+
+header #userBadge img {
+    width: 6vh;
+    border-radius: 50%;
 }
 
 

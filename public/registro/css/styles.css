@@ -17,6 +17,11 @@ header {
     background-color: #0000006c;
 }
 
+header .webChatLogo {
+    width: 400px !important;
+    height: 100px !important;
+}
+
 .card {
     background-color: transparent !important;
     margin-bottom: 2em;

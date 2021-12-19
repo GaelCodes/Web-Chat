@@ -898,7 +898,11 @@ $(document).ready(function() {
 
     // Función que muestra los datos del usuario
     function displayUserData(userData) {
-        $('#userBadge').text(`${userData.email}`);
+        $('#userBadge').html(`
+        <img src="https://firebasestorage.googleapis.com/v0/b/web-chat-de48b.appspot.com/o/default-avatar-usuario.png?alt=media&token=1942c2c5-33d2-4a0c-a70d-fd6e24c5cfdb" alt="Imagen no encontrada">
+                        <p class="p-0 m-0 mx-2">${userData.email}</p>
+        
+        `);
     }
     // Función que obtiene los datos del usuario
     function getUserData(userID) {
