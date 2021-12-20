@@ -2,37 +2,67 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    overflow-x: hidden;
 }
 
+
+/* Inicio body */
+
 body {
-    overflow-x: hidden;
     background-color: #252030 !important;
-    min-height: 100vh;
-    display: flex;
-    flex-flow: column nowrap;
-    justify-content: space-between;
-    align-items: stretch;
 }
+
+
+/* Inicio header */
 
 header {
     background-color: #0000006c;
     color: rgba(0, 0, 0, 0.808);
+    height: min-content;
 }
 
-header .webChatLogo {
-    width: 400px !important;
-    height: 100px !important;
+
+/* @media only screen and (min-width: 576px) {
+    .webChatLogo {
+        width: 50vw;
+        margin: 2vh auto;
+    }
 }
 
-header a:link,
-header a:visited,
-header a:hover {
-    color: rgba(219, 219, 219, 0.932);
+@media only screen and (min-width: 768px) {
+    .webChatLogo {
+        width: 30vw;
+        margin: 2vh auto;
+    }
+}
+
+@media only screen and (min-width: 992px) {
+    .webChatLogo {
+        width: 25vw;
+        margin: 2vh auto;
+    }
+}
+
+@media only screen and (min-width: 1200px) {
+    .webChatLogo {
+        width: 20vw;
+        margin: 2vh auto;
+    }
+} */
+
+
+/* Fin header */
+
+
+/* Inicio main */
+
+main {
+    min-height: 80vh;
 }
 
 .card {
     background-color: transparent !important;
-    margin-bottom: 2em;
+    margin: 2em auto;
     border-radius: 0px !important;
     -webkit-box-shadow: 4px 10px 19px 5px rgba(0, 0, 0, 0.69);
     -moz-box-shadow: 4px 10px 19px 5px rgba(0, 0, 0, 0.69);
@@ -56,11 +86,42 @@ header a:hover {
     background-color: rgba(255, 255, 255, 0.623);
 }
 
+
+/* Fin main */
+
+
+/* Inicio footer */
+
 footer {
     background-color: rgba(0, 0, 0, 0.219);
     padding: 2em 0px;
     color: rgba(219, 219, 219, 0.932);
 }
 
+.my-social-items {
+    font-size: 34px;
+}
 
-/*# sourceMappingURL=styles.css.map */
+.my-social-items li {
+    margin: 0px 10px;
+}
+
+.my-social-items a:visited {
+    color: #157ca1;
+}
+
+.my-social-items a:link {
+    color: #157ca1;
+}
+
+.my-politics a:visited,
+.my-politics a:link {
+    text-decoration: none;
+    color: white;
+}
+
+
+/* Fin footer */
+
+
+/* Fin body */
