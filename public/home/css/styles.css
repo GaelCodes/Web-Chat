@@ -4,6 +4,9 @@
     box-sizing: border-box;
 }
 
+
+/* Inicio screen < 576px  */
+
 body {
     /* background-color: #202b30; */
     background-color: #252030 !important;
@@ -16,23 +19,15 @@ body header {
     background-color: #0000006c;
 }
 
-header .webChatLogo {
-    width: 50vw;
-    height: 100%;
-}
-
-@media only screen and (min-width: 768px) {
-    header .webChatLogo {
-        width: 20vw;
-    }
-}
-
 header #userBadge {
     width: 100%;
+    background-color: #167596;
+    color: #171616;
+    border: none;
 }
 
 header #userBadge img {
-    width: 6vh;
+    width: 10vw !important;
     border-radius: 50%;
 }
 
@@ -41,6 +36,7 @@ header #userBadge img {
 
 header input {
     border: none !important;
+    font-size: 1.4rem !important;
     background-color: rgba(255, 255, 255, 0.103) !important;
     color: rgba(255, 255, 255, 0.733) !important;
 }
@@ -52,8 +48,14 @@ header input {
 /* inicio logged user data */
 
 header #logoutButton {
-    background-color: rgba(112, 112, 112, 0.603) !important;
+    background-color: rgb(22 47 56) !important;
     color: rgba(255, 255, 255, 0.733) !important;
+}
+
+.dropdown-menu {
+    padding: 2% !important;
+    width: 95%;
+    background-color: #171616 !important;
 }
 
 
@@ -107,7 +109,7 @@ header #logoutButton {
 /* INICIO MAIN */
 
 body main {
-    height: 85%;
+    min-height: 85vh;
 }
 
 #main-row {
@@ -140,12 +142,13 @@ body main {
 .chatTagInterlocutorPicture {
     grid-area: picture;
     width: 100%;
-    height: 100%;
+    margin: auto;
     border-radius: 50%;
 }
 
 .chatTagInterlocutorEmail {
     grid-area: email;
+    font-size: 1.2em;
 }
 
 .chatTagLastMessage {
@@ -157,12 +160,12 @@ body main {
     color: gray;
 }
 
-.chatsContainer {
+#chatsContainer {
     color: rgba(219, 219, 219, 0.808);
     padding: 0px;
 }
 
-.chatsContainer h1 {
+#chatsContainer h1 {
     color: rgba(219, 219, 219, 0.808);
     margin: 0px;
     padding: 0.5em 0px;
@@ -188,46 +191,36 @@ body main {
     scrollbar-color: #00000041 #ffffff54;
 }
 
-@media only screen and (min-width: 767px) {
-    #chatCard {
-        position: relative !important;
-        max-height: 85vh;
-        height: 85vh;
-        width: 75% !important;
-        padding-right: 1em !important;
-    }
-}
-
 #chatCard .card-header {
     max-height: 20%;
-}
-
-#chat-interlocutor-md {
     color: rgba(219, 219, 219, 0.808);
     margin: 0px;
     padding: 0.5em 0px;
     background-color: #00000036;
 }
 
-.chatCardInterlocutorPicture {
-    width: 10% !important;
-    margin-right: 2%;
-}
-
-#chat-interlocutor-md p {
-    margin: 0;
+#hideChatCardButton {
+    color: white;
+    background-color: rgb(21 127 165) !important;
+    border: none;
 }
 
 #chatCard .card-body {
     max-height: 80%;
     overflow-y: auto;
     overflow-x: hidden;
-    background-color: #a5a5a517;
+    background-color: #171616;
 }
 
 #chatCard .card-footer #inputDesktop {
     background-color: rgba(0, 0, 0, 0.288);
     color: rgba(245, 245, 245, 0.623);
+    font-size: 1.2em;
+}
+
+#sendButtonDesktop {
+    background-color: #157fa5;
+    font-size: 1.2em;
 }
 
 #chatCard .card-footer {
@@ -296,10 +289,10 @@ body main {
     position: relative;
     max-width: 70%;
     white-space: normal;
-    color: #9fa2a7;
-    font-size: .8em;
+    color: #b7b6b8;
+    font-size: 1em;
     line-height: 1.75;
-    background: rgba(31, 59, 110, 0.774);
+    background: rgb(22 47 56);
     padding: 1em;
     border-radius: 0.5em;
     margin-top: 10px;
@@ -321,7 +314,7 @@ body main {
     left: -10px;
     border-width: 10px 10px 0 0px;
     border-style: solid;
-    border-color: transparent rgba(31, 59, 110, 0.774);
+    border-color: transparent rgb(22 47 56);
     display: block;
     width: 0;
 }
@@ -406,8 +399,93 @@ body main {
 footer {
     background-color: rgba(0, 0, 0, 0.219);
     padding: 2em 0px;
-    color: rgba(219, 219, 219, 0.808);
+    color: rgba(219, 219, 219, 0.932);
+}
+
+.my-social-items {
+    font-size: 34px;
+}
+
+.my-social-items li {
+    margin: 0px 10px;
+}
+
+.my-social-items a:visited {
+    color: #157ca1;
+}
+
+.my-social-items a:link {
+    color: #157ca1;
+}
+
+.my-politics a:visited,
+.my-politics a:link {
+    text-decoration: none;
+    color: white;
 }
 
 
-/* FIN FOOTER */
+/* Fin footer */
+
+
+/* Fin screen < 576px */
+
+
+/* Inicio screen > 768px  */
+
+@media only screen and (min-width: 768px) {
+    /* Inicio body */
+    body {
+        overflow-x: hidden !important;
+    }
+    /* Inicio header */
+    header #userBadge {
+        max-width: 100%;
+        font-size: 1.2em;
+    }
+    header #userBadge img {
+        width: 4vw !important;
+        border-radius: 50%;
+    }
+    /* Fin header */
+    /* Inicio main */
+    #chatCard {
+        position: relative !important;
+        max-height: 85vh;
+        height: 85vh;
+    }
+    /* Fin main */
+    /* Inicio footer */
+    /* Fin footer */
+    /* Fin body */
+}
+
+
+/* Fin screen > 768px  */
+
+
+/* Inicio screen > 992px  */
+
+@media only screen and (min-width: 992px) {
+    /* Inicio header */
+    header #userBadge {
+        width: 100% !important;
+        overflow-x: hidden !important;
+    }
+    /* Fin header */
+    /* Inicio main */
+    #chatCard {
+        position: relative !important;
+        max-height: 85vh;
+        height: 85vh;
+    }
+    #hideChatCardButton {
+        max-width: 3vw;
+    }
+    /* Fin main */
+    /* Inicio footer */
+    /* Fin footer */
+}
+
+
+/* Fin screen > 992px  */

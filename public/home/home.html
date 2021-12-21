@@ -7,74 +7,62 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WebChat</title>
     <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
 </head>
 
-<body>
+<body class="container-fluid">
 
-    <header class="container-fluid p-3 text-white">
-
-        <div class="row align-items-center">
-            <div class="col-12 col-md-4 mb-2 d-flex justify-content-center">
-                <a href="#">
-                    <img class="webChatLogo" src="../assets/WebChatLogo-v1.svg" alt="Imagen no encontrada">
-                </a>
-            </div>
-
-
-            <form class="col-12 col-md-4 order-3 order-md-2 mb-2">
-                <input id="dropdownMenuButton1" type="search" class="form-control form-control-dark" placeholder="Buscar usuario..." aria-label="Search" data-bs-toggle="dropdown" autocomplete="off">
-                <ul id="foundUsersList" class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-
-                </ul>
-            </form>
-
-
-
-            <div class="dropdown col-12 col-md-4 order-md-3 d-flex justify-content-center mb-2">
-                <button id="userBadge" class="btn btn-secondary dropdown-toggle d-flex align-items-center justify-content-center" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <header class="row justify-content-center justify-content-md-between align-items-center py-2">
+        <!-- Logo Webchat -->
+        <a href="#" class="col-8 col-sm-6 col-md-3 col-lg-2 py-2">
+            <img class="webChatLogo " src="../assets/WebChatLogo-v1.svg" alt="Imagen no encontrada">
+        </a>
+        <!-- UserLogged -->
+        <section class="dropdown col-12 col-sm-10 col-md-4 col-lg-3 order-md-3 mb-2 mb-md-0">
+            <button id="userBadge" class="btn dropdown-toggle d-flex align-items-center justify-content-center flex-wrap" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <img src="https://firebasestorage.googleapis.com/v0/b/web-chat-de48b.appspot.com/o/default-avatar-usuario.png?alt=media&token=1942c2c5-33d2-4a0c-a70d-fd6e24c5cfdb" alt="Imagen no encontrada">
                         <p class="p-0 m-0">abigael-hf@hotmail.com</p>
                     </button>
-                <div class="dropdown-menu" aria-labelledby="userBadge">
-                    <button id="logoutButton" class="btn dropdown-item" type="button">Desconectarse</button>
-                </div>
+            <div class="dropdown-menu" aria-labelledby="userBadge">
+                <button id="logoutButton" class="btn dropdown-item" type="button">Desconectarse</button>
             </div>
-        </div>
+        </section>
+        <!-- Searcher -->
+        <section class="col-12 col-sm-10 col-md-4 col-lg-3 order-3 order-md-2 mb-2 mb-md-0">
+            <input id="dropdownMenuButton1" type="search" class="form-control form-control-dark" placeholder="Buscar usuarios..." aria-label="Search" data-bs-toggle="dropdown" autocomplete="off">
+            <ul id="foundUsersList" class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
 
-
+            </ul>
+        </section>
 
     </header>
 
-    <main class="container-fluid">
-        <div id="main-row" class="row">
-            <div class="chatsContainer col-12 col-md-3 text-center">
-                <h1 class="h3">CHATS</h1>
-                <ul id="desktop-chat-list" class="list-unstyled">
-                </ul>
-                <ul id="mobile-chat-list" class="list-unstyled d-md-none">
-                </ul>
-            </div>
-            <div id="chatCard" class="card text-center d-md-flex col-md-9 flex-column justify-content-start p-0">
-                <div id="chat-interlocutor-md" class="card-header d-flex flex-row h3">
-                    <!-- el interlocutor va aquí -->
-                    <button id="hideChatCardButton" class="btn btn-primary ms-4 p-1 px-2">
+    <main class="row justify-content-center justify-content-md-start flex-nowrap">
+        <section id="chatsContainer" class="col-12 col-md-5 col-lg-3 row flex-column align-items-center text-center">
+            <h1 class="h3 w-100">CHATS</h1>
+            <ul class="list-unstyled col-sm-10 col-md-12">
+            </ul>
+        </section>
+        <section id="chatCard" class="card col-md-7 col-lg-9 p-0 d-none flex-column justify-content-start text-center">
+
+            <div class="card-header row h3 align-items-center justify-content-around">
+                <button id="hideChatCardButton" class="col-2 col-sm-1 btn btn-primary ms-1 ms-md-3 px-1">
                         <i class="d-md-none bi bi-fullscreen-exit"></i>
-                        <i class="bi bi-arrow-right h5 d-none d-md-block m-0"></i>
+                        <i class="bi bi-arrow-right h5 d-none d-md-block m-0 p-lg-0"></i>
                     </button>
-                    <div class="mx-auto d-flex align-items-center">
-                        <img class="chatCardInterlocutorPicture" src="https://firebasestorage.googleapis.com/v0/b/web-chat-de48b.appspot.com/o/default-avatar-usuario.png?alt=media&token=1942c2c5-33d2-4a0c-a70d-fd6e24c5cfdb" alt="Imagen no encontrada">
-                        <p>Abigael-hf@hotmail.com</p>
-                    </div>
-
+                <div class="col-9 col-sm-7 col-md-10 col-lg-7 mx-auto row align-items-center">
+                    <img id="chatCardInterlocutorPicture" class="col-4 col-sm-3 col-md-2 rounded-circle" src="https://firebasestorage.googleapis.com/v0/b/web-chat-de48b.appspot.com/o/default-avatar-usuario.png?alt=media&token=1942c2c5-33d2-4a0c-a70d-fd6e24c5cfdb" alt="Imagen no encontrada">
+                    <p id="chatCardInterlocutorEmail" class="col-8 col-sm-9 m-0">Abigael-hf@hotmail.com</p>
                 </div>
-                <div class="card-body">
-                    <div class="container">
-                        <ul id="messages-list-md" class="list-unstyled d-flex flex-column">
+            </div>
 
-                            <!-- <li> mensaje </li> -->
-                            <!-- 
+            <div class="card-body">
+                <div class="container">
+                    <ul id="messages-list-md" class="list-unstyled d-flex flex-column">
+
+                        <!-- <li> mensaje </li> -->
+                        <!-- 
                                     Mensaje del usuario:
                                     <li class="message align-self-start bg-primary text-start text-dark mt-2">                
                                         <p>${message.content}</p>
@@ -88,24 +76,60 @@
                                     </li>
                                 
                                 -->
-                            <!-- <li> mensaje </li> -->
+                        <!-- <li> mensaje </li> -->
 
-                        </ul>
-                    </div>
-                </div>
-                <div class="card-footer text-muted">
-                    <div class="mt-auto mb-2 d-flex flex-row">
-                        <!-- Envio mensajes -->
-                        <input disabled type="text" name="inputNewMessageDesktop" id="inputDesktop" class="form-control border-0" placeholder="Escribe tu mensaje aquí...">
-                        <button id="sendButtonDesktop" disabled class="btn btn-primary d-flex ms-2">Enviar <i class="bi bi-upload ms-2"></i></button>
-                    </div>
+                    </ul>
                 </div>
             </div>
-        </div>
+            <div class="card-footer text-muted pb-5 pe-2">
+                <div class="mt-auto mb-2 d-flex flex-row">
+                    <!-- Envio mensajes -->
+                    <input disabled type="text" name="inputNewMessageDesktop" id="inputDesktop" class="form-control border-0" placeholder="Escribe tu mensaje aquí...">
+                    <button id="sendButtonDesktop" disabled class="btn btn-primary d-flex ms-2">Enviar <i class="bi bi-upload ms-2"></i></button>
+                </div>
+            </div>
+        </section>
     </main>
 
-    <footer class="text-center">
-        <h1 class="h6">Desarrollado por @GaelCodes</h1>
+    <footer class="row justify-content-end text-center mt-5 pt-5">
+        <!-- Copyright -->
+        <section class="col-12 col-md-4 order-md-2">
+            <p class="mb-0 mb-md-2">Desarrollado por</p>
+            <p>&#169; 2021 <b>Abigael Heredia Feliz</b> - Todos los derechos reservados</p>
+        </section>
+
+        <!-- Redes sociales -->
+        <section class="col-12 col-md-4 order-md-3 mb-4 mb-md-0 text-center">
+            <p class="h6">Redes sociales</p>
+            <ul class="my-social-items list-group list-unstyled inline-list list-group-horizontal justify-content-center">
+                <li>
+                    <a href="https://github.com/GaelCodes" target="_blank" rel="noopener noreferrer" aria-label="Link to my Github profile">
+                        <i class="bi bi-github"></i>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://www.instagram.com/gael_codes/" target="_blank" rel="noopener noreferrer" aria-label="Link to my Instagram profile">
+                        <i class="bi bi-instagram"></i>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://twitter.com/gaelcodes" target="_blank" rel="noopener noreferrer" aria-label="Link to my Twitter profile">
+                        <i class="bi bi-twitter"></i>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://www.linkedin.com/in/abigael-heredia/" target="_blank" rel="noopener noreferrer" aria-label="Link to my LinkedIn profile">
+                        <i class="bi bi-linkedin"></i>
+                    </a>
+                </li>
+            </ul>
+        </section>
+
+        <!-- Términos y licencias -->
+        <section class="my-politics col-12 col-md-4 d-flex flex-column mb-4">
+            <a href="licenses/privacidad.html" class="mb-4" target="_blank" rel="noopener noreferrer">Política de privacidad</a>
+            <a href="licenses/licenses.html" target="_blank" rel="noopener noreferrer">Terminos y Licencias de terceros</a>
+        </section>
     </footer>
 
     <!-- FIREBASE PRODUCTION -->

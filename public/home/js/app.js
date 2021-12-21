@@ -280,7 +280,7 @@ class ChatController {
 
     async showMessages() {
 
-        if (window.matchMedia('(max-width: 768px)').matches) {
+        if (window.matchMedia('(max-width: 767px)').matches) {
             // Animation chatCardFadeIn Mobile
 
             this.chatView.populateChatCard(this.chat.copy());
@@ -294,7 +294,7 @@ class ChatController {
             // Si ya se están mostrando los mensajes 
             // del chat en cuestión no pasará nada
             if (ChatView.chatShowingMessages != this.chatView) {
-
+                $('.selected').removeClass('selected');
                 // Sacaré la chatCard, cuando esté fuera se rellenará
                 // y finalmente volverá a entrar entonces
                 // se habilitará el input
@@ -304,7 +304,7 @@ class ChatController {
                 this.chatView.populateChatCard(this.chat.copy());
                 await this.chatView.animateChatCardFadeInRight();
                 ChatView.chatCardInputDesktop.disabled = false;
-
+                this.chatView.chatTag.classList.add('selected');
                 ChatView.chatShowingMessages = this.chatView;
             }
         }
@@ -319,14 +319,15 @@ class ChatController {
                 // Algorithm hide messages for mobile
 
                 await this.chatView.animateChatCardZoomOut()
-                $('#chatCard').css("display", "none");
+                $('#chatCard').addClass('d-none');
+                $('#chatCard').removeClass('d-flex');
                 this.chatView.resetChatCard();
                 ChatView.chatCardInputDesktop.disabled = true;
                 ChatView.chatShowingMessages = null;
 
             } else {
                 // Algorithm hide messages for desktop
-
+                $('.selected').removeClass('selected');
                 await this.chatView.animateChatCardFadeOutRight();
                 this.chatView.resetChatCard();
                 ChatView.chatCardInputDesktop.disabled = true;
@@ -452,11 +453,11 @@ class ChatView {
     }
 
     static init() {
-        ChatView.chatsContainer = $('#desktop-chat-list');
+        ChatView.chatsContainer = $('#chatsContainer ul')[0];
 
         ChatView.chatCard = $('#chatCard');
-        ChatView.chatCardInterlocutorPicture = $('.chatCardInterlocutorPicture')[0];
-        ChatView.chatCardInterlocutorEmail = $('#chat-interlocutor-md p')[0];
+        ChatView.chatCardInterlocutorPicture = $('#chatCardInterlocutorPicture')[0];
+        ChatView.chatCardInterlocutorEmail = $('#chatCardInterlocutorEmail')[0];
         ChatView.chatCardMessagesList = $('#messages-list-md')[0];
         ChatView.chatCardInputDesktop = $('#inputDesktop')[0];
         ChatView.chatCardSendButtonDesktop = $('#sendButtonDesktop')[0];
@@ -537,17 +538,17 @@ class ChatView {
         // Con getBoundingClientRect() obtengo las  
         // dimensiones y posición del chatTag
         $('#chatCard').css({
-            'left': "+=75%",
+            'left': "175%",
             'position': 'absolute',
-            'display': 'flex',
         });
+        $('#chatCard').addClass('d-flex');
+        $('#chatCard').removeClass('d-none');
     }
 
     animateChatCardFadeInRight() {
         this.setInitialPositionForFadeInRigh();
-        $('#chatCard').css({ "position": "relative", "left": "75%" });
         return $('#chatCard').animate({
-                left: "-=75%",
+                left: "0",
                 opacity: 1
             },
             500).promise();
@@ -566,15 +567,16 @@ class ChatView {
         // Con getBoundingClientRect() obtengo las  
         // dimensiones y posición del chatTag
         let chatTagRectangle = this.chatTag.getBoundingClientRect();
+
         $('#chatCard').css({
             'opacity': 0.25,
             'position': 'absolute',
-            'display': 'flex',
             'width': chatTagRectangle.width,
             'height': chatTagRectangle.height,
             'top': chatTagRectangle.y,
-
         });
+        $('#chatCard').addClass('d-flex');
+        $('#chatCard').removeClass('d-none');
     }
 
     animateChatCardZoomIn() {
@@ -585,7 +587,8 @@ class ChatView {
         return $('#chatCard').animate({
             'opacity': 1,
             top: 0,
-            height: "100vh"
+            height: "100vh",
+            width: "100vw"
         }, "slow").promise();
 
     }
@@ -911,31 +914,6 @@ $(document).ready(function() {
 
     }
 
-    // BUSCADOR
-
-
-
-
-
-
-
-
-    // CREAR CHAT
-
-    // TODO: Reimplementar el envío de mensajes 
-    // ENVIAR MENSAJE
-
-
-
-    // var sendButtonDesktop = '#sendButtonDesktop';
-    // // $(sendButtonDesktop).click(sendMessage);
-    // // $('#inputDesktop').on('input', enableButton);
-    // $('#inputDesktop').on('keyup', (event) => {
-    //     if (event.code === "Enter" && !$(sendButtonDesktop)[0].disabled) {
-    //         $(sendButtonDesktop).click();
-    //     }
-    // });
-
 
     // LOGOUT
     var logoutButton = document.getElementById('logoutButton');
@@ -947,55 +925,5 @@ $(document).ready(function() {
                 console.log(`Se ha producido el siguiente error: ${error}`);
             });
     }
-
-
-    // OBTENER CHAT
-    // MOSTRAR CHAT
-
-    var interlocutorMobile = $('#chat-interlocutor');
-    var interlocutorDesktop = $('#chat-interlocutor-md');
-
-    var messagesListMobile = $('#messages-list');
-    var messagesListDesktop = $('#messages-list-md');
-
-    var chat = { 'interlocutorID': '', 'messages': [] };
-
-
-    async function displayChatMobile(event) {
-
-        let chat = {
-            'interlocutorID': event.target.innerText,
-            'mensajes': []
-        }
-
-
-        interlocutorElementMobile.innerHTML = event.target.innerHTML;
-
-
-        chat.mensajes = await getChat(chat.interlocutorID);
-
-
-        messagesListElementMobile.innerHTML = '';
-        chat.mensajes.forEach(
-            (mensaje) => {
-
-                mensaje = mensaje.data();
-                let messageElement = document.createElement('li');
-
-                messageElement.classList.add('align-self-end', 'badge', 'rounded-pill', 'bg-light', 'text-dark', 'mt-2');
-                messageElement.innerHTML = `${mensaje.contenido}`;
-
-
-                messagesListElementMobile.appendChild(messageElement);
-            }
-        );
-    }
-
-
-
-
-
-
-
 
 });
