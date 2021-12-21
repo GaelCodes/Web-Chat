@@ -8,14 +8,14 @@
     <title>WebChat</title>
 
 
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="../css/styles.css">
 
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
 </head>
 
-<body class="container-fluid p-0">
+<body class="container-fluid">
 
     <header class="row justify-content-center">
         <a href="#" class="col-8 col-sm-6 col-md-5 col-lg-3 py-2">
@@ -30,7 +30,7 @@
             <div class="card-header text-center">
                 <h1 class="h2">Registrarse</h1>
             </div>
-            <div class="card-body py-5 px-5">
+            <div class="card-body py-5 px-sm-4 px-md-5">
 
                 <form id="signUpForm">
 
@@ -40,7 +40,7 @@
                     <input id="signUpPassword" name="signUpPassword" type="password" class="form-control" placeholder="Introduzca su contraseña">
                     <label for="signUpPassword2" class="form-label">Contraseña</label>
                     <input id="signUpPassword2" name="signUpPassword2" type="password" class="form-control" placeholder="Reintroduzca la contraseña">
-                    <button id="signUpButton" class="btn btn-primary d-block mx-auto mt-4" type="submit">Registrarse</button>
+                    <button id="signUpButton" class="btn d-block mx-auto mt-4" type="submit">Registrarse</button>
                     <div id="signUpErrorsContainer" class="text-danger my-2"></div>
 
                 </form>
