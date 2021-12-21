@@ -72,18 +72,33 @@ main {
 
 .card-header,
 .card-footer {
-    background-color: rgba(255, 255, 255, 0.158) !important;
-    color: rgba(255, 255, 255, 0.842);
+    background-color: rgb(16, 89, 116) !important;
+    color: #171616;
 }
 
 .card-body {
-    background-color: rgba(255, 255, 255, 0.288) !important;
+    background-color: #171616 !important;
+    color: white;
 }
 
 .card-body input,
 .card-body input:focus {
     color: rgb(0, 0, 0);
-    background-color: rgba(255, 255, 255, 0.623);
+    background-color: rgba(0, 0, 0, 0.452);
+    border: none;
+}
+
+.card-body #signInButton {
+    background-color: rgb(21 122 159);
+    border: none;
+    color: #171616;
+    font-weight: bold;
+}
+
+.card-footer a:visited,
+.card-footer a:link {
+    color: #171616;
+    font-weight: bolder;
 }
 
 
