@@ -46,7 +46,7 @@ main {
 .card-header,
 .card-footer {
     background-color: rgb(16, 89, 116) !important;
-    color: #171616;
+    color: #ffffff;
 }
 
 .card-body {
@@ -56,7 +56,7 @@ main {
 
 .card-body input,
 .card-body input:focus {
-    color: rgb(0, 0, 0);
+    color: rgb(255, 255, 255);
     background-color: rgba(0, 0, 0, 0.452);
     border: none;
 }
@@ -65,13 +65,13 @@ main {
 .card-body #signUpButton {
     background-color: rgb(21 122 159);
     border: none;
-    color: #171616;
+    color: #ffffff;
     font-weight: bold;
 }
 
 .card-footer a:visited,
 .card-footer a:link {
-    color: #171616;
+    color: #ffffff;
     font-weight: bolder;
 }
 
