@@ -258,7 +258,7 @@ class ChatController {
 
                         }
                         if (change.type === "removed") {
-                            console.log("Removed city: ", change.doc.data());
+                            // console.log("Removed city: ", change.doc.data());
                         }
                     });
                 },
@@ -861,7 +861,12 @@ class FoundUserView {
     }
 
     showFoundUser() {
+
         this.foundUserTag.style.display = 'flex';
+        if ($("#foundUsersList").css("display") === "none") {
+            $("#foundUsersList").css("display", "block");
+        }
+
     }
 
     hideFoundUser() {
