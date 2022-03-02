@@ -279,6 +279,9 @@ class ChatController {
     }
 
     async showMessages() {
+        // En caso de que el chat sea abierto desde el buscador
+        // de usuarios se debe ocultar el la lista de usuarios
+        Searcher.hideFoundUsersList();
 
         if (window.matchMedia('(max-width: 767px)').matches) {
             // Animation chatCardFadeIn Mobile
@@ -673,9 +676,20 @@ class Searcher {
     static init() {
         Searcher.foundUsers = [];
         Searcher.input = $('input[type="search"]')[0];
+
+        // Events listener
         Searcher.input.addEventListener('focus', Searcher.getUsers);
         Searcher.input.addEventListener('keyup', Searcher.filterUsers);
         Searcher.input.addEventListener('blur', Searcher.hideFoundUsersList);
+
+        // Hot fix: focusout propagated when click on foundUsersList
+        $("#foundUsersList").hover(() => {
+            // Remove event listener focusout when foundUsersList hovered
+            Searcher.input.removeEventListener('blur', Searcher.hideFoundUsersList);
+        }, () => {
+            // Add event listener focusout to when foundUsersList hovered
+            Searcher.input.addEventListener('blur', Searcher.hideFoundUsersList);
+        });
     }
 
     static getUsers() {
