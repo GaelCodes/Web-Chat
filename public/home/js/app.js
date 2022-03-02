@@ -675,6 +675,7 @@ class Searcher {
         Searcher.input = $('input[type="search"]')[0];
         Searcher.input.addEventListener('focus', Searcher.getUsers);
         Searcher.input.addEventListener('keyup', Searcher.filterUsers);
+        Searcher.input.addEventListener('blur', Searcher.hideFoundUsersList);
     }
 
     static getUsers() {
@@ -738,6 +739,10 @@ class Searcher {
                 }
             }
         )
+    }
+
+    static hideFoundUsersList() {
+        $("#foundUsersList").css("display", "none");
     }
 }
 //Inicializo las variables globales
